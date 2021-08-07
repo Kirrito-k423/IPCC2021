@@ -1,0 +1,71 @@
+
+mid Time 1 taken is 1.085210 core
+mid Time 1 taken is 0.045519 maxlab
+mid Time 1 taken is 0.000006 sigmalbeforetime
+mid Time 1 taken is 0.106630 sigma
+mid Time 1 taken is 0.000001 inv
+mid Time 1 taken is 0.000004 kseed
+mid Time 2 taken is 0.869349 core
+mid Time 2 taken is 0.045469 maxlab
+mid Time 2 taken is 0.000001 sigmalbeforetime
+mid Time 2 taken is 0.054936 sigma
+mid Time 2 taken is 0.000000 inv
+mid Time 2 taken is 0.000004 kseed
+mid Time 3 taken is 0.859667 core
+mid Time 3 taken is 0.045391 maxlab
+mid Time 3 taken is 0.000002 sigmalbeforetime
+mid Time 3 taken is 0.099287 sigma
+mid Time 3 taken is 0.000000 inv
+mid Time 3 taken is 0.000003 kseed
+mid Time 4 taken is 0.800837 core
+mid Time 4 taken is 0.045542 maxlab
+mid Time 4 taken is 0.000001 sigmalbeforetime
+mid Time 4 taken is 0.108118 sigma
+mid Time 4 taken is 0.000001 inv
+mid Time 4 taken is 0.000003 kseed
+mid Time 5 taken is 0.847318 core
+mid Time 5 taken is 0.045486 maxlab
+mid Time 5 taken is 0.000001 sigmalbeforetime
+mid Time 5 taken is 0.058439 sigma
+mid Time 5 taken is 0.000001 inv
+mid Time 5 taken is 0.000004 kseed
+mid Time 6 taken is 0.737002 core
+mid Time 6 taken is 0.077680 maxlab
+mid Time 6 taken is 0.000001 sigmalbeforetime
+mid Time 6 taken is 0.055161 sigma
+mid Time 6 taken is 0.000001 inv
+mid Time 6 taken is 0.000002 kseed
+mid Time 7 taken is 0.845897 core
+mid Time 7 taken is 0.037606 maxlab
+mid Time 7 taken is 0.000002 sigmalbeforetime
+mid Time 7 taken is 0.053144 sigma
+mid Time 7 taken is 0.000000 inv
+mid Time 7 taken is 0.000003 kseed
+mid Time 8 taken is 0.650836 core
+mid Time 8 taken is 0.047630 maxlab
+mid Time 8 taken is 0.000001 sigmalbeforetime
+mid Time 8 taken is 0.075472 sigma
+mid Time 8 taken is 0.000001 inv
+mid Time 8 taken is 0.000004 kseed
+mid Time 9 taken is 0.632109 core
+mid Time 9 taken is 0.037552 maxlab
+mid Time 9 taken is 0.000001 sigmalbeforetime
+mid Time 9 taken is 0.052806 sigma
+mid Time 9 taken is 0.000001 inv
+mid Time 9 taken is 0.000003 kseed
+mid Time 10 taken is 0.658917 core
+mid Time 10 taken is 0.037615 maxlab
+mid Time 10 taken is 0.000001 sigmalbeforetime
+mid Time 10 taken is 0.052553 sigma
+mid Time 10 taken is 0.000000 inv
+mid Time 10 taken is 0.000003 kseed
+Time taken is 0.449497
+Time taken is 0.931067 0.481570 DetectLabEdges
+Time taken is 0.931197 0.000130 GetLABXYSeeds_ForGivenK
+Time taken is 0.931198 0.000001 PerformSuperpixelSegmentation_VariableSandM 31
+Time taken is 0.931198 0.000000 PerformSuperpixelSegmentation_VariableSandM 32
+Time taken is 0.931204 0.000006 PerformSuperpixelSegmentation_VariableSandM 33
+Time taken is 2.076386 1.145182 PerformSuperpixelSegmentation_VariableSandM
+Time taken is 11.383757 9.307371 PerformSuperpixelSegmentation_VariableSandM 循环
+Time taken is 14.204364 2.820607 EnforceLabelConnectivityComputing time=14204 ms
+There are 0 points' labels are different from original file.
