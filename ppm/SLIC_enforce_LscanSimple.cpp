@@ -651,9 +651,8 @@ void SLIC::EnforceLabelConnectivity(
 				while(!lineq.empty()){
 					p = lineq.front();	
 					lineq.pop();
-					x = p.first;
-					y = p.second;
-					x1=x;
+					x1 = p.first;
+					y = p.second;		
 					int nindex = y*width + x1;
 					while( x1 >= 0 && 0 > nlabels[nindex] && oldColor == labels[nindex]){ //nlabels[oindex] = label;导致原坐标是排除在外的
 						x1--;
@@ -665,21 +664,23 @@ void SLIC::EnforceLabelConnectivity(
 					while( x1 < width && 0 > nlabels[nindex] && oldColor == labels[nindex]){					
 						int nindexMinusy = (y-1)*width + x1;
 						int nindexPlusy = (y+1)*width + x1;
+						bool Above = y>0;
+						bool Below = y<(height-1);
 						nlabels[nindex] = label;
-						indexvec[count]=y*width+x1;
+						indexvec[count]=nindex;
 						count++;
-						if(!spanAbove && y>0 && 0 > nlabels[nindexMinusy] && oldColor == labels[nindexMinusy]){ //这里判断出了上行的元素可以被染色，可能为了修改screen的访存连续性，所以这里没修改。而且你改了上行的值，却没考虑其四周，会有完备性的问题。
+						if(Above && !spanAbove &&  0 > nlabels[nindexMinusy] && oldColor == labels[nindexMinusy]){ //这里判断出了上行的元素可以被染色，可能为了修改screen的访存连续性，所以这里没修改。而且你改了上行的值，却没考虑其四周，会有完备性的问题。
 							lineq.push({x1,y-1});
 							spanAbove=1;
 						}
-						else if(spanAbove && y>0 || 0 <= nlabels[nindexMinusy] || oldColor != labels[nindexMinusy]){
+						else if(Above && spanAbove && (0 <= nlabels[nindexMinusy] || oldColor != labels[nindexMinusy])){
 							spanAbove=0; //不压入重复过多的元素
 						}
-						if(!spanBelow && y<(height-1) && 0 > nlabels[nindexPlusy] && oldColor == labels[nindexPlusy]){
+						if(Below && !spanBelow && 0 > nlabels[nindexPlusy] && oldColor == labels[nindexPlusy]){
 							lineq.push({x1,y+1});
 							spanBelow=1;
 						}
-						else if(spanBelow && y<(height-1) || 0 <=  nlabels[nindexPlusy] || oldColor != labels[nindexPlusy]){
+						else if(Below && spanBelow && ( 0 <=  nlabels[nindexPlusy] || oldColor != labels[nindexPlusy])){
 							spanBelow=0;
 						}
 						x1++;

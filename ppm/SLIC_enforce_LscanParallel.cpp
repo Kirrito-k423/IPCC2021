@@ -35,6 +35,15 @@ static omp_lock_t lock,lock2;
 
 double itime, ftime,f1time, f2time, f3time, f4time,f5time,f6time, f7time,f8time;
 double f31time,f32time,f33time;
+
+
+typedef struct
+{
+    int y;
+    int xbegin;
+    int xend;
+}triple;
+
 typedef chrono::high_resolution_clock Clock;
 
 // For superpixels
@@ -552,6 +561,61 @@ void SLIC::SaveSuperpixelLabels2PPM(
 
 }
 
+void threadtask(
+	int x,
+	int y,
+	int oldColor,
+	int label,	// want to be labelnum
+	queue<triple>* threadq,
+	int* threadcount,
+	const int*					labels,//input labels that need to be corrected to remove stray labels
+	const int&					width,
+	const int&					height,
+	int*						nlabels,//new labels
+){
+	bool spanAbove, spanBelow; 
+	int threadnum;
+	threadnum = omp_get_thread_num()
+	int xbegin,x1 = x;
+	int nindex = y*width + x1;
+	while( x1 >= 0 && 0 > nlabels[nindex] && oldColor == labels[nindex]){ //nlabels[oindex] = label;导致原坐标是排除在外的
+		x1--;
+		nindex = y*width + x1;
+	}
+	xbegin = ++x1;
+	nindex = y*width + x1;
+	spanAbove = spanBelow = 0;
+	while( x1 < width && 0 > nlabels[nindex] && oldColor == labels[nindex]){					
+		int nindexMinusy = (y-1)*width + x1;
+		int nindexPlusy = (y+1)*width + x1;
+		bool Above = y>0;
+		bool Below = y<(height-1);
+		nlabels[nindex] = label;
+		if(Above && !spanAbove &&  0 > nlabels[nindexMinusy] && oldColor == labels[nindexMinusy]){ //这里判断出了上行的元素可以被染色，可能为了修改screen的访存连续性，所以这里没修改。而且你改了上行的值，却没考虑其四周，会有完备性的问题。
+			// lineq.push({x1,y-1});
+			#pragma omp task
+			threadtask(x1,y-1,oldColor,label,threadq,threadcount,labels,width,height,nlabels);
+			spanAbove=1;
+		}
+		else if(Above && spanAbove && (0 <= nlabels[nindexMinusy] || oldColor != labels[nindexMinusy])){
+			spanAbove=0; //不压入重复过多的元素
+		}
+		if(Below && !spanBelow && 0 > nlabels[nindexPlusy] && oldColor == labels[nindexPlusy]){
+			// lineq.push({x1,y+1});
+			#pragma omp task
+			threadtask(x1,y+1,oldColor,label,threadq,threadcount,labels,width,height,nlabels);
+			spanBelow=1;
+		}
+		else if(Below && spanBelow && ( 0 <=  nlabels[nindexPlusy] || oldColor != labels[nindexPlusy])){
+			spanBelow=0;
+		}
+		x1++;
+		nindex = y*width + x1;
+	}
+	// triple threadtmp = {y,xbegin,x1-1}
+	threadq[threadnum].push({y,xbegin,x1-1});
+	threadcount[threadnum]+=x1-xbegin;
+}
 //===========================================================================
 ///	EnforceLabelConnectivity
 ///
@@ -586,7 +650,10 @@ void SLIC::EnforceLabelConnectivity(
 	int adjlabel(0);//adjacent label
 	// #pragma omp parallel for collapse(2) nlabels的写入与使用有数据依赖
 	// queue<int> workq,workq2,saveq;
-	queue<pair<int,int>> lineq;
+	// queue<pair<int,int>> lineq;
+	queue<triple> threadq[64];
+	int threadcount[64];
+	for( int i = 0; i < 64; i++ ) threadcount[i] = 0;
 	f7time = omp_get_wtime();
 	for( int j = 0; j < height; j++ )
 	{
@@ -641,51 +708,14 @@ void SLIC::EnforceLabelConnectivity(
 				// }
 			
 				// nlabels[oindex] = label;
-				int x1,x,y;
-				pair<int, int> p;
-				bool spanAbove, spanBelow;
 				int oldColor = labels[oindex];
+				#pragma omp task
+				threadtask(k,j,oldColor,label,threadq,threadcount,labels,width,height,nlabels);	
+				#pragma omp taskwait
+				// #pragma omp flush 
+
 				int count(0);
-				lineq.push({k,j});
-				// indexvec[0]=j*width+k;
-				while(!lineq.empty()){
-					p = lineq.front();	
-					lineq.pop();
-					x = p.first;
-					y = p.second;
-					x1=x;
-					int nindex = y*width + x1;
-					while( x1 >= 0 && 0 > nlabels[nindex] && oldColor == labels[nindex]){ //nlabels[oindex] = label;导致原坐标是排除在外的
-						x1--;
-						nindex = y*width + x1;
-					}
-					x1++;
-					nindex = y*width + x1;
-					spanAbove = spanBelow = 0;
-					while( x1 < width && 0 > nlabels[nindex] && oldColor == labels[nindex]){					
-						int nindexMinusy = (y-1)*width + x1;
-						int nindexPlusy = (y+1)*width + x1;
-						nlabels[nindex] = label;
-						indexvec[count]=y*width+x1;
-						count++;
-						if(!spanAbove && y>0 && 0 > nlabels[nindexMinusy] && oldColor == labels[nindexMinusy]){ //这里判断出了上行的元素可以被染色，可能为了修改screen的访存连续性，所以这里没修改。而且你改了上行的值，却没考虑其四周，会有完备性的问题。
-							lineq.push({x1,y-1});
-							spanAbove=1;
-						}
-						else if(spanAbove && y>0 || 0 <= nlabels[nindexMinusy] || oldColor != labels[nindexMinusy]){
-							spanAbove=0; //不压入重复过多的元素
-						}
-						if(!spanBelow && y<(height-1) && 0 > nlabels[nindexPlusy] && oldColor == labels[nindexPlusy]){
-							lineq.push({x1,y+1});
-							spanBelow=1;
-						}
-						else if(spanBelow && y<(height-1) || 0 <=  nlabels[nindexPlusy] || oldColor != labels[nindexPlusy]){
-							spanBelow=0;
-						}
-						x1++;
-						nindex = y*width + x1;
-					}
-				}
+				for( int i = 0; i < 64; i++ ) count += threadcount[i];
 				// printf("\ncheck point %d %d",k,j);
 				// fflush(stdout);
 				//-------------------------------------------------------
@@ -695,10 +725,17 @@ void SLIC::EnforceLabelConnectivity(
 				if(count <= SUPSZ >> 2)
 				{
 					#pragma omp parallel for
-					for( int c = 0; c < count; c++ )
+					for( int c = 0; c < 64; c++ )
 					{	
-						// int ind = y*width+x;
-						nlabels[indexvec[c]] = adjlabel;
+						triple p;
+						while(!threadq[c].empty()){
+							p = threadq[c].front();	
+							threadq[c].pop();
+							for(int i=p.xbegin; i < p.xend+1; i++){
+								nlabels[p.y*width + i] = adjlabel;
+							}
+						}
+						// int ind = y*width+x;	
 					}
 					label--;
 				}

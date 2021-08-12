@@ -30,7 +30,6 @@
 #include <algorithm>
 using namespace std;
 
-
 class SLIC  
 {
 public:
