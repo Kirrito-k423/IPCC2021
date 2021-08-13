@@ -571,11 +571,13 @@ void threadtask(
 	const int*					labels,//input labels that need to be corrected to remove stray labels
 	const int&					width,
 	const int&					height,
-	int*						nlabels,//new labels
+	int*						nlabels//new labels
 ){
+	printf("\nthread task check point %d %d begin",x,y);
+	fflush(stdout);
 	bool spanAbove, spanBelow; 
 	int threadnum;
-	threadnum = omp_get_thread_num()
+	threadnum = omp_get_thread_num();
 	int xbegin,x1 = x;
 	int nindex = y*width + x1;
 	while( x1 >= 0 && 0 > nlabels[nindex] && oldColor == labels[nindex]){ //nlabels[oindex] = label;导致原坐标是排除在外的
@@ -596,6 +598,8 @@ void threadtask(
 			#pragma omp task
 			threadtask(x1,y-1,oldColor,label,threadq,threadcount,labels,width,height,nlabels);
 			spanAbove=1;
+			printf("\nthread task check y-- point %d %d %d %d",x,y,x1,y-1);
+			fflush(stdout);
 		}
 		else if(Above && spanAbove && (0 <= nlabels[nindexMinusy] || oldColor != labels[nindexMinusy])){
 			spanAbove=0; //不压入重复过多的元素
@@ -605,6 +609,8 @@ void threadtask(
 			#pragma omp task
 			threadtask(x1,y+1,oldColor,label,threadq,threadcount,labels,width,height,nlabels);
 			spanBelow=1;
+			printf("\nthread task check y++ point %d %d %d %d",x,y,x1,y+1);
+			fflush(stdout);
 		}
 		else if(Below && spanBelow && ( 0 <=  nlabels[nindexPlusy] || oldColor != labels[nindexPlusy])){
 			spanBelow=0;
@@ -615,6 +621,8 @@ void threadtask(
 	// triple threadtmp = {y,xbegin,x1-1}
 	threadq[threadnum].push({y,xbegin,x1-1});
 	threadcount[threadnum]+=x1-xbegin;
+	printf("\nthread task check point %d %d~%dend",x,y,x1-1);
+	fflush(stdout);
 }
 //===========================================================================
 ///	EnforceLabelConnectivity
@@ -706,18 +714,24 @@ void SLIC::EnforceLabelConnectivity(
 
 				// 	}
 				// }
-			
-				// nlabels[oindex] = label;
-				int oldColor = labels[oindex];
-				#pragma omp task
-				threadtask(k,j,oldColor,label,threadq,threadcount,labels,width,height,nlabels);	
-				#pragma omp taskwait
-				// #pragma omp flush 
-
+				printf("\ncheck point begin");
+				fflush(stdout);
+				#pragma omp parallel num_threads(64)
+				{
+					#pragma omp single
+					{
+						// nlabels[oindex] = label;
+						int oldColor = labels[oindex];
+						#pragma omp task
+						threadtask(k,j,oldColor,label,threadq,threadcount,labels,width,height,nlabels);	
+						#pragma omp taskwait
+						// #pragma omp flush 
+					}
+				}
 				int count(0);
 				for( int i = 0; i < 64; i++ ) count += threadcount[i];
-				// printf("\ncheck point %d %d",k,j);
-				// fflush(stdout);
+				printf("\ncheck point %d %d",k,j);
+				fflush(stdout);
 				//-------------------------------------------------------
 				// If segment size is less then a limit, assign an
 				// adjacent label found before, and decrement label count.
@@ -740,8 +754,8 @@ void SLIC::EnforceLabelConnectivity(
 					label--;
 				}
 				label++;
-				// printf("\ncheck point -03- ");
-				// fflush(stdout);
+				printf("\ncheck point -03- ");
+				fflush(stdout);
 			}
 			oindex++;
 		}
