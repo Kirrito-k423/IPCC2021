@@ -30,7 +30,6 @@
 #include "SLIC.h"
 #include <chrono>
 #include <omp.h>
-#include "unistd.h"
 
 static omp_lock_t lock,lock2;
 
@@ -578,6 +577,8 @@ void threadtask(
 	// fflush(stdout);
 	bool spanAbove, spanBelow; 
 	int threadnum;
+	queue<pair<int,int>> delaytask; 
+	int delay = 5;
 	threadnum = omp_get_thread_num();
 	int xbegin,x1 = x;
 	int nindex = y*width + x1;
@@ -594,10 +595,19 @@ void threadtask(
 		bool Above = y>0;
 		bool Below = y<(height-1);
 		nlabels[nindex] = label;
+		if (!delaytask.empty()&&delaytask.front().first==x1){
+			pair<int,int> p = delaytask.front();
+			delaytask.pop();
+			#pragma omp task
+			threadtask(p.first-delay,p.second,oldColor,label,threadq,threadcount,labels,width,height,nlabels);			
+			// printf("\nthread task check inside point %d %d %d %d %d",x,y,x1,p.first-delay,p.second);
+			// fflush(stdout);
+		}
 		if(Above && !spanAbove &&  0 > nlabels[nindexMinusy] && oldColor == labels[nindexMinusy]){ //这里判断出了上行的元素可以被染色，可能为了修改screen的访存连续性，所以这里没修改。而且你改了上行的值，却没考虑其四周，会有完备性的问题。
 			// lineq.push({x1,y-1});
-			#pragma omp task
-			threadtask(x1,y-1,oldColor,label,threadq,threadcount,labels,width,height,nlabels);
+			// #pragma omp task
+			// threadtask(x1,y-1,oldColor,label,threadq,threadcount,labels,width,height,nlabels);
+			delaytask.push({x1+delay,y-1});
 			spanAbove=1;
 			// printf("\nthread task check y-- point %d %d %d %d",x,y,x1,y-1);
 			// fflush(stdout);
@@ -607,8 +617,9 @@ void threadtask(
 		}
 		if(Below && !spanBelow && 0 > nlabels[nindexPlusy] && oldColor == labels[nindexPlusy]){
 			// lineq.push({x1,y+1});
-			#pragma omp task
-			threadtask(x1,y+1,oldColor,label,threadq,threadcount,labels,width,height,nlabels);
+			// #pragma omp task
+			// threadtask(x1,y+1,oldColor,label,threadq,threadcount,labels,width,height,nlabels);
+			delaytask.push({x1+delay,y+1});
 			spanBelow=1;
 			// printf("\nthread task check y++ point %d %d %d %d",x,y,x1,y+1);
 			// fflush(stdout);
@@ -618,6 +629,14 @@ void threadtask(
 		}
 		x1++;
 		nindex = y*width + x1;
+	}
+	while(!delaytask.empty()){
+		pair<int,int> p = delaytask.front();
+		delaytask.pop();
+		#pragma omp task
+		threadtask(p.first-delay,p.second,oldColor,label,threadq,threadcount,labels,width,height,nlabels);			
+		// printf("\nthread task check outside point %d %d %d %d %d",x,y,delay,p.first-delay,p.second);
+		// fflush(stdout);
 	}
 	// triple threadtmp = {y,xbegin,x1-1}
 	threadq[threadnum].push({y,xbegin,x1-1});
@@ -662,8 +681,7 @@ void SLIC::EnforceLabelConnectivity(
 	// queue<pair<int,int>> lineq;
 	queue<triple> threadq[64];
 	int threadcount[64];
-	for( int i = 0; i < 64; i++ ) threadcount[i] = 0;
-	sleep(5);
+	
 	f7time = omp_get_wtime();
 	for( int j = 0; j < height; j++ )
 	{
@@ -680,7 +698,6 @@ void SLIC::EnforceLabelConnectivity(
 				//-------------------------------------------------------
 				// Quickly find an adjacent label for use later if needed
 				//-------------------------------------------------------
-				double begintime = omp_get_wtime();
 				{for( int n = 0; n < 4; n++ )
 				{
 					// int x = xvec[0] + dx4[n];
@@ -719,9 +736,9 @@ void SLIC::EnforceLabelConnectivity(
 				// }
 				// printf("\ncheck point begin");
 				// fflush(stdout);
-				double begintime1 = omp_get_wtime();
+
 				for( int i = 0; i < 64; i++ ) threadcount[i] = 0;
-				double begintime2 = omp_get_wtime();
+
 				#pragma omp parallel num_threads(64)
 				{
 					#pragma omp single
@@ -734,7 +751,6 @@ void SLIC::EnforceLabelConnectivity(
 						// #pragma omp flush 
 					}
 				}
-				double begintime3 = omp_get_wtime();
 				int count(0);
 				for( int i = 0; i < 64; i++ ) count += threadcount[i];
 				// printf("\ncheck point %d %d",k,j);
@@ -759,7 +775,7 @@ void SLIC::EnforceLabelConnectivity(
 						// int ind = y*width+x;	
 					}
 					label--;
-				}else{
+				} else{
 					#pragma omp parallel for
 					for( int c = 0; c < 64; c++ )
 					{	
@@ -767,13 +783,8 @@ void SLIC::EnforceLabelConnectivity(
 					}
 				}
 				label++;
-				double begintime4 = omp_get_wtime();
 				// printf("\ncheck point -03- ");
 				// fflush(stdout);
-				printf("\nend Time %d %d taken is %f dxy4",k,j ,begintime1-begintime);
-				printf("\nend Time %d %d taken is %f threadcount",k,j ,begintime2-begintime1);
-				printf("\nend Time %d %d taken is %f core",k,j ,begintime3-begintime2);
-				printf("\nend Time %d %d taken is %f count",k,j ,begintime4-begintime3);
 			}
 			oindex++;
 		}

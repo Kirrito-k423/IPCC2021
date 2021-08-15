@@ -1,74 +1,1218 @@
 
-mid Time 1 taken is 1.323942 core
-mid Time 1 taken is 0.031429 maxlab
-mid Time 1 taken is 0.000018 sigmalbeforetime
-mid Time 1 taken is 0.120225 sigma
-mid Time 1 taken is 0.000005 inv
-mid Time 1 taken is 0.000018 kseed
-mid Time 2 taken is 1.107355 core
-mid Time 2 taken is 0.030079 maxlab
-mid Time 2 taken is 0.000006 sigmalbeforetime
-mid Time 2 taken is 0.117170 sigma
-mid Time 2 taken is 0.000005 inv
-mid Time 2 taken is 0.000018 kseed
-mid Time 3 taken is 1.180114 core
-mid Time 3 taken is 0.030154 maxlab
-mid Time 3 taken is 0.000006 sigmalbeforetime
-mid Time 3 taken is 0.108053 sigma
-mid Time 3 taken is 0.000003 inv
-mid Time 3 taken is 0.000014 kseed
-mid Time 4 taken is 1.320440 core
-mid Time 4 taken is 0.071596 maxlab
-mid Time 4 taken is 0.000006 sigmalbeforetime
-mid Time 4 taken is 0.088470 sigma
+mid Time 1 taken is 1.339979 core
+mid Time 1 taken is 0.047653 maxlab
+mid Time 1 taken is 0.000017 sigmalbeforetime
+mid Time 1 taken is 0.145414 sigma
+mid Time 1 taken is 0.000008 inv
+mid Time 1 taken is 0.000032 kseed
+mid Time 2 taken is 1.087653 core
+mid Time 2 taken is 0.045524 maxlab
+mid Time 2 taken is 0.000005 sigmalbeforetime
+mid Time 2 taken is 0.140387 sigma
+mid Time 2 taken is 0.000009 inv
+mid Time 2 taken is 0.000032 kseed
+mid Time 3 taken is 1.489395 core
+mid Time 3 taken is 0.078278 maxlab
+mid Time 3 taken is 0.000011 sigmalbeforetime
+mid Time 3 taken is 0.089033 sigma
+mid Time 3 taken is 0.000005 inv
+mid Time 3 taken is 0.000018 kseed
+mid Time 4 taken is 0.957325 core
+mid Time 4 taken is 0.056014 maxlab
+mid Time 4 taken is 0.000007 sigmalbeforetime
+mid Time 4 taken is 0.123620 sigma
 mid Time 4 taken is 0.000005 inv
-mid Time 4 taken is 0.000018 kseed
-mid Time 5 taken is 1.085452 core
-mid Time 5 taken is 0.035281 maxlab
-mid Time 5 taken is 0.000006 sigmalbeforetime
-mid Time 5 taken is 0.085792 sigma
-mid Time 5 taken is 0.000005 inv
-mid Time 5 taken is 0.000018 kseed
-mid Time 6 taken is 1.054774 core
-mid Time 6 taken is 0.035422 maxlab
-mid Time 6 taken is 0.000014 sigmalbeforetime
-mid Time 6 taken is 0.095038 sigma
+mid Time 4 taken is 0.000019 kseed
+mid Time 5 taken is 0.916660 core
+mid Time 5 taken is 0.036849 maxlab
+mid Time 5 taken is 0.000016 sigmalbeforetime
+mid Time 5 taken is 0.084752 sigma
+mid Time 5 taken is 0.000004 inv
+mid Time 5 taken is 0.000015 kseed
+mid Time 6 taken is 1.343161 core
+mid Time 6 taken is 0.093018 maxlab
+mid Time 6 taken is 0.000011 sigmalbeforetime
+mid Time 6 taken is 0.087523 sigma
 mid Time 6 taken is 0.000005 inv
 mid Time 6 taken is 0.000018 kseed
-mid Time 7 taken is 1.208057 core
-mid Time 7 taken is 0.080269 maxlab
-mid Time 7 taken is 0.000011 sigmalbeforetime
-mid Time 7 taken is 0.088932 sigma
-mid Time 7 taken is 0.000005 inv
+mid Time 7 taken is 1.126107 core
+mid Time 7 taken is 0.020723 maxlab
+mid Time 7 taken is 0.000006 sigmalbeforetime
+mid Time 7 taken is 0.084716 sigma
+mid Time 7 taken is 0.000004 inv
 mid Time 7 taken is 0.000018 kseed
-mid Time 8 taken is 0.992402 core
-mid Time 8 taken is 0.075309 maxlab
-mid Time 8 taken is 0.000006 sigmalbeforetime
-mid Time 8 taken is 0.127568 sigma
-mid Time 8 taken is 0.000004 inv
+mid Time 8 taken is 1.071003 core
+mid Time 8 taken is 0.020757 maxlab
+mid Time 8 taken is 0.000005 sigmalbeforetime
+mid Time 8 taken is 0.094875 sigma
+mid Time 8 taken is 0.000005 inv
 mid Time 8 taken is 0.000018 kseed
-mid Time 9 taken is 1.260131 core
-mid Time 9 taken is 0.020763 maxlab
+mid Time 9 taken is 0.840965 core
+mid Time 9 taken is 0.020769 maxlab
 mid Time 9 taken is 0.000005 sigmalbeforetime
-mid Time 9 taken is 0.085750 sigma
+mid Time 9 taken is 0.084673 sigma
 mid Time 9 taken is 0.000005 inv
 mid Time 9 taken is 0.000018 kseed
-mid Time 10 taken is 1.017420 core
-mid Time 10 taken is 0.020700 maxlab
+mid Time 10 taken is 0.987584 core
+mid Time 10 taken is 0.021010 maxlab
 mid Time 10 taken is 0.000006 sigmalbeforetime
-mid Time 10 taken is 0.098534 sigma
+mid Time 10 taken is 0.084701 sigma
 mid Time 10 taken is 0.000005 inv
 mid Time 10 taken is 0.000018 kseed
-Time taken is 0.858175
-Time taken is 1.512548 0.654374 DetectLabEdges
-Time taken is 1.512839 0.000290 GetLABXYSeeds_ForGivenK
-Time taken is 1.512839 0.000000 PerformSuperpixelSegmentation_VariableSandM 31
-Time taken is 1.512839 0.000000 PerformSuperpixelSegmentation_VariableSandM 32
-Time taken is 1.512863 0.000024 PerformSuperpixelSegmentation_VariableSandM 33
-Time taken is 3.125557 1.612695 PerformSuperpixelSegmentation_VariableSandM
-Time taken is 16.226101 13.100544 PerformSuperpixelSegmentation_VariableSandM 循环
-Time taken is 16.226124 0.000024 EnforceLabelConnectivity	numlable
-Time taken is 16.258697 0.032573 EnforceLabelConnectivity	xvec yvec
-Time taken is 26.320222 10.061525 EnforceLabelConnectivity iteration
-Time taken is 26.401399 0.081177 EnforceLabelConnectivity klabelsComputing time=26401 ms
-There are 86588716 points' labels are different from original file.
+end Time 0 0 taken is 0.000001 dxy4
+end Time 0 0 taken is 0.000001 threadcount
+end Time 0 0 taken is 0.039448 core
+end Time 0 0 taken is 0.000034 count
+end Time 680 0 taken is 0.000000 dxy4
+end Time 680 0 taken is 0.000000 threadcount
+end Time 680 0 taken is 0.031824 core
+end Time 680 0 taken is 0.000026 count
+end Time 690 0 taken is 0.000000 dxy4
+end Time 690 0 taken is 0.000000 threadcount
+end Time 690 0 taken is 0.030346 core
+end Time 690 0 taken is 0.000032 count
+end Time 765 0 taken is 0.000000 dxy4
+end Time 765 0 taken is 0.000000 threadcount
+end Time 765 0 taken is 0.046785 core
+end Time 765 0 taken is 0.028005 count
+end Time 795 0 taken is 0.000000 dxy4
+end Time 795 0 taken is 0.000000 threadcount
+end Time 795 0 taken is 0.026393 core
+end Time 795 0 taken is 0.000025 count
+end Time 850 0 taken is 0.000000 dxy4
+end Time 850 0 taken is 0.000000 threadcount
+end Time 850 0 taken is 0.035873 core
+end Time 850 0 taken is 0.000022 count
+end Time 1377 0 taken is 0.000000 dxy4
+end Time 1377 0 taken is 0.000000 threadcount
+end Time 1377 0 taken is 0.036059 core
+end Time 1377 0 taken is 0.000021 count
+end Time 1951 0 taken is 0.000000 dxy4
+end Time 1951 0 taken is 0.000000 threadcount
+end Time 1951 0 taken is 0.032203 core
+end Time 1951 0 taken is 0.000021 count
+end Time 1356 622 taken is 0.000000 dxy4
+end Time 1356 622 taken is 0.000000 threadcount
+end Time 1356 622 taken is 0.043583 core
+end Time 1356 622 taken is 0.000023 count
+end Time 1980 626 taken is 0.000000 dxy4
+end Time 1980 626 taken is 0.000000 threadcount
+end Time 1980 626 taken is 0.043918 core
+end Time 1980 626 taken is 0.029921 count
+end Time 801 644 taken is 0.000000 dxy4
+end Time 801 644 taken is 0.000000 threadcount
+end Time 801 644 taken is 0.037718 core
+end Time 801 644 taken is 0.000021 count
+end Time 1704 1193 taken is 0.000000 dxy4
+end Time 1704 1193 taken is 0.000000 threadcount
+end Time 1704 1193 taken is 0.037976 core
+end Time 1704 1193 taken is 0.000023 count
+end Time 765 1210 taken is 0.000000 dxy4
+end Time 765 1210 taken is 0.000000 threadcount
+end Time 765 1210 taken is 0.036177 core
+end Time 765 1210 taken is 0.000028 count
+end Time 850 1224 taken is 0.000000 dxy4
+end Time 850 1224 taken is 0.000000 threadcount
+end Time 850 1224 taken is 0.047954 core
+end Time 850 1224 taken is 0.001205 count
+end Time 2558 1246 taken is 0.000000 dxy4
+end Time 2558 1246 taken is 0.000000 threadcount
+end Time 2558 1246 taken is 0.035805 core
+end Time 2558 1246 taken is 0.000021 count
+end Time 680 1288 taken is 0.000000 dxy4
+end Time 680 1288 taken is 0.000000 threadcount
+end Time 680 1288 taken is 0.031286 core
+end Time 680 1288 taken is 0.000023 count
+end Time 82 1295 taken is 0.000000 dxy4
+end Time 82 1295 taken is 0.000000 threadcount
+end Time 82 1295 taken is 0.032742 core
+end Time 82 1295 taken is 0.000023 count
+end Time 762 1334 taken is 0.000000 dxy4
+end Time 762 1334 taken is 0.000000 threadcount
+end Time 762 1334 taken is 0.025698 core
+end Time 762 1334 taken is 0.000028 count
+end Time 846 1339 taken is 0.000000 dxy4
+end Time 846 1339 taken is 0.000000 threadcount
+end Time 846 1339 taken is 0.025758 core
+end Time 846 1339 taken is 0.000025 count
+end Time 1353 1916 taken is 0.000000 dxy4
+end Time 1353 1916 taken is 0.000000 threadcount
+end Time 1353 1916 taken is 0.033219 core
+end Time 1353 1916 taken is 0.000021 count
+end Time 1978 1928 taken is 0.000001 dxy4
+end Time 1978 1928 taken is 0.000000 threadcount
+end Time 1978 1928 taken is 0.033955 core
+end Time 1978 1928 taken is 0.000021 count
+end Time 803 1956 taken is 0.000000 dxy4
+end Time 803 1956 taken is 0.000000 threadcount
+end Time 803 1956 taken is 0.038560 core
+end Time 803 1956 taken is 0.000024 count
+end Time 1701 2504 taken is 0.000000 dxy4
+end Time 1701 2504 taken is 0.000000 threadcount
+end Time 1701 2504 taken is 0.039849 core
+end Time 1701 2504 taken is 0.000020 count
+end Time 765 2525 taken is 0.000000 dxy4
+end Time 765 2525 taken is 0.000000 threadcount
+end Time 765 2525 taken is 0.036634 core
+end Time 765 2525 taken is 0.000027 count
+end Time 850 2531 taken is 0.000000 dxy4
+end Time 850 2531 taken is 0.000000 threadcount
+end Time 850 2531 taken is 0.036311 core
+end Time 850 2531 taken is 0.000025 count
+end Time 2556 2555 taken is 0.000000 dxy4
+end Time 2556 2555 taken is 0.000000 threadcount
+end Time 2556 2555 taken is 0.034800 core
+end Time 2556 2555 taken is 0.000021 count
+end Time 680 2604 taken is 0.000000 dxy4
+end Time 680 2604 taken is 0.000000 threadcount
+end Time 680 2604 taken is 0.029593 core
+end Time 680 2604 taken is 0.000022 count
+end Time 76 2613 taken is 0.000000 dxy4
+end Time 76 2613 taken is 0.000000 threadcount
+end Time 76 2613 taken is 0.032690 core
+end Time 76 2613 taken is 0.000024 count
+end Time 761 2653 taken is 0.000000 dxy4
+end Time 761 2653 taken is 0.000000 threadcount
+end Time 761 2653 taken is 0.024540 core
+end Time 761 2653 taken is 0.000030 count
+end Time 847 2658 taken is 0.000000 dxy4
+end Time 847 2658 taken is 0.000000 threadcount
+end Time 847 2658 taken is 0.025305 core
+end Time 847 2658 taken is 0.000025 count
+end Time 1353 3230 taken is 0.000000 dxy4
+end Time 1353 3230 taken is 0.000000 threadcount
+end Time 1353 3230 taken is 0.033401 core
+end Time 1353 3230 taken is 0.000021 count
+end Time 1976 3243 taken is 0.000000 dxy4
+end Time 1976 3243 taken is 0.000000 threadcount
+end Time 1976 3243 taken is 0.032525 core
+end Time 1976 3243 taken is 0.000023 count
+end Time 802 3274 taken is 0.000000 dxy4
+end Time 802 3274 taken is 0.000000 threadcount
+end Time 802 3274 taken is 0.038129 core
+end Time 802 3274 taken is 0.000024 count
+end Time 1700 3822 taken is 0.000000 dxy4
+end Time 1700 3822 taken is 0.000000 threadcount
+end Time 1700 3822 taken is 0.039656 core
+end Time 1700 3822 taken is 0.000020 count
+end Time 765 3843 taken is 0.000000 dxy4
+end Time 765 3843 taken is 0.000000 threadcount
+end Time 765 3843 taken is 0.036750 core
+end Time 765 3843 taken is 0.000027 count
+end Time 850 3848 taken is 0.000000 dxy4
+end Time 850 3848 taken is 0.000000 threadcount
+end Time 850 3848 taken is 0.036616 core
+end Time 850 3848 taken is 0.000023 count
+end Time 2556 3872 taken is 0.000000 dxy4
+end Time 2556 3872 taken is 0.000000 threadcount
+end Time 2556 3872 taken is 0.035356 core
+end Time 2556 3872 taken is 0.000021 count
+end Time 680 3922 taken is 0.000000 dxy4
+end Time 680 3922 taken is 0.000000 threadcount
+end Time 680 3922 taken is 0.028730 core
+end Time 680 3922 taken is 0.000024 count
+end Time 76 3931 taken is 0.000000 dxy4
+end Time 76 3931 taken is 0.000000 threadcount
+end Time 76 3931 taken is 0.032243 core
+end Time 76 3931 taken is 0.000023 count
+end Time 759 3971 taken is 0.000000 dxy4
+end Time 759 3971 taken is 0.000000 threadcount
+end Time 759 3971 taken is 0.025744 core
+end Time 759 3971 taken is 0.000028 count
+end Time 845 3976 taken is 0.000000 dxy4
+end Time 845 3976 taken is 0.000000 threadcount
+end Time 845 3976 taken is 0.026191 core
+end Time 845 3976 taken is 0.000026 count
+end Time 1355 4548 taken is 0.000000 dxy4
+end Time 1355 4548 taken is 0.000000 threadcount
+end Time 1355 4548 taken is 0.032996 core
+end Time 1355 4548 taken is 0.000023 count
+end Time 1977 4561 taken is 0.000000 dxy4
+end Time 1977 4561 taken is 0.000000 threadcount
+end Time 1977 4561 taken is 0.035572 core
+end Time 1977 4561 taken is 0.000024 count
+end Time 802 4592 taken is 0.000000 dxy4
+end Time 802 4592 taken is 0.000000 threadcount
+end Time 802 4592 taken is 0.037826 core
+end Time 802 4592 taken is 0.000021 count
+end Time 1701 5141 taken is 0.000000 dxy4
+end Time 1701 5141 taken is 0.000000 threadcount
+end Time 1701 5141 taken is 0.040018 core
+end Time 1701 5141 taken is 0.000021 count
+end Time 765 5162 taken is 0.000000 dxy4
+end Time 765 5162 taken is 0.000000 threadcount
+end Time 765 5162 taken is 0.037337 core
+end Time 765 5162 taken is 0.000028 count
+end Time 850 5167 taken is 0.000000 dxy4
+end Time 850 5167 taken is 0.000001 threadcount
+end Time 850 5167 taken is 0.046805 core
+end Time 850 5167 taken is 0.004243 count
+end Time 2557 5191 taken is 0.000000 dxy4
+end Time 2557 5191 taken is 0.000000 threadcount
+end Time 2557 5191 taken is 0.034972 core
+end Time 2557 5191 taken is 0.000022 count
+end Time 680 5241 taken is 0.000000 dxy4
+end Time 680 5241 taken is 0.000000 threadcount
+end Time 680 5241 taken is 0.030388 core
+end Time 680 5241 taken is 0.000024 count
+end Time 77 5250 taken is 0.000000 dxy4
+end Time 77 5250 taken is 0.000000 threadcount
+end Time 77 5250 taken is 0.033084 core
+end Time 77 5250 taken is 0.000023 count
+end Time 761 5290 taken is 0.000000 dxy4
+end Time 761 5290 taken is 0.000000 threadcount
+end Time 761 5290 taken is 0.026262 core
+end Time 761 5290 taken is 0.000028 count
+end Time 846 5295 taken is 0.000000 dxy4
+end Time 846 5295 taken is 0.000000 threadcount
+end Time 846 5295 taken is 0.025338 core
+end Time 846 5295 taken is 0.000031 count
+end Time 1353 5868 taken is 0.000000 dxy4
+end Time 1353 5868 taken is 0.000000 threadcount
+end Time 1353 5868 taken is 0.034383 core
+end Time 1353 5868 taken is 0.000021 count
+end Time 1976 5881 taken is 0.000000 dxy4
+end Time 1976 5881 taken is 0.000000 threadcount
+end Time 1976 5881 taken is 0.033617 core
+end Time 1976 5881 taken is 0.000022 count
+end Time 802 5912 taken is 0.000000 dxy4
+end Time 802 5912 taken is 0.000000 threadcount
+end Time 802 5912 taken is 0.037425 core
+end Time 802 5912 taken is 0.000023 count
+end Time 1701 6460 taken is 0.000000 dxy4
+end Time 1701 6460 taken is 0.000000 threadcount
+end Time 1701 6460 taken is 0.039483 core
+end Time 1701 6460 taken is 0.000022 count
+end Time 765 6481 taken is 0.000000 dxy4
+end Time 765 6481 taken is 0.000000 threadcount
+end Time 765 6481 taken is 0.037209 core
+end Time 765 6481 taken is 0.000025 count
+end Time 850 6487 taken is 0.000000 dxy4
+end Time 850 6487 taken is 0.000000 threadcount
+end Time 850 6487 taken is 0.036418 core
+end Time 850 6487 taken is 0.000022 count
+end Time 2558 6510 taken is 0.000000 dxy4
+end Time 2558 6510 taken is 0.000000 threadcount
+end Time 2558 6510 taken is 0.038361 core
+end Time 2558 6510 taken is 0.000020 count
+end Time 680 6560 taken is 0.000000 dxy4
+end Time 680 6560 taken is 0.000000 threadcount
+end Time 680 6560 taken is 0.030036 core
+end Time 680 6560 taken is 0.000025 count
+end Time 82 6569 taken is 0.000000 dxy4
+end Time 82 6569 taken is 0.000000 threadcount
+end Time 82 6569 taken is 0.031477 core
+end Time 82 6569 taken is 0.000027 count
+end Time 754 6610 taken is 0.000000 dxy4
+end Time 754 6610 taken is 0.000000 threadcount
+end Time 754 6610 taken is 0.026165 core
+end Time 754 6610 taken is 0.000028 count
+end Time 840 6615 taken is 0.000000 dxy4
+end Time 840 6615 taken is 0.000000 threadcount
+end Time 840 6615 taken is 0.025061 core
+end Time 840 6615 taken is 0.000026 count
+end Time 1354 7187 taken is 0.000000 dxy4
+end Time 1354 7187 taken is 0.000000 threadcount
+end Time 1354 7187 taken is 0.034409 core
+end Time 1354 7187 taken is 0.000020 count
+end Time 1977 7200 taken is 0.000000 dxy4
+end Time 1977 7200 taken is 0.000000 threadcount
+end Time 1977 7200 taken is 0.033526 core
+end Time 1977 7200 taken is 0.000023 count
+end Time 802 7231 taken is 0.000000 dxy4
+end Time 802 7231 taken is 0.000000 threadcount
+end Time 802 7231 taken is 0.038001 core
+end Time 802 7231 taken is 0.000022 count
+end Time 1700 7780 taken is 0.000000 dxy4
+end Time 1700 7780 taken is 0.000000 threadcount
+end Time 1700 7780 taken is 0.039708 core
+end Time 1700 7780 taken is 0.000020 count
+end Time 765 7801 taken is 0.000000 dxy4
+end Time 765 7801 taken is 0.000000 threadcount
+end Time 765 7801 taken is 0.036704 core
+end Time 765 7801 taken is 0.000025 count
+end Time 850 7806 taken is 0.000000 dxy4
+end Time 850 7806 taken is 0.000000 threadcount
+end Time 850 7806 taken is 0.035621 core
+end Time 850 7806 taken is 0.000020 count
+end Time 2556 7830 taken is 0.000000 dxy4
+end Time 2556 7830 taken is 0.000000 threadcount
+end Time 2556 7830 taken is 0.034544 core
+end Time 2556 7830 taken is 0.000022 count
+end Time 680 7880 taken is 0.000000 dxy4
+end Time 680 7880 taken is 0.000000 threadcount
+end Time 680 7880 taken is 0.029007 core
+end Time 680 7880 taken is 0.000024 count
+end Time 76 7889 taken is 0.000000 dxy4
+end Time 76 7889 taken is 0.000000 threadcount
+end Time 76 7889 taken is 0.032783 core
+end Time 76 7889 taken is 0.000024 count
+end Time 759 7929 taken is 0.000000 dxy4
+end Time 759 7929 taken is 0.000000 threadcount
+end Time 759 7929 taken is 0.025367 core
+end Time 759 7929 taken is 0.000028 count
+end Time 845 7934 taken is 0.000000 dxy4
+end Time 845 7934 taken is 0.000000 threadcount
+end Time 845 7934 taken is 0.026315 core
+end Time 845 7934 taken is 0.000024 count
+end Time 1353 8507 taken is 0.000000 dxy4
+end Time 1353 8507 taken is 0.000000 threadcount
+end Time 1353 8507 taken is 0.033048 core
+end Time 1353 8507 taken is 0.000022 count
+end Time 1977 8519 taken is 0.000000 dxy4
+end Time 1977 8519 taken is 0.000000 threadcount
+end Time 1977 8519 taken is 0.035035 core
+end Time 1977 8519 taken is 0.000021 count
+end Time 802 8551 taken is 0.000000 dxy4
+end Time 802 8551 taken is 0.000000 threadcount
+end Time 802 8551 taken is 0.036105 core
+end Time 802 8551 taken is 0.000022 count
+end Time 1701 9099 taken is 0.000000 dxy4
+end Time 1701 9099 taken is 0.000000 threadcount
+end Time 1701 9099 taken is 0.039242 core
+end Time 1701 9099 taken is 0.000021 count
+end Time 765 9120 taken is 0.000000 dxy4
+end Time 765 9120 taken is 0.000000 threadcount
+end Time 765 9120 taken is 0.036187 core
+end Time 765 9120 taken is 0.000027 count
+end Time 850 9126 taken is 0.000000 dxy4
+end Time 850 9126 taken is 0.000000 threadcount
+end Time 850 9126 taken is 0.036376 core
+end Time 850 9126 taken is 0.000022 count
+end Time 2558 9149 taken is 0.000000 dxy4
+end Time 2558 9149 taken is 0.000000 threadcount
+end Time 2558 9149 taken is 0.036449 core
+end Time 2558 9149 taken is 0.000021 count
+end Time 680 9199 taken is 0.000000 dxy4
+end Time 680 9199 taken is 0.000000 threadcount
+end Time 680 9199 taken is 0.028629 core
+end Time 680 9199 taken is 0.000023 count
+end Time 80 9208 taken is 0.000000 dxy4
+end Time 80 9208 taken is 0.000000 threadcount
+end Time 80 9208 taken is 0.031962 core
+end Time 80 9208 taken is 0.000021 count
+end Time 764 9248 taken is 0.000000 dxy4
+end Time 764 9248 taken is 0.000000 threadcount
+end Time 764 9248 taken is 0.026046 core
+end Time 764 9248 taken is 0.000028 count
+end Time 849 9253 taken is 0.000000 dxy4
+end Time 849 9253 taken is 0.000000 threadcount
+end Time 849 9253 taken is 0.025996 core
+end Time 849 9253 taken is 0.000025 count
+end Time 1354 9826 taken is 0.000000 dxy4
+end Time 1354 9826 taken is 0.000000 threadcount
+end Time 1354 9826 taken is 0.033920 core
+end Time 1354 9826 taken is 0.000022 count
+end Time 1976 9839 taken is 0.000000 dxy4
+end Time 1976 9839 taken is 0.000000 threadcount
+end Time 1976 9839 taken is 0.032542 core
+end Time 1976 9839 taken is 0.000021 count
+end Time 802 9870 taken is 0.000000 dxy4
+end Time 802 9870 taken is 0.000000 threadcount
+end Time 802 9870 taken is 0.037033 core
+end Time 802 9870 taken is 0.000021 count
+end Time 1700 10419 taken is 0.000000 dxy4
+end Time 1700 10419 taken is 0.000000 threadcount
+end Time 1700 10419 taken is 0.040095 core
+end Time 1700 10419 taken is 0.000021 count
+end Time 765 10439 taken is 0.000000 dxy4
+end Time 765 10439 taken is 0.000000 threadcount
+end Time 765 10439 taken is 0.036555 core
+end Time 765 10439 taken is 0.000025 count
+end Time 850 10445 taken is 0.000000 dxy4
+end Time 850 10445 taken is 0.000000 threadcount
+end Time 850 10445 taken is 0.049285 core
+end Time 850 10445 taken is 0.000020 count
+end Time 2556 10469 taken is 0.000000 dxy4
+end Time 2556 10469 taken is 0.000000 threadcount
+end Time 2556 10469 taken is 0.034633 core
+end Time 2556 10469 taken is 0.000022 count
+end Time 680 10518 taken is 0.000000 dxy4
+end Time 680 10518 taken is 0.000000 threadcount
+end Time 680 10518 taken is 0.032338 core
+end Time 680 10518 taken is 0.000026 count
+end Time 84 10527 taken is 0.000000 dxy4
+end Time 84 10527 taken is 0.000000 threadcount
+end Time 84 10527 taken is 0.032052 core
+end Time 84 10527 taken is 0.000115 count
+end Time 757 10568 taken is 0.000000 dxy4
+end Time 757 10568 taken is 0.000000 threadcount
+end Time 757 10568 taken is 0.025679 core
+end Time 757 10568 taken is 0.000028 count
+end Time 842 10573 taken is 0.000000 dxy4
+end Time 842 10573 taken is 0.000000 threadcount
+end Time 842 10573 taken is 0.025509 core
+end Time 842 10573 taken is 0.000026 count
+end Time 1355 11145 taken is 0.000000 dxy4
+end Time 1355 11145 taken is 0.000000 threadcount
+end Time 1355 11145 taken is 0.033445 core
+end Time 1355 11145 taken is 0.000020 count
+end Time 1977 11158 taken is 0.000000 dxy4
+end Time 1977 11158 taken is 0.000000 threadcount
+end Time 1977 11158 taken is 0.033754 core
+end Time 1977 11158 taken is 0.000021 count
+end Time 802 11189 taken is 0.000000 dxy4
+end Time 802 11189 taken is 0.000000 threadcount
+end Time 802 11189 taken is 0.038231 core
+end Time 802 11189 taken is 0.000021 count
+end Time 1701 11738 taken is 0.000000 dxy4
+end Time 1701 11738 taken is 0.000000 threadcount
+end Time 1701 11738 taken is 0.039585 core
+end Time 1701 11738 taken is 0.000020 count
+end Time 765 11759 taken is 0.000000 dxy4
+end Time 765 11759 taken is 0.000000 threadcount
+end Time 765 11759 taken is 0.037055 core
+end Time 765 11759 taken is 0.000026 count
+end Time 850 11764 taken is 0.000000 dxy4
+end Time 850 11764 taken is 0.000000 threadcount
+end Time 850 11764 taken is 0.034846 core
+end Time 850 11764 taken is 0.000023 count
+end Time 2557 11788 taken is 0.000000 dxy4
+end Time 2557 11788 taken is 0.000000 threadcount
+end Time 2557 11788 taken is 0.033591 core
+end Time 2557 11788 taken is 0.000022 count
+end Time 680 11838 taken is 0.000000 dxy4
+end Time 680 11838 taken is 0.000000 threadcount
+end Time 680 11838 taken is 0.030227 core
+end Time 680 11838 taken is 0.000023 count
+end Time 77 11847 taken is 0.000000 dxy4
+end Time 77 11847 taken is 0.000000 threadcount
+end Time 77 11847 taken is 0.035491 core
+end Time 77 11847 taken is 0.000021 count
+end Time 761 11887 taken is 0.000000 dxy4
+end Time 761 11887 taken is 0.000000 threadcount
+end Time 761 11887 taken is 0.031594 core
+end Time 761 11887 taken is 0.000027 count
+end Time 846 11892 taken is 0.000000 dxy4
+end Time 846 11892 taken is 0.000000 threadcount
+end Time 846 11892 taken is 0.031069 core
+end Time 846 11892 taken is 0.000024 count
+end Time 1353 12465 taken is 0.000000 dxy4
+end Time 1353 12465 taken is 0.000000 threadcount
+end Time 1353 12465 taken is 0.034529 core
+end Time 1353 12465 taken is 0.000021 count
+end Time 1976 12478 taken is 0.000000 dxy4
+end Time 1976 12478 taken is 0.000000 threadcount
+end Time 1976 12478 taken is 0.033297 core
+end Time 1976 12478 taken is 0.000022 count
+end Time 802 12509 taken is 0.000000 dxy4
+end Time 802 12509 taken is 0.000000 threadcount
+end Time 802 12509 taken is 0.039564 core
+end Time 802 12509 taken is 0.000020 count
+end Time 1701 13057 taken is 0.000000 dxy4
+end Time 1701 13057 taken is 0.000000 threadcount
+end Time 1701 13057 taken is 0.039672 core
+end Time 1701 13057 taken is 0.000019 count
+end Time 765 13078 taken is 0.000000 dxy4
+end Time 765 13078 taken is 0.000000 threadcount
+end Time 765 13078 taken is 0.037579 core
+end Time 765 13078 taken is 0.000025 count
+end Time 850 13084 taken is 0.000000 dxy4
+end Time 850 13084 taken is 0.000000 threadcount
+end Time 850 13084 taken is 0.036034 core
+end Time 850 13084 taken is 0.000021 count
+end Time 2558 13107 taken is 0.000000 dxy4
+end Time 2558 13107 taken is 0.000000 threadcount
+end Time 2558 13107 taken is 0.034100 core
+end Time 2558 13107 taken is 0.000021 count
+end Time 680 13157 taken is 0.000000 dxy4
+end Time 680 13157 taken is 0.000000 threadcount
+end Time 680 13157 taken is 0.029775 core
+end Time 680 13157 taken is 0.000025 count
+end Time 82 13166 taken is 0.000000 dxy4
+end Time 82 13166 taken is 0.000001 threadcount
+end Time 82 13166 taken is 0.032906 core
+end Time 82 13166 taken is 0.000023 count
+end Time 754 13207 taken is 0.000000 dxy4
+end Time 754 13207 taken is 0.000000 threadcount
+end Time 754 13207 taken is 0.026205 core
+end Time 754 13207 taken is 0.000035 count
+end Time 840 13212 taken is 0.000000 dxy4
+end Time 840 13212 taken is 0.000000 threadcount
+end Time 840 13212 taken is 0.026175 core
+end Time 840 13212 taken is 0.000023 count
+end Time 1354 13784 taken is 0.000000 dxy4
+end Time 1354 13784 taken is 0.000000 threadcount
+end Time 1354 13784 taken is 0.033773 core
+end Time 1354 13784 taken is 0.000023 count
+end Time 1977 13797 taken is 0.000000 dxy4
+end Time 1977 13797 taken is 0.000000 threadcount
+end Time 1977 13797 taken is 0.032460 core
+end Time 1977 13797 taken is 0.000023 count
+end Time 802 13828 taken is 0.000000 dxy4
+end Time 802 13828 taken is 0.000000 threadcount
+end Time 802 13828 taken is 0.039027 core
+end Time 802 13828 taken is 0.000021 count
+end Time 1700 14377 taken is 0.000000 dxy4
+end Time 1700 14377 taken is 0.000000 threadcount
+end Time 1700 14377 taken is 0.039285 core
+end Time 1700 14377 taken is 0.000020 count
+end Time 765 14398 taken is 0.000000 dxy4
+end Time 765 14398 taken is 0.000000 threadcount
+end Time 765 14398 taken is 0.036795 core
+end Time 765 14398 taken is 0.000025 count
+end Time 850 14403 taken is 0.000000 dxy4
+end Time 850 14403 taken is 0.000000 threadcount
+end Time 850 14403 taken is 0.035876 core
+end Time 850 14403 taken is 0.000024 count
+end Time 2556 14427 taken is 0.000000 dxy4
+end Time 2556 14427 taken is 0.000000 threadcount
+end Time 2556 14427 taken is 0.034810 core
+end Time 2556 14427 taken is 0.000024 count
+end Time 680 14477 taken is 0.000000 dxy4
+end Time 680 14477 taken is 0.000000 threadcount
+end Time 680 14477 taken is 0.029925 core
+end Time 680 14477 taken is 0.000021 count
+end Time 76 14486 taken is 0.000000 dxy4
+end Time 76 14486 taken is 0.000000 threadcount
+end Time 76 14486 taken is 0.033934 core
+end Time 76 14486 taken is 0.000021 count
+end Time 759 14526 taken is 0.000000 dxy4
+end Time 759 14526 taken is 0.000000 threadcount
+end Time 759 14526 taken is 0.026756 core
+end Time 759 14526 taken is 0.000027 count
+end Time 845 14531 taken is 0.000000 dxy4
+end Time 845 14531 taken is 0.000000 threadcount
+end Time 845 14531 taken is 0.024742 core
+end Time 845 14531 taken is 0.000024 count
+end Time 1353 15104 taken is 0.000000 dxy4
+end Time 1353 15104 taken is 0.000000 threadcount
+end Time 1353 15104 taken is 0.032827 core
+end Time 1353 15104 taken is 0.000020 count
+end Time 1977 15116 taken is 0.000000 dxy4
+end Time 1977 15116 taken is 0.000000 threadcount
+end Time 1977 15116 taken is 0.034490 core
+end Time 1977 15116 taken is 0.000073 count
+end Time 802 15148 taken is 0.000000 dxy4
+end Time 802 15148 taken is 0.000000 threadcount
+end Time 802 15148 taken is 0.038703 core
+end Time 802 15148 taken is 0.000023 count
+end Time 1701 15696 taken is 0.000000 dxy4
+end Time 1701 15696 taken is 0.000000 threadcount
+end Time 1701 15696 taken is 0.044171 core
+end Time 1701 15696 taken is 0.000022 count
+end Time 765 15717 taken is 0.000000 dxy4
+end Time 765 15717 taken is 0.000000 threadcount
+end Time 765 15717 taken is 0.043850 core
+end Time 765 15717 taken is 0.002335 count
+end Time 850 15723 taken is 0.000000 dxy4
+end Time 850 15723 taken is 0.000000 threadcount
+end Time 850 15723 taken is 0.043186 core
+end Time 850 15723 taken is 0.000022 count
+end Time 2558 15746 taken is 0.000000 dxy4
+end Time 2558 15746 taken is 0.000000 threadcount
+end Time 2558 15746 taken is 0.063093 core
+end Time 2558 15746 taken is 0.007062 count
+end Time 680 15796 taken is 0.000000 dxy4
+end Time 680 15796 taken is 0.000000 threadcount
+end Time 680 15796 taken is 0.039355 core
+end Time 680 15796 taken is 0.000966 count
+end Time 80 15805 taken is 0.000000 dxy4
+end Time 80 15805 taken is 0.000000 threadcount
+end Time 80 15805 taken is 0.033149 core
+end Time 80 15805 taken is 0.000024 count
+end Time 764 15845 taken is 0.000000 dxy4
+end Time 764 15845 taken is 0.000000 threadcount
+end Time 764 15845 taken is 0.025759 core
+end Time 764 15845 taken is 0.000030 count
+end Time 849 15850 taken is 0.000000 dxy4
+end Time 849 15850 taken is 0.000000 threadcount
+end Time 849 15850 taken is 0.026161 core
+end Time 849 15850 taken is 0.000026 count
+end Time 1354 16423 taken is 0.000000 dxy4
+end Time 1354 16423 taken is 0.000000 threadcount
+end Time 1354 16423 taken is 0.043599 core
+end Time 1354 16423 taken is 0.000022 count
+end Time 1976 16436 taken is 0.000000 dxy4
+end Time 1976 16436 taken is 0.000000 threadcount
+end Time 1976 16436 taken is 0.038968 core
+end Time 1976 16436 taken is 0.000023 count
+end Time 802 16467 taken is 0.000000 dxy4
+end Time 802 16467 taken is 0.000000 threadcount
+end Time 802 16467 taken is 0.037237 core
+end Time 802 16467 taken is 0.000021 count
+end Time 1700 17016 taken is 0.000000 dxy4
+end Time 1700 17016 taken is 0.000000 threadcount
+end Time 1700 17016 taken is 0.047852 core
+end Time 1700 17016 taken is 0.000025 count
+end Time 765 17036 taken is 0.000000 dxy4
+end Time 765 17036 taken is 0.000000 threadcount
+end Time 765 17036 taken is 0.040285 core
+end Time 765 17036 taken is 0.000030 count
+end Time 850 17042 taken is 0.000000 dxy4
+end Time 850 17042 taken is 0.000000 threadcount
+end Time 850 17042 taken is 0.036202 core
+end Time 850 17042 taken is 0.000022 count
+end Time 2556 17066 taken is 0.000000 dxy4
+end Time 2556 17066 taken is 0.000000 threadcount
+end Time 2556 17066 taken is 0.044172 core
+end Time 2556 17066 taken is 0.000022 count
+end Time 680 17115 taken is 0.000000 dxy4
+end Time 680 17115 taken is 0.000000 threadcount
+end Time 680 17115 taken is 0.029620 core
+end Time 680 17115 taken is 0.000023 count
+end Time 84 17124 taken is 0.000000 dxy4
+end Time 84 17124 taken is 0.000000 threadcount
+end Time 84 17124 taken is 0.043368 core
+end Time 84 17124 taken is 0.000022 count
+end Time 757 17165 taken is 0.000000 dxy4
+end Time 757 17165 taken is 0.000000 threadcount
+end Time 757 17165 taken is 0.027363 core
+end Time 757 17165 taken is 0.000028 count
+end Time 842 17170 taken is 0.000000 dxy4
+end Time 842 17170 taken is 0.000000 threadcount
+end Time 842 17170 taken is 0.026066 core
+end Time 842 17170 taken is 0.000026 count
+end Time 1355 17742 taken is 0.000000 dxy4
+end Time 1355 17742 taken is 0.000000 threadcount
+end Time 1355 17742 taken is 0.042163 core
+end Time 1355 17742 taken is 0.000023 count
+end Time 1977 17755 taken is 0.000000 dxy4
+end Time 1977 17755 taken is 0.000000 threadcount
+end Time 1977 17755 taken is 0.041580 core
+end Time 1977 17755 taken is 0.000022 count
+end Time 802 17786 taken is 0.000000 dxy4
+end Time 802 17786 taken is 0.000000 threadcount
+end Time 802 17786 taken is 0.036739 core
+end Time 802 17786 taken is 0.000021 count
+end Time 1701 18335 taken is 0.000000 dxy4
+end Time 1701 18335 taken is 0.000000 threadcount
+end Time 1701 18335 taken is 0.048314 core
+end Time 1701 18335 taken is 0.000021 count
+end Time 765 18356 taken is 0.000000 dxy4
+end Time 765 18356 taken is 0.000000 threadcount
+end Time 765 18356 taken is 0.039610 core
+end Time 765 18356 taken is 0.000027 count
+end Time 850 18361 taken is 0.000000 dxy4
+end Time 850 18361 taken is 0.000000 threadcount
+end Time 850 18361 taken is 0.037248 core
+end Time 850 18361 taken is 0.000022 count
+end Time 2557 18385 taken is 0.000000 dxy4
+end Time 2557 18385 taken is 0.000000 threadcount
+end Time 2557 18385 taken is 0.043247 core
+end Time 2557 18385 taken is 0.000020 count
+end Time 680 18435 taken is 0.000000 dxy4
+end Time 680 18435 taken is 0.000000 threadcount
+end Time 680 18435 taken is 0.029384 core
+end Time 680 18435 taken is 0.000023 count
+end Time 77 18444 taken is 0.000000 dxy4
+end Time 77 18444 taken is 0.000000 threadcount
+end Time 77 18444 taken is 0.031407 core
+end Time 77 18444 taken is 0.000023 count
+end Time 760 18484 taken is 0.000000 dxy4
+end Time 760 18484 taken is 0.000001 threadcount
+end Time 760 18484 taken is 0.026718 core
+end Time 760 18484 taken is 0.000032 count
+end Time 846 18489 taken is 0.000000 dxy4
+end Time 846 18489 taken is 0.000000 threadcount
+end Time 846 18489 taken is 0.025068 core
+end Time 846 18489 taken is 0.000025 count
+end Time 1353 19062 taken is 0.000000 dxy4
+end Time 1353 19062 taken is 0.000000 threadcount
+end Time 1353 19062 taken is 0.043196 core
+end Time 1353 19062 taken is 0.000026 count
+end Time 1976 19075 taken is 0.000000 dxy4
+end Time 1976 19075 taken is 0.000000 threadcount
+end Time 1976 19075 taken is 0.039706 core
+end Time 1976 19075 taken is 0.000023 count
+end Time 802 19106 taken is 0.000000 dxy4
+end Time 802 19106 taken is 0.000000 threadcount
+end Time 802 19106 taken is 0.036850 core
+end Time 802 19106 taken is 0.000021 count
+end Time 1701 19654 taken is 0.000000 dxy4
+end Time 1701 19654 taken is 0.000000 threadcount
+end Time 1701 19654 taken is 0.048767 core
+end Time 1701 19654 taken is 0.000025 count
+end Time 765 19675 taken is 0.000000 dxy4
+end Time 765 19675 taken is 0.000000 threadcount
+end Time 765 19675 taken is 0.041471 core
+end Time 765 19675 taken is 0.000028 count
+end Time 850 19681 taken is 0.000000 dxy4
+end Time 850 19681 taken is 0.000000 threadcount
+end Time 850 19681 taken is 0.035865 core
+end Time 850 19681 taken is 0.000022 count
+end Time 2558 19704 taken is 0.000000 dxy4
+end Time 2558 19704 taken is 0.000000 threadcount
+end Time 2558 19704 taken is 0.042368 core
+end Time 2558 19704 taken is 0.000022 count
+end Time 680 19754 taken is 0.000000 dxy4
+end Time 680 19754 taken is 0.000000 threadcount
+end Time 680 19754 taken is 0.030428 core
+end Time 680 19754 taken is 0.000024 count
+end Time 80 19763 taken is 0.000000 dxy4
+end Time 80 19763 taken is 0.000000 threadcount
+end Time 80 19763 taken is 0.033553 core
+end Time 80 19763 taken is 0.000023 count
+end Time 764 19803 taken is 0.000000 dxy4
+end Time 764 19803 taken is 0.000000 threadcount
+end Time 764 19803 taken is 0.026135 core
+end Time 764 19803 taken is 0.000031 count
+end Time 849 19808 taken is 0.000000 dxy4
+end Time 849 19808 taken is 0.000000 threadcount
+end Time 849 19808 taken is 0.025730 core
+end Time 849 19808 taken is 0.000025 count
+end Time 1354 20381 taken is 0.000000 dxy4
+end Time 1354 20381 taken is 0.000000 threadcount
+end Time 1354 20381 taken is 0.043828 core
+end Time 1354 20381 taken is 0.000022 count
+end Time 1976 20394 taken is 0.000000 dxy4
+end Time 1976 20394 taken is 0.000000 threadcount
+end Time 1976 20394 taken is 0.040555 core
+end Time 1976 20394 taken is 0.000022 count
+end Time 802 20425 taken is 0.000000 dxy4
+end Time 802 20425 taken is 0.000000 threadcount
+end Time 802 20425 taken is 0.064609 core
+end Time 802 20425 taken is 0.020037 count
+end Time 1700 20974 taken is 0.000000 dxy4
+end Time 1700 20974 taken is 0.000000 threadcount
+end Time 1700 20974 taken is 0.055429 core
+end Time 1700 20974 taken is 0.000023 count
+end Time 765 20994 taken is 0.000000 dxy4
+end Time 765 20994 taken is 0.000000 threadcount
+end Time 765 20994 taken is 0.040689 core
+end Time 765 20994 taken is 0.000028 count
+end Time 850 21000 taken is 0.000000 dxy4
+end Time 850 21000 taken is 0.000001 threadcount
+end Time 850 21000 taken is 0.035076 core
+end Time 850 21000 taken is 0.000021 count
+end Time 2556 21024 taken is 0.000000 dxy4
+end Time 2556 21024 taken is 0.000000 threadcount
+end Time 2556 21024 taken is 0.044203 core
+end Time 2556 21024 taken is 0.000024 count
+end Time 680 21073 taken is 0.000000 dxy4
+end Time 680 21073 taken is 0.000000 threadcount
+end Time 680 21073 taken is 0.030010 core
+end Time 680 21073 taken is 0.000025 count
+end Time 84 21082 taken is 0.000000 dxy4
+end Time 84 21082 taken is 0.000000 threadcount
+end Time 84 21082 taken is 0.031783 core
+end Time 84 21082 taken is 0.000022 count
+end Time 757 21123 taken is 0.000000 dxy4
+end Time 757 21123 taken is 0.000000 threadcount
+end Time 757 21123 taken is 0.025881 core
+end Time 757 21123 taken is 0.000030 count
+end Time 842 21128 taken is 0.000000 dxy4
+end Time 842 21128 taken is 0.000000 threadcount
+end Time 842 21128 taken is 0.024608 core
+end Time 842 21128 taken is 0.000026 count
+end Time 1355 21700 taken is 0.000000 dxy4
+end Time 1355 21700 taken is 0.000001 threadcount
+end Time 1355 21700 taken is 0.067854 core
+end Time 1355 21700 taken is 0.032002 count
+end Time 1977 21713 taken is 0.000000 dxy4
+end Time 1977 21713 taken is 0.000000 threadcount
+end Time 1977 21713 taken is 0.055871 core
+end Time 1977 21713 taken is 0.025539 count
+end Time 802 21744 taken is 0.000000 dxy4
+end Time 802 21744 taken is 0.000000 threadcount
+end Time 802 21744 taken is 0.038051 core
+end Time 802 21744 taken is 0.000025 count
+end Time 1701 22293 taken is 0.000000 dxy4
+end Time 1701 22293 taken is 0.000000 threadcount
+end Time 1701 22293 taken is 0.048403 core
+end Time 1701 22293 taken is 0.000025 count
+end Time 765 22314 taken is 0.000000 dxy4
+end Time 765 22314 taken is 0.000000 threadcount
+end Time 765 22314 taken is 0.040935 core
+end Time 765 22314 taken is 0.000027 count
+end Time 850 22320 taken is 0.000000 dxy4
+end Time 850 22320 taken is 0.000000 threadcount
+end Time 850 22320 taken is 0.035823 core
+end Time 850 22320 taken is 0.000022 count
+end Time 2557 22343 taken is 0.000000 dxy4
+end Time 2557 22343 taken is 0.000000 threadcount
+end Time 2557 22343 taken is 0.041614 core
+end Time 2557 22343 taken is 0.000022 count
+end Time 680 22393 taken is 0.000001 dxy4
+end Time 680 22393 taken is 0.000000 threadcount
+end Time 680 22393 taken is 0.029585 core
+end Time 680 22393 taken is 0.000022 count
+end Time 78 22402 taken is 0.000000 dxy4
+end Time 78 22402 taken is 0.000000 threadcount
+end Time 78 22402 taken is 0.031595 core
+end Time 78 22402 taken is 0.000024 count
+end Time 762 22442 taken is 0.000000 dxy4
+end Time 762 22442 taken is 0.000000 threadcount
+end Time 762 22442 taken is 0.026552 core
+end Time 762 22442 taken is 0.000027 count
+end Time 847 22447 taken is 0.000000 dxy4
+end Time 847 22447 taken is 0.000000 threadcount
+end Time 847 22447 taken is 0.025262 core
+end Time 847 22447 taken is 0.000025 count
+end Time 1354 23020 taken is 0.000000 dxy4
+end Time 1354 23020 taken is 0.000000 threadcount
+end Time 1354 23020 taken is 0.042351 core
+end Time 1354 23020 taken is 0.000022 count
+end Time 1976 23033 taken is 0.000000 dxy4
+end Time 1976 23033 taken is 0.000000 threadcount
+end Time 1976 23033 taken is 0.038546 core
+end Time 1976 23033 taken is 0.000020 count
+end Time 802 23064 taken is 0.000000 dxy4
+end Time 802 23064 taken is 0.000000 threadcount
+end Time 802 23064 taken is 0.038019 core
+end Time 802 23064 taken is 0.000023 count
+end Time 1700 23613 taken is 0.000000 dxy4
+end Time 1700 23613 taken is 0.000000 threadcount
+end Time 1700 23613 taken is 0.048752 core
+end Time 1700 23613 taken is 0.000023 count
+end Time 765 23633 taken is 0.000000 dxy4
+end Time 765 23633 taken is 0.000000 threadcount
+end Time 765 23633 taken is 0.040728 core
+end Time 765 23633 taken is 0.000028 count
+end Time 850 23639 taken is 0.000000 dxy4
+end Time 850 23639 taken is 0.000000 threadcount
+end Time 850 23639 taken is 0.036953 core
+end Time 850 23639 taken is 0.000022 count
+end Time 2559 23662 taken is 0.000000 dxy4
+end Time 2559 23662 taken is 0.000000 threadcount
+end Time 2559 23662 taken is 0.042442 core
+end Time 2559 23662 taken is 0.000020 count
+end Time 680 23712 taken is 0.000000 dxy4
+end Time 680 23712 taken is 0.000000 threadcount
+end Time 680 23712 taken is 0.029114 core
+end Time 680 23712 taken is 0.000022 count
+end Time 83 23721 taken is 0.000000 dxy4
+end Time 83 23721 taken is 0.000000 threadcount
+end Time 83 23721 taken is 0.033081 core
+end Time 83 23721 taken is 0.000028 count
+end Time 756 23762 taken is 0.000000 dxy4
+end Time 756 23762 taken is 0.000000 threadcount
+end Time 756 23762 taken is 0.026511 core
+end Time 756 23762 taken is 0.000029 count
+end Time 841 23767 taken is 0.000000 dxy4
+end Time 841 23767 taken is 0.000001 threadcount
+end Time 841 23767 taken is 0.025476 core
+end Time 841 23767 taken is 0.000026 count
+end Time 1355 24339 taken is 0.000000 dxy4
+end Time 1355 24339 taken is 0.000000 threadcount
+end Time 1355 24339 taken is 0.042820 core
+end Time 1355 24339 taken is 0.000025 count
+end Time 1977 24352 taken is 0.000000 dxy4
+end Time 1977 24352 taken is 0.000000 threadcount
+end Time 1977 24352 taken is 0.038696 core
+end Time 1977 24352 taken is 0.000023 count
+end Time 802 24383 taken is 0.000000 dxy4
+end Time 802 24383 taken is 0.000000 threadcount
+end Time 802 24383 taken is 0.037990 core
+end Time 802 24383 taken is 0.000024 count
+end Time 1701 24932 taken is 0.000000 dxy4
+end Time 1701 24932 taken is 0.000000 threadcount
+end Time 1701 24932 taken is 0.049429 core
+end Time 1701 24932 taken is 0.000022 count
+end Time 765 24953 taken is 0.000000 dxy4
+end Time 765 24953 taken is 0.000000 threadcount
+end Time 765 24953 taken is 0.040663 core
+end Time 765 24953 taken is 0.000029 count
+end Time 850 24958 taken is 0.000000 dxy4
+end Time 850 24958 taken is 0.000000 threadcount
+end Time 850 24958 taken is 0.035969 core
+end Time 850 24958 taken is 0.000021 count
+end Time 2557 24982 taken is 0.000000 dxy4
+end Time 2557 24982 taken is 0.000000 threadcount
+end Time 2557 24982 taken is 0.071527 core
+end Time 2557 24982 taken is 0.032002 count
+end Time 680 25032 taken is 0.000000 dxy4
+end Time 680 25032 taken is 0.000000 threadcount
+end Time 680 25032 taken is 0.047532 core
+end Time 680 25032 taken is 0.032001 count
+end Time 77 25041 taken is 0.000000 dxy4
+end Time 77 25041 taken is 0.000000 threadcount
+end Time 77 25041 taken is 0.063907 core
+end Time 77 25041 taken is 0.032004 count
+end Time 760 25081 taken is 0.000000 dxy4
+end Time 760 25081 taken is 0.000000 threadcount
+end Time 760 25081 taken is 0.055615 core
+end Time 760 25081 taken is 0.032005 count
+end Time 846 25086 taken is 0.000000 dxy4
+end Time 846 25086 taken is 0.000000 threadcount
+end Time 846 25086 taken is 0.039941 core
+end Time 846 25086 taken is 0.032000 count
+end Time 1353 25659 taken is 0.000001 dxy4
+end Time 1353 25659 taken is 0.000000 threadcount
+end Time 1353 25659 taken is 0.054970 core
+end Time 1353 25659 taken is 0.000021 count
+end Time 1976 25672 taken is 0.000000 dxy4
+end Time 1976 25672 taken is 0.000000 threadcount
+end Time 1976 25672 taken is 0.053796 core
+end Time 1976 25672 taken is 0.000020 count
+end Time 802 25703 taken is 0.000000 dxy4
+end Time 802 25703 taken is 0.000000 threadcount
+end Time 802 25703 taken is 0.036529 core
+end Time 802 25703 taken is 0.000021 count
+end Time 1701 26251 taken is 0.000000 dxy4
+end Time 1701 26251 taken is 0.000000 threadcount
+end Time 1701 26251 taken is 0.049208 core
+end Time 1701 26251 taken is 0.000022 count
+end Time 765 26272 taken is 0.000000 dxy4
+end Time 765 26272 taken is 0.000000 threadcount
+end Time 765 26272 taken is 0.041340 core
+end Time 765 26272 taken is 0.000027 count
+end Time 850 26278 taken is 0.000000 dxy4
+end Time 850 26278 taken is 0.000000 threadcount
+end Time 850 26278 taken is 0.035957 core
+end Time 850 26278 taken is 0.000023 count
+end Time 2558 26301 taken is 0.000000 dxy4
+end Time 2558 26301 taken is 0.000000 threadcount
+end Time 2558 26301 taken is 0.042361 core
+end Time 2558 26301 taken is 0.000021 count
+end Time 680 26351 taken is 0.000000 dxy4
+end Time 680 26351 taken is 0.000000 threadcount
+end Time 680 26351 taken is 0.029643 core
+end Time 680 26351 taken is 0.000025 count
+end Time 80 26360 taken is 0.000000 dxy4
+end Time 80 26360 taken is 0.000000 threadcount
+end Time 80 26360 taken is 0.034067 core
+end Time 80 26360 taken is 0.000025 count
+end Time 764 26400 taken is 0.000000 dxy4
+end Time 764 26400 taken is 0.000000 threadcount
+end Time 764 26400 taken is 0.025776 core
+end Time 764 26400 taken is 0.000029 count
+end Time 849 26405 taken is 0.000000 dxy4
+end Time 849 26405 taken is 0.000000 threadcount
+end Time 849 26405 taken is 0.026217 core
+end Time 849 26405 taken is 0.000023 count
+end Time 1354 26978 taken is 0.000000 dxy4
+end Time 1354 26978 taken is 0.000000 threadcount
+end Time 1354 26978 taken is 0.042075 core
+end Time 1354 26978 taken is 0.000021 count
+end Time 1976 26991 taken is 0.000000 dxy4
+end Time 1976 26991 taken is 0.000000 threadcount
+end Time 1976 26991 taken is 0.059960 core
+end Time 1976 26991 taken is 0.032005 count
+end Time 802 27022 taken is 0.000001 dxy4
+end Time 802 27022 taken is 0.000000 threadcount
+end Time 802 27022 taken is 0.038334 core
+end Time 802 27022 taken is 0.000022 count
+end Time 1700 27571 taken is 0.000000 dxy4
+end Time 1700 27571 taken is 0.000000 threadcount
+end Time 1700 27571 taken is 0.049127 core
+end Time 1700 27571 taken is 0.000022 count
+end Time 765 27591 taken is 0.000000 dxy4
+end Time 765 27591 taken is 0.000000 threadcount
+end Time 765 27591 taken is 0.041009 core
+end Time 765 27591 taken is 0.000028 count
+end Time 850 27597 taken is 0.000000 dxy4
+end Time 850 27597 taken is 0.000000 threadcount
+end Time 850 27597 taken is 0.035336 core
+end Time 850 27597 taken is 0.000024 count
+end Time 2556 27621 taken is 0.000000 dxy4
+end Time 2556 27621 taken is 0.000000 threadcount
+end Time 2556 27621 taken is 0.041783 core
+end Time 2556 27621 taken is 0.000021 count
+end Time 680 27670 taken is 0.000000 dxy4
+end Time 680 27670 taken is 0.000000 threadcount
+end Time 680 27670 taken is 0.029647 core
+end Time 680 27670 taken is 0.000024 count
+end Time 84 27679 taken is 0.000000 dxy4
+end Time 84 27679 taken is 0.000000 threadcount
+end Time 84 27679 taken is 0.035134 core
+end Time 84 27679 taken is 0.000023 count
+end Time 757 27720 taken is 0.000000 dxy4
+end Time 757 27720 taken is 0.000000 threadcount
+end Time 757 27720 taken is 0.026361 core
+end Time 757 27720 taken is 0.000028 count
+end Time 842 27725 taken is 0.000000 dxy4
+end Time 842 27725 taken is 0.000000 threadcount
+end Time 842 27725 taken is 0.024988 core
+end Time 842 27725 taken is 0.000025 count
+end Time 1355 28297 taken is 0.000000 dxy4
+end Time 1355 28297 taken is 0.000000 threadcount
+end Time 1355 28297 taken is 0.043861 core
+end Time 1355 28297 taken is 0.000022 count
+end Time 1977 28310 taken is 0.000000 dxy4
+end Time 1977 28310 taken is 0.000000 threadcount
+end Time 1977 28310 taken is 0.041965 core
+end Time 1977 28310 taken is 0.000022 count
+end Time 802 28341 taken is 0.000000 dxy4
+end Time 802 28341 taken is 0.000000 threadcount
+end Time 802 28341 taken is 0.038568 core
+end Time 802 28341 taken is 0.000021 count
+end Time 1701 28890 taken is 0.000000 dxy4
+end Time 1701 28890 taken is 0.000000 threadcount
+end Time 1701 28890 taken is 0.048198 core
+end Time 1701 28890 taken is 0.000026 count
+end Time 765 28911 taken is 0.000000 dxy4
+end Time 765 28911 taken is 0.000000 threadcount
+end Time 765 28911 taken is 0.040784 core
+end Time 765 28911 taken is 0.000025 count
+end Time 850 28917 taken is 0.000000 dxy4
+end Time 850 28917 taken is 0.000000 threadcount
+end Time 850 28917 taken is 0.050585 core
+end Time 850 28917 taken is 0.004026 count
+end Time 2557 28940 taken is 0.000000 dxy4
+end Time 2557 28940 taken is 0.000000 threadcount
+end Time 2557 28940 taken is 0.065703 core
+end Time 2557 28940 taken is 0.032004 count
+end Time 680 28990 taken is 0.000000 dxy4
+end Time 680 28990 taken is 0.000000 threadcount
+end Time 680 28990 taken is 0.047526 core
+end Time 680 28990 taken is 0.032001 count
+end Time 78 28999 taken is 0.000000 dxy4
+end Time 78 28999 taken is 0.000000 threadcount
+end Time 78 28999 taken is 0.051910 core
+end Time 78 28999 taken is 0.031997 count
+end Time 761 29039 taken is 0.000000 dxy4
+end Time 761 29039 taken is 0.000000 threadcount
+end Time 761 29039 taken is 0.043614 core
+end Time 761 29039 taken is 0.032005 count
+end Time 847 29044 taken is 0.000000 dxy4
+end Time 847 29044 taken is 0.000000 threadcount
+end Time 847 29044 taken is 0.047943 core
+end Time 847 29044 taken is 0.028004 count
+end Time 1353 29617 taken is 0.000000 dxy4
+end Time 1353 29617 taken is 0.000000 threadcount
+end Time 1353 29617 taken is 0.061616 core
+end Time 1353 29617 taken is 0.000023 count
+end Time 1977 29629 taken is 0.000000 dxy4
+end Time 1977 29629 taken is 0.000000 threadcount
+end Time 1977 29629 taken is 0.039821 core
+end Time 1977 29629 taken is 0.000021 count
+end Time 802 29661 taken is 0.000000 dxy4
+end Time 802 29661 taken is 0.000000 threadcount
+end Time 802 29661 taken is 0.036401 core
+end Time 802 29661 taken is 0.000024 count
+end Time 1701 30208 taken is 0.000001 dxy4
+end Time 1701 30208 taken is 0.000000 threadcount
+end Time 1701 30208 taken is 0.049297 core
+end Time 1701 30208 taken is 0.000023 count
+end Time 765 30229 taken is 0.000000 dxy4
+end Time 765 30229 taken is 0.000000 threadcount
+end Time 765 30229 taken is 0.040477 core
+end Time 765 30229 taken is 0.000027 count
+end Time 850 30235 taken is 0.000000 dxy4
+end Time 850 30235 taken is 0.000000 threadcount
+end Time 850 30235 taken is 0.037121 core
+end Time 850 30235 taken is 0.000023 count
+end Time 2558 30258 taken is 0.000000 dxy4
+end Time 2558 30258 taken is 0.000000 threadcount
+end Time 2558 30258 taken is 0.041278 core
+end Time 2558 30258 taken is 0.000021 count
+end Time 680 30308 taken is 0.000000 dxy4
+end Time 680 30308 taken is 0.000000 threadcount
+end Time 680 30308 taken is 0.030721 core
+end Time 680 30308 taken is 0.000025 count
+end Time 75 30317 taken is 0.000000 dxy4
+end Time 75 30317 taken is 0.000000 threadcount
+end Time 75 30317 taken is 0.036669 core
+end Time 75 30317 taken is 0.000024 count
+end Time 761 30357 taken is 0.000000 dxy4
+end Time 761 30357 taken is 0.000000 threadcount
+end Time 761 30357 taken is 0.025955 core
+end Time 761 30357 taken is 0.000027 count
+end Time 847 30362 taken is 0.000000 dxy4
+end Time 847 30362 taken is 0.000000 threadcount
+end Time 847 30362 taken is 0.026555 core
+end Time 847 30362 taken is 0.000025 count
+end Time 1353 30931 taken is 0.000000 dxy4
+end Time 1353 30931 taken is 0.000000 threadcount
+end Time 1353 30931 taken is 0.041749 core
+end Time 1353 30931 taken is 0.000023 count
+end Time 1976 30944 taken is 0.000000 dxy4
+end Time 1976 30944 taken is 0.000000 threadcount
+end Time 1976 30944 taken is 0.038904 core
+end Time 1976 30944 taken is 0.000023 count
+end Time 802 30973 taken is 0.000000 dxy4
+end Time 802 30973 taken is 0.000000 threadcount
+end Time 802 30973 taken is 0.036654 core
+end Time 802 30973 taken is 0.000020 count
+end Time 1701 31508 taken is 0.000000 dxy4
+end Time 1701 31508 taken is 0.000000 threadcount
+end Time 1701 31508 taken is 0.048891 core
+end Time 1701 31508 taken is 0.000024 count
+end Time 765 31529 taken is 0.000000 dxy4
+end Time 765 31529 taken is 0.000000 threadcount
+end Time 765 31529 taken is 0.039674 core
+end Time 765 31529 taken is 0.000028 count
+end Time 850 31535 taken is 0.000000 dxy4
+end Time 850 31535 taken is 0.000000 threadcount
+end Time 850 31535 taken is 0.036103 core
+end Time 850 31535 taken is 0.000025 count
+end Time 2558 31559 taken is 0.000000 dxy4
+end Time 2558 31559 taken is 0.000000 threadcount
+end Time 2558 31559 taken is 0.043455 core
+end Time 2558 31559 taken is 0.000021 count
+end Time 680 31609 taken is 0.000000 dxy4
+end Time 680 31609 taken is 0.000000 threadcount
+end Time 680 31609 taken is 0.029640 core
+end Time 680 31609 taken is 0.000021 count
+end Time 83 31613 taken is 0.000000 dxy4
+end Time 83 31613 taken is 0.000000 threadcount
+end Time 83 31613 taken is 0.031618 core
+end Time 83 31613 taken is 0.000022 count
+end Time 755 31657 taken is 0.000000 dxy4
+end Time 755 31657 taken is 0.000000 threadcount
+end Time 755 31657 taken is 0.025269 core
+end Time 755 31657 taken is 0.000029 count
+end Time 844 31662 taken is 0.000000 dxy4
+end Time 844 31662 taken is 0.000000 threadcount
+end Time 844 31662 taken is 0.023101 core
+end Time 844 31662 taken is 0.000024 count
+end Time 1353 32205 taken is 0.000000 dxy4
+end Time 1353 32205 taken is 0.000000 threadcount
+end Time 1353 32205 taken is 0.040656 core
+end Time 1353 32205 taken is 0.000024 count
+end Time 1978 32218 taken is 0.000000 dxy4
+end Time 1978 32218 taken is 0.000000 threadcount
+end Time 1978 32218 taken is 0.037973 core
+end Time 1978 32218 taken is 0.000021 count
+end Time 804 32241 taken is 0.000000 dxy4
+end Time 804 32241 taken is 0.000000 threadcount
+end Time 804 32241 taken is 0.036099 core
+end Time 804 32241 taken is 0.000022 count
+end Time 1700 32739 taken is 0.000000 dxy4
+end Time 1700 32739 taken is 0.000000 threadcount
+end Time 1700 32739 taken is 0.060724 core
+end Time 1700 32739 taken is 0.000024 count
+end Time 765 32752 taken is 0.000000 dxy4
+end Time 765 32752 taken is 0.000000 threadcount
+end Time 765 32752 taken is 0.039392 core
+end Time 765 32752 taken is 0.000026 count
+end Time 850 32760 taken is 0.000000 dxy4
+end Time 850 32760 taken is 0.000000 threadcount
+end Time 850 32760 taken is 0.057997 core
+end Time 850 32760 taken is 0.009596 count
+end Time 2559 32781 taken is 0.000001 dxy4
+end Time 2559 32781 taken is 0.000000 threadcount
+end Time 2559 32781 taken is 0.052537 core
+end Time 2559 32781 taken is 0.032008 count
+end Time 84 32839 taken is 0.000000 dxy4
+end Time 84 32839 taken is 0.000000 threadcount
+end Time 84 32839 taken is 0.079455 core
+end Time 84 32839 taken is 0.032002 count
+end Time 680 32839 taken is 0.000000 dxy4
+end Time 680 32839 taken is 0.000000 threadcount
+end Time 680 32839 taken is 0.055989 core
+end Time 680 32839 taken is 0.032002 count
+end Time 758 32880 taken is 0.000000 dxy4
+end Time 758 32880 taken is 0.000000 threadcount
+end Time 758 32880 taken is 0.047611 core
+end Time 758 32880 taken is 0.032007 count
+end Time 843 32885 taken is 0.000000 dxy4
+end Time 843 32885 taken is 0.000000 threadcount
+end Time 843 32885 taken is 0.047940 core
+end Time 843 32885 taken is 0.028006 count
+end Time 1357 33381 taken is 0.000000 dxy4
+end Time 1357 33381 taken is 0.000000 threadcount
+end Time 1357 33381 taken is 0.046803 core
+end Time 1357 33381 taken is 0.000163 count
+end Time 1989 33395 taken is 0.000000 dxy4
+end Time 1989 33395 taken is 0.000000 threadcount
+end Time 1989 33395 taken is 0.030413 core
+end Time 1989 33395 taken is 0.000025 count
+end Time 798 33420 taken is 0.000000 dxy4
+end Time 798 33420 taken is 0.000000 threadcount
+end Time 798 33420 taken is 0.030341 core
+end Time 798 33420 taken is 0.000022 count
+Time taken is 0.876832
+Time taken is 1.546565 0.669733 DetectLabEdges
+Time taken is 1.546863 0.000298 GetLABXYSeeds_ForGivenK
+Time taken is 1.546863 0.000000 PerformSuperpixelSegmentation_VariableSandM 31
+Time taken is 1.546863 0.000000 PerformSuperpixelSegmentation_VariableSandM 32
+Time taken is 1.546890 0.000026 PerformSuperpixelSegmentation_VariableSandM 33
+Time taken is 3.175199 1.628309 PerformSuperpixelSegmentation_VariableSandM
+Time taken is 15.902985 12.727786 PerformSuperpixelSegmentation_VariableSandM 循环
+Time taken is 15.903014 0.000030 EnforceLabelConnectivity	numlable
+Time taken is 20.934320 5.031305 EnforceLabelConnectivity	xvec yvec
+Time taken is 32.632990 11.698670 EnforceLabelConnectivity iteration
+Time taken is 32.750421 0.117431 EnforceLabelConnectivity klabelsComputing time=32750 ms
+There are 0 points' labels are different from original file.
