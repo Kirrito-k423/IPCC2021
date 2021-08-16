@@ -562,9 +562,12 @@ void SLIC::SaveSuperpixelLabels2PPM(
 }
 
 void  threadtask(
-	queue<pair<int,int>>* taskPerThread,
-	queue<pair<int,int>> (*generateTmpTask)[64],
-	int* taskPerThreadCount,
+	pair<int,int> task,
+	pair<int,int> (*taskarray)[64][100],
+	int threadnum,
+	int (*writetask)[64],
+	// queue<pair<int,int>> (*generateTmpTask)[64],
+	// int* taskPerThreadCount,
 	int oldColor,
 	int label,	// want to be labelnum
 	queue<triple>* threadq,
@@ -577,17 +580,17 @@ void  threadtask(
 	// printf("\nthread task check point %d %d begin",x,y);
 	// fflush(stdout);
 	bool spanAbove, spanBelow; 
-	int threadnum;
-	int x,y;
+	// int threadnum;
+	int x = task.first,y = task.second;
 	//queue<pair<int,int>> delaytask; 
 	//int delay = 5;
-	threadnum = omp_get_thread_num();
-	taskPerThreadCount[threadnum]=0;
-	while(!taskPerThread[threadnum].empty()){
-		x = taskPerThread[threadnum].front().first;
-		y = taskPerThread[threadnum].front().second;
-		taskPerThread[threadnum].pop();
-	//后面tab一次
+	// threadnum = omp_get_thread_num();
+	// taskPerThreadCount[threadnum]=0;
+	// while(!taskPerThread[threadnum].empty()){
+	// 	x = taskPerThread[threadnum].front().first;
+	// 	y = taskPerThread[threadnum].front().second;
+	// 	taskPerThread[threadnum].pop();
+	// //后面tab一次
 	int xbegin,x1 = x;
 	int nindex = y*width + x1;
 	while( x1 >= 0 && 0 > nlabels[nindex] && oldColor == labels[nindex]){ //nlabels[oindex] = label;导致原坐标是排除在外的
@@ -615,8 +618,9 @@ void  threadtask(
 			// lineq.push({x1,y-1});
 			// #pragma omp task
 			// threadtask(x1,y-1,oldColor,label,threadq,threadcount,labels,width,height,nlabels);
-			generateTmpTask[threadnum][(y-1)%64].push({x1,y-1});
-			taskPerThreadCount[threadnum]++;
+			
+			taskarray[(y-1)%64][threadnum][writetask[(y-1)%64][threadnum]] = {x1,y-1};
+			writetask[(y-1)%64][threadnum]++;
 			spanAbove=1;
 			// printf("\nthread task check y-- point %d %d %d %d",x,y,x1,y-1);
 			// fflush(stdout);
@@ -628,8 +632,10 @@ void  threadtask(
 			// lineq.push({x1,y+1});
 			// #pragma omp task
 			// threadtask(x1,y+1,oldColor,label,threadq,threadcount,labels,width,height,nlabels);
-			generateTmpTask[threadnum][(y+1)%64].push({x1,y+1});
-			taskPerThreadCount[threadnum]++;
+			// generateTmpTask[threadnum][(y+1)%64].push({x1,y+1});
+			taskarray[(y+1)%64][threadnum][writetask[(y+1)%64][threadnum]] = {x1,y+1};
+			writetask[(y+1)%64][threadnum]++;
+			// taskPerThreadCount[threadnum]++;
 			spanBelow=1;
 			// printf("\nthread task check y++ point %d %d %d %d",x,y,x1,y+1);
 			// fflush(stdout);
@@ -653,7 +659,7 @@ void  threadtask(
 	threadcount[threadnum]+=x1-xbegin;
 	// printf("\nthread task check point %d %d~%dend",x,y,x1-1);
 	// fflush(stdout);
-	}
+// }
 }
 //===========================================================================
 ///	EnforceLabelConnectivity
@@ -694,8 +700,12 @@ void SLIC::EnforceLabelConnectivity(
 	int threadcount[64];			//同上
 	int taskPerThreadCount[64];		//用于判读是否还有任务残留
 	queue<pair<int,int>> taskPerThread[64];
-	queue<pair<int,int>> generateTmpTask[64][64];
-	
+	// queue<pair<int,int>> generateTmpTask[64][64];
+	fflush(stdout);
+	pair<int,int> taskarray[64][64][100];//假设线程到线程布置任务不超过1000
+	int writetask[64][64];
+	int readtask[64][64];
+	int completeTask[64];
 	
 	f7time = omp_get_wtime();
 	for( int j = 0; j < height; j++ )
@@ -751,49 +761,89 @@ void SLIC::EnforceLabelConnectivity(
 				// }
 				// printf("\ncheck point begin");
 				// fflush(stdout);
+				#pragma omp parallel for 
+				for( int i = 0; i < 64; i++ ) {
+					threadcount[i] = 0;
+					completeTask[i] = 0;
+				}
 
-				for( int i = 0; i < 64; i++ ) threadcount[i] = 0;
+				#pragma omp parallel for collapse(2)
+				for( int i = 0; i < 64; i++ ){
+					for( int j = 0; j < 64; j++ ){
+						writetask[i][j]=0;
+						readtask[i][j]=0;
+					}					
+				}
 				
-				taskPerThread[j%64].push({k,j});
+				taskarray[j%64][0][0]={k,j};//线程0写给线程j%64的初始任务0
+				writetask[j%64][0]++;
+				int overcheck = 0;
+
+				// taskPerThread[j%64].push({k,j});
 				int count(1);
 				int oldColor = labels[oindex];
-				while(count!=0){
-					double	ftime0 = omp_get_wtime();
-
-					int i,j;
-					#pragma omp parallel for
-					for(i=0; i<64; i++){
-						if(taskPerThreadCount[i]!=0)
-							threadtask(taskPerThread,generateTmpTask,taskPerThreadCount,oldColor,label,threadq,threadcount,labels,width,height,nlabels);
-					}
-
-					double	ftime1 = omp_get_wtime();
-
-					//将tmp task 分类到下次taskper后,清空
-					for(j=0;j<64;j++){
-						// #pragma omp parallel for private(i)
-						for(i=0;i<64;i++){						
-							while(!generateTmpTask[i][j].empty()){
-								taskPerThread[i].push(generateTmpTask[i][j].front());
-								generateTmpTask[i][j].pop();
+				
+				#pragma omp parallel for 
+				for( int i = 0; i <64; i++ ){
+					int threadnum;
+					threadnum = omp_get_thread_num();
+					
+					// printf("\ncheck point threadnum %d",threadnum);
+					// fflush(stdout);
+					//读取任务
+					while(!overcheck){
+						int readiteration = 64;
+						while(readiteration--){
+							while(readtask[threadnum][readiteration] < writetask[threadnum][readiteration]){//这是线程readiteration产生的属于threadnum的任务
+								//处理待处理任务,同时这时才会发布任务
+								completeTask[threadnum] = 0;
+								threadtask(taskarray[threadnum][readiteration][readtask[threadnum][readiteration]],taskarray,threadnum,writetask,\
+								oldColor,label,threadq,threadcount,labels,width,height,nlabels);
+								readtask[threadnum][readiteration]++;
+							}
+							//部分任务暂时完成
+						}
+						//迭代一遍完成其余线程布置的任务。
+						//检查布置任务是否完成
+						int checkpush = 1;
+						readiteration = 64;
+						while(readiteration--){
+							if(readtask[readiteration][threadnum] < writetask[readiteration][threadnum]){
+								checkpush = 0;
+								break;
 							}
 						}
+						if(checkpush) completeTask[threadnum] = 1;
+						else completeTask[threadnum] = 0;
+						//判断是否结束
+						
+						if(completeTask[threadnum]){
+							#pragma omp critical
+							{
+								if(threadnum == 0){
+									//overcheck=1; 会导致其他线程提前中断
+									int flag = 1;
+									int iteration =64;
+									while(iteration--){
+										if(completeTask[iteration]!=1){
+											flag=0;
+											break;
+										}
+									}
+									if(flag == 1){
+										overcheck=1;
+									}
+								}
+							}
+						}
+						// printf("\ncheck point completeTask %d %d",threadnum,completeTask[threadnum]);
+						// fflush(stdout);
 					}
-
-					double	ftime2 = omp_get_wtime();
-
-					//计算count
-					count = 0;
-					// #pragma omp parallel for reduction(+:count)
-					for( i = 0; i < 64; i++ ) count += taskPerThreadCount[i];
-
-					double	ftime3 = omp_get_wtime();
-
-					// printf("\nTime taken is %f threadtask", ftime1-ftime0);
-					// printf("\nTime taken is %f taskPerThread", ftime2-ftime1);
-					// printf("\nTime taken is %f count %d ", ftime3-ftime2,count);
+					// printf("\ncheck point completeTask %d %d i %d",completeTask[threadnum],threadnum,i);
 					// fflush(stdout);
 				}
+				// printf("\ncheck point end");
+				// fflush(stdout);
 				
 				count = 0;
 				for( int i = 0; i < 64; i++ ) count += threadcount[i];
