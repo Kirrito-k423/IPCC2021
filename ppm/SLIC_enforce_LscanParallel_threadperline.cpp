@@ -561,9 +561,10 @@ void SLIC::SaveSuperpixelLabels2PPM(
 
 }
 
-void threadtask(
-	int x,
-	int y,
+void  threadtask(
+	queue<pair<int,int>>* taskPerThread,
+	queue<pair<int,int>> (*generateTmpTask)[64],
+	int* taskPerThreadCount,
 	int oldColor,
 	int label,	// want to be labelnum
 	queue<triple>* threadq,
@@ -577,9 +578,16 @@ void threadtask(
 	// fflush(stdout);
 	bool spanAbove, spanBelow; 
 	int threadnum;
-	queue<pair<int,int>> delaytask; 
-	int delay = 5;
+	int x,y;
+	//queue<pair<int,int>> delaytask; 
+	//int delay = 5;
 	threadnum = omp_get_thread_num();
+	taskPerThreadCount[threadnum]=0;
+	while(!taskPerThread[threadnum].empty()){
+		x = taskPerThread[threadnum].front().first;
+		y = taskPerThread[threadnum].front().second;
+		taskPerThread[threadnum].pop();
+	//后面tab一次
 	int xbegin,x1 = x;
 	int nindex = y*width + x1;
 	while( x1 >= 0 && 0 > nlabels[nindex] && oldColor == labels[nindex]){ //nlabels[oindex] = label;导致原坐标是排除在外的
@@ -595,19 +603,20 @@ void threadtask(
 		bool Above = y>0;
 		bool Below = y<(height-1);
 		nlabels[nindex] = label;
-		if (!delaytask.empty()&&delaytask.front().first==x1){
-			pair<int,int> p = delaytask.front();
-			delaytask.pop();
-			#pragma omp task
-			threadtask(p.first-delay,p.second,oldColor,label,threadq,threadcount,labels,width,height,nlabels);			
+		//if (!delaytask.empty()&&delaytask.front().first==x1){
+			//pair<int,int> p = delaytask.front();
+			//delaytask.pop();
+			//#pragma omp task
+			//threadtask(p.first-delay,p.second,oldColor,label,threadq,threadcount,labels,width,height,nlabels);			
 			// printf("\nthread task check inside point %d %d %d %d %d",x,y,x1,p.first-delay,p.second);
 			// fflush(stdout);
-		}
+		//}
 		if(Above && !spanAbove &&  0 > nlabels[nindexMinusy] && oldColor == labels[nindexMinusy]){ //这里判断出了上行的元素可以被染色，可能为了修改screen的访存连续性，所以这里没修改。而且你改了上行的值，却没考虑其四周，会有完备性的问题。
 			// lineq.push({x1,y-1});
 			// #pragma omp task
 			// threadtask(x1,y-1,oldColor,label,threadq,threadcount,labels,width,height,nlabels);
-			delaytask.push({x1+delay,y-1});
+			generateTmpTask[threadnum][(y-1)%64].push({x1,y-1});
+			taskPerThreadCount[threadnum]++;
 			spanAbove=1;
 			// printf("\nthread task check y-- point %d %d %d %d",x,y,x1,y-1);
 			// fflush(stdout);
@@ -619,7 +628,8 @@ void threadtask(
 			// lineq.push({x1,y+1});
 			// #pragma omp task
 			// threadtask(x1,y+1,oldColor,label,threadq,threadcount,labels,width,height,nlabels);
-			delaytask.push({x1+delay,y+1});
+			generateTmpTask[threadnum][(y+1)%64].push({x1,y+1});
+			taskPerThreadCount[threadnum]++;
 			spanBelow=1;
 			// printf("\nthread task check y++ point %d %d %d %d",x,y,x1,y+1);
 			// fflush(stdout);
@@ -630,19 +640,20 @@ void threadtask(
 		x1++;
 		nindex = y*width + x1;
 	}
-	while(!delaytask.empty()){
-		pair<int,int> p = delaytask.front();
-		delaytask.pop();
-		#pragma omp task
-		threadtask(p.first-delay,p.second,oldColor,label,threadq,threadcount,labels,width,height,nlabels);			
+	//while(!delaytask.empty()){
+		//pair<int,int> p = delaytask.front();
+		//delaytask.pop();
+		//#pragma omp task
+		//threadtask(p.first-delay,p.second,oldColor,label,threadq,threadcount,labels,width,height,nlabels);			
 		// printf("\nthread task check outside point %d %d %d %d %d",x,y,delay,p.first-delay,p.second);
 		// fflush(stdout);
-	}
+	//}
 	// triple threadtmp = {y,xbegin,x1-1}
 	threadq[threadnum].push({y,xbegin,x1-1});
 	threadcount[threadnum]+=x1-xbegin;
 	// printf("\nthread task check point %d %d~%dend",x,y,x1-1);
 	// fflush(stdout);
+	}
 }
 //===========================================================================
 ///	EnforceLabelConnectivity
@@ -679,8 +690,12 @@ void SLIC::EnforceLabelConnectivity(
 	// #pragma omp parallel for collapse(2) nlabels的写入与使用有数据依赖
 	// queue<int> workq,workq2,saveq;
 	// queue<pair<int,int>> lineq;
-	queue<triple> threadq[64];
-	int threadcount[64];
+	queue<triple> threadq[64]; //用于特殊情况下清空标记
+	int threadcount[64];			//同上
+	int taskPerThreadCount[64];		//用于判读是否还有任务残留
+	queue<pair<int,int>> taskPerThread[64];
+	queue<pair<int,int>> generateTmpTask[64][64];
+	
 	
 	f7time = omp_get_wtime();
 	for( int j = 0; j < height; j++ )
@@ -738,20 +753,49 @@ void SLIC::EnforceLabelConnectivity(
 				// fflush(stdout);
 
 				for( int i = 0; i < 64; i++ ) threadcount[i] = 0;
+				
+				taskPerThread[j%64].push({k,j});
+				int count(1);
+				int oldColor = labels[oindex];
+				while(count!=0){
+					double	ftime0 = omp_get_wtime();
 
-				#pragma omp parallel num_threads(64)
-				{
-					#pragma omp single
-					{
-						// nlabels[oindex] = label;
-						int oldColor = labels[oindex];
-						#pragma omp task
-						threadtask(k,j,oldColor,label,threadq,threadcount,labels,width,height,nlabels);	
-						#pragma omp taskwait
-						// #pragma omp flush 
+					int i,j;
+					#pragma omp parallel for
+					for(i=0; i<64; i++){
+						if(taskPerThreadCount[i]!=0)
+							threadtask(taskPerThread,generateTmpTask,taskPerThreadCount,oldColor,label,threadq,threadcount,labels,width,height,nlabels);
 					}
+
+					double	ftime1 = omp_get_wtime();
+
+					//将tmp task 分类到下次taskper后,清空
+					for(j=0;j<64;j++){
+						// #pragma omp parallel for private(i)
+						for(i=0;i<64;i++){						
+							while(!generateTmpTask[i][j].empty()){
+								taskPerThread[i].push(generateTmpTask[i][j].front());
+								generateTmpTask[i][j].pop();
+							}
+						}
+					}
+
+					double	ftime2 = omp_get_wtime();
+
+					//计算count
+					count = 0;
+					// #pragma omp parallel for reduction(+:count)
+					for( i = 0; i < 64; i++ ) count += taskPerThreadCount[i];
+
+					double	ftime3 = omp_get_wtime();
+
+					// printf("\nTime taken is %f threadtask", ftime1-ftime0);
+					// printf("\nTime taken is %f taskPerThread", ftime2-ftime1);
+					// printf("\nTime taken is %f count %d ", ftime3-ftime2,count);
+					// fflush(stdout);
 				}
-				int count(0);
+				
+				count = 0;
 				for( int i = 0; i < 64; i++ ) count += threadcount[i];
 				// printf("\ncheck point %d %d",k,j);
 				// fflush(stdout);
