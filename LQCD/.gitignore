@@ -1,0 +1,11 @@
+data/
+.vscode/
+src/*.o
+src/main
+test/
+*.pyc
+*.so
+*.a
+src/profiling.node5/
+src/slurmlog/
+src/log/
