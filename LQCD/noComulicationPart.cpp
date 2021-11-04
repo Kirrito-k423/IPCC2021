@@ -79,41 +79,58 @@ for (int y = 0; y < subgrid[1]; y++) {
 
 				__m256d vHalf = _mm256_set1_pd(-0.5);
 				for (int c1 = 0; c1 < 3; c1++) {
-					// step1Real = _mm256_set_epi64x(vTmp1Real[c2*64:(c2+1)*64],vTmp1Real[c2*64:(c2+1)*64],vTmp1Real[c2*64:(c2+1)*64],0);
-					// (vTmp1Real * vAEReal - vAEimage * vtmp1Image) / -2
+					// 另一种思路 step1Real = _mm256_set_epi64x(vTmp1Real[c2*64:(c2+1)*64],vTmp1Real[c2*64:(c2+1)*64],vTmp1Real[c2*64:(c2+1)*64],0);
 
+
+					// 计算第一行的实数 (vTmp1Real * vAEReal - vAEImage * vTmp1Image) / -2
 					__m256d vTmpC = _mm256_mul_pd(vAEImag, vTmp1Imag);
 					__m256d vTmp3Real = _mm256_fmsub_pd(vTmp1Real, vAEReal, vTmpC);
 					vTmp3Real = _mm256_mul_pd(vTmp3Real, vHalf);			// (vTmp1Real * AEReal - vAEimage * tmp1Image) / 2
 					__m256d vTmpSumReal = _mm256_hadd_pd(vTmp3Real, vTmp3Real);		// vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
 					destE[0 * 3 + c1].real = ((double*)&vTmpSumReal)[0] + ((double*)&vTmpSumReal)[2];
+					destE[3 * 3 + c1].image = flag * (((double*)&vTmpSumReal)[0] + ((double*)&vTmpSumReal)[2]);
 
-					// (vTmp1Real * vAEImage + vAEReal * vtmp1Image) / -2
+					// 计算第一行的虚部 (vTmp1Real * vAEImage + vAEReal * vTmp1Image) / -2
 					vTmpC = _mm256_mul_pd(vAEReal, vTmp1Imag);
 					__m256d vTmp3Imag = _mm256_fmsub_pd(vTmp1Real, vAEImag, vTmpC);
 					vTmp3Imag = _mm256_mul_pd(vTmp3Imag, vHalf);			// (vTmp1Real * AEReal - vAEimage * tmp1Image) / 2
 					__m256d vTmpSumImag = _mm256_hadd_pd(vTmp3Imag, vTmp3Imag);		// vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
 					destE[0 * 3 + c1].image = ((double*)&vTmpSumImag)[0] + ((double*)&vTmpSumImag)[2];
-					
+					destE[3 * 3 + c1].real = - flag * (((double*)&vTmpSumImag)[0] + ((double*)&vTmpSumImag)[2]);
+					 
+					// (vTmp2Real * vAEReal - vAEImage * vTmp2Image) / -2
+					__m256d vTmpC = _mm256_mul_pd(vAEImag, vTmp2Imag);
+					__m256d vTmp3Real = _mm256_fmsub_pd(vTmp2Real, vAEReal, vTmpC);
+					vTmp3Real = _mm256_mul_pd(vTmp3Real, vHalf);			// (vTmp1Real * AEReal - vAEimage * tmp1Image) / 2
+					__m256d vTmpSumReal = _mm256_hadd_pd(vTmp3Real, vTmp3Real);		// vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
+					destE[1 * 3 + c1].real = ((double*)&vTmpSumReal)[0] + ((double*)&vTmpSumReal)[2];
+					destE[2 * 3 + c1].image = flag * (((double*)&vTmpSumReal)[0] + ((double*)&vTmpSumReal)[2]);
 
-					// TODO: vTmp2 				
+					// (vTmp2Real * vAEImage + vAEReal * vTmp2Image) / -2
+					vTmpC = _mm256_mul_pd(vAEReal, vTmp2Imag);
+					__m256d vTmp3Imag = _mm256_fmsub_pd(vTmp2Real, vAEImag, vTmpC);
+					vTmp3Imag = _mm256_mul_pd(vTmp3Imag, vHalf);			// (vTmp1Real * AEReal - vAEimage * tmp1Image) / 2
+					__m256d vTmpSumImag = _mm256_hadd_pd(vTmp3Imag, vTmp3Imag);		// vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
+					destE[1 * 3 + c1].image = ((double*)&vTmpSumImag)[0] + ((double*)&vTmpSumImag)[2];
+					destE[2 * 3 + c1].real = - flag * (((double*)&vTmpSumImag)[0] + ((double*)&vTmpSumImag)[2]);
+		
 				}
 				
 
-				for (int c1 = 0; c1 < 3; c1++) {
-					for (int c2 = 0; c2 < 3; c2++) {
-						{
-							tmp = -(srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]) * half *
-								AE[c1 * 3 + c2];
-							destE[0 * 3 + c1] += tmp;
-							destE[3 * 3 + c1] += flag * (I * tmp);
-							tmp = -(srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * half *
-								AE[c1 * 3 + c2];
-							destE[1 * 3 + c1] += tmp;
-							destE[2 * 3 + c1] += flag * (I * tmp);
-						}
-					}
-				}
+				// for (int c1 = 0; c1 < 3; c1++) {
+				// 	for (int c2 = 0; c2 < 3; c2++) {
+				// 		{
+				// 			tmp = -(srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]) * half *
+				// 				AE[c1 * 3 + c2];
+				// 			destE[0 * 3 + c1] += tmp;
+				// 			destE[3 * 3 + c1] += flag * (I * tmp);
+				// 			tmp = -(srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * half *
+				// 				AE[c1 * 3 + c2];
+				// 			destE[1 * 3 + c1] += tmp;
+				// 			destE[2 * 3 + c1] += flag * (I * tmp);
+				// 		}
+				// 	}
+				// }
 			}
 		}
 	}
