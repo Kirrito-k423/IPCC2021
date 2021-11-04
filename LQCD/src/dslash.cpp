@@ -506,6 +506,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     //////////////////////////////////////////////////////// no comunication
     /////////////////////////////////////////////////////////
 
+    // int count = 0;
+
     // for (int y = 0; y < subgrid[1]; y++) {
     //     for (int z = 0; z < subgrid[2]; z++) {
     //         for (int t = 0; t < subgrid[3]; t++) {
@@ -553,11 +555,42 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     //                         }
     //                     }
     //                 }
+
+    //                 if (count < 10 && rank == 0) {
+    //                     printf("rank = %d x = %d y = %d z = %d t = %d\n", rank, x, y, z, t);
+    //                     printf("srcO:\n");
+    //                     for (int c1 = 0; c1 < 4; c1++) {
+    //                         for (int c2 = 0; c2 < 3; c2++) {
+    //                             printf("%.2f+%.2fi ", srcO[c1 * 3 + c2].real(), srcO[c1 * 3 + c2].imag());
+    //                         }
+    //                         printf("\n");
+    //                     }
+
+    //                     printf("AE:\n");
+    //                     for (int c1 = 0; c1 < 4; c1++) {
+    //                         for (int c2 = 0; c2 < 3; c2++) {
+    //                             printf("%.2f+%.2fi ", AE[c1 * 3 + c2].real(), AE[c1 * 3 + c2].imag());
+    //                         }
+    //                         printf("\n");
+    //                     }
+
+    //                     printf("destE:\n");
+    //                     for (int c1 = 0; c1 < 4; c1++) {
+    //                         for (int c2 = 0; c2 < 3; c2++) {
+    //                             printf("%.2f+%.2fi ", destE[c1 * 3 + c2].real(), destE[c1 * 3 + c2].imag());
+    //                         }
+    //                         printf("\n");
+    //                     }
+
+    //                     count += 1;
+    //                     getchar();
+    //                 }
     //             }
     //         }
     //     }
     // }
 
+    int count = 0;
 	for (int y = 0; y < subgrid[1]; y++) {
 		for (int z = 0; z < subgrid[2]; z++) {
 			for (int t = 0; t < subgrid[3]; t++) {
@@ -571,9 +604,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 					complex<double> tmp;
 					int f_x;
 					if ((y + z + t + x_p) % 2 == cb) {
-					f_x = x;
+					    f_x = x;
 					} else {
-					f_x = (x + 1) % subgrid[0];
+					    f_x = (x + 1) % subgrid[0];
 					}
 
 					complex<double> *srcO = src.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
@@ -642,11 +675,11 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
 						// 计算第一行的虚部 (vTmp1Real * vAEimag + vAEReal * vTmp1imag) / -2
 						vTmpC = _mm256_mul_pd(vAEReal[c1], vTmp1Imag);
-						__m256d vTmp3Imag = _mm256_fmsub_pd(vTmp1Real, vAEImag[c1], vTmpC);
+						__m256d vTmp3Imag = _mm256_fmadd_pd(vTmp1Real, vAEImag[c1], vTmpC);
 						vTmp3Imag = _mm256_mul_pd(vTmp3Imag, vHalf);			// (vTmp1Real * AEReal - vAEimag * tmp1imag) / 2
 						__m256d vTmpSumImag = _mm256_hadd_pd(vTmp3Imag, vTmp3Imag);		// vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
 						destE[0 * 3 + c1].imag(((double*)&vTmpSumImag)[0] + ((double*)&vTmpSumImag)[2]);
-						destE[3 * 3 + c1].real(- flag * (((double*)&vTmpSumImag)[0] + ((double*)&vTmpSumImag)[2]));
+						destE[3 * 3 + c1].real(-flag * (((double*)&vTmpSumImag)[0] + ((double*)&vTmpSumImag)[2]));
 						
 						// (vTmp2Real * vAEReal - vAEimag * vTmp2imag) / -2
 						vTmpC = _mm256_mul_pd(vAEImag[c1], vTmp2Imag);
@@ -658,29 +691,42 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
 						// (vTmp2Real * vAEimag + vAEReal * vTmp2imag) / -2
 						vTmpC = _mm256_mul_pd(vAEReal[c1], vTmp2Imag);
-						vTmp3Imag = _mm256_fmsub_pd(vTmp2Real, vAEImag[c1], vTmpC);
+						vTmp3Imag = _mm256_fmadd_pd(vTmp2Real, vAEImag[c1], vTmpC);
 						vTmp3Imag = _mm256_mul_pd(vTmp3Imag, vHalf);			// (vTmp1Real * AEReal - vAEimag * tmp1imag) / 2
 						vTmpSumImag = _mm256_hadd_pd(vTmp3Imag, vTmp3Imag);		// vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
 						destE[1 * 3 + c1].imag(((double*)&vTmpSumImag)[0] + ((double*)&vTmpSumImag)[2]);
 						destE[2 * 3 + c1].real(-flag * (((double*)&vTmpSumImag)[0] + ((double*)&vTmpSumImag)[2]));
-			
 					}
-					
 
-					// for (int c1 = 0; c1 < 3; c1++) {
-					// 	for (int c2 = 0; c2 < 3; c2++) {
-					// 		{
-					// 			tmp = -(srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]) * half *
-					// 				AE[c1 * 3 + c2];
-					// 			destE[0 * 3 + c1] += tmp;
-					// 			destE[3 * 3 + c1] += flag * (I * tmp);
-					// 			tmp = -(srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * half *
-					// 				AE[c1 * 3 + c2];
-					// 			destE[1 * 3 + c1] += tmp;
-					// 			destE[2 * 3 + c1] += flag * (I * tmp);
-					// 		}
-					// 	}
-					// }
+                    if (count < 10 && rank == 0) {
+                        printf("rank = %d x = %d y = %d z = %d t = %d flag = %.0lf\n", rank, x, y, z, t, flag);
+                        printf("srcO:\n");
+                        for (int c1 = 0; c1 < 4; c1++) {
+                            for (int c2 = 0; c2 < 3; c2++) {
+                                printf("%.2f+%.2fi ", srcO[c1 * 3 + c2].real(), srcO[c1 * 3 + c2].imag());
+                            }
+                            printf("\n");
+                        }
+
+                        printf("AE:\n");
+                        for (int c1 = 0; c1 < 4; c1++) {
+                            for (int c2 = 0; c2 < 3; c2++) {
+                                printf("%.2f+%.2fi ", AE[c1 * 3 + c2].real(), AE[c1 * 3 + c2].imag());
+                            }
+                            printf("\n");
+                        }
+
+                        printf("destE:\n");
+                        for (int c1 = 0; c1 < 4; c1++) {
+                            for (int c2 = 0; c2 < 3; c2++) {
+                                printf("%.2f+%.2fi ", destE[c1 * 3 + c2].real(), destE[c1 * 3 + c2].imag());
+                            }
+                            printf("\n");
+                        }
+
+                        count += 1;
+                        getchar();
+                    }
 				}
 			}
 		}
