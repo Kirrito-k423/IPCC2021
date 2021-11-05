@@ -68,6 +68,21 @@ int main()
 		vTmp2Imag = _mm256_add_pd(vSrcImag[1], vSrcReal[2]);
 	}
 
+	double tmpReal[4],tmpImag[4];
+	_mm256_store_pd(tmpReal,vTmp1Real);
+	_mm256_store_pd(tmpImag,vTmp1Imag);
+	printf("coreTmp1: ");
+	for (int i=0; i<4; i++){
+		printf("%.2f+%.2fi \n", tmpReal[i], tmpImag[i]);
+	}
+
+	_mm256_store_pd(tmpReal,vTmp2Real);
+	_mm256_store_pd(tmpImag,vTmp2Imag);
+	printf("coreTmp2: ");
+	for (int i=0; i<4; i++){
+		printf("%.2f+%.2fi \n", tmpReal[i], tmpImag[i]);
+	}
+
 	// load AE
 	__m256d vAEReal[3], vAEImag[3];
 	for (int c1 = 0; c1 < 3; c1++)

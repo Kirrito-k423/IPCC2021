@@ -1,3 +1,11 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: Shaojie Tan
+ * @Date: 2021-11-05 14:22:40
+ * @LastEditors: Shaojie Tan
+ * @LastEditTime: 2021-11-05 14:43:47
+ */
 #include <iostream>
 #include <complex>
 using namespace std;
@@ -16,7 +24,7 @@ int main()
 		{0.47, 0.61}, {0.67, 0.91}, {0.72, 0.71},
 		{0.28, 0.84}, {0.78, 0.93}, {0.56, 0.79},
 		{0.98, 0.38}, {0.78, 0.64}, {0.70, 0.93}};
-    complex<double> tmp;
+    complex<double> tmp,coreTmp;
 	double flag = -1;
     const double half = 0.5;
 
@@ -24,13 +32,20 @@ int main()
     {
         for (int c2 = 0; c2 < 3; c2++)
         {
+			printf("i j = %d %d \n", c1,c2);
             {
-                tmp = -(srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]) * half *
+				coreTmp = (srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]);
+                tmp = - coreTmp * half *
                       AE[c1 * 3 + c2];
+				printf("%.2f+%.2fi ", coreTmp.real(), coreTmp.imag());
+				printf("%.2f+%.2fi \n", tmp.real(), tmp.imag());
                 destE[0 * 3 + c1] += tmp;
                 destE[3 * 3 + c1] += flag * (I * tmp);
-                tmp = -(srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * half *
+				coreTmp = (srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]);
+                tmp = - coreTmp * half *
                       AE[c1 * 3 + c2];
+				printf("%.2f+%.2fi ", coreTmp.real(), coreTmp.imag());
+				printf("%.2f+%.2fi \n", tmp.real(), tmp.imag());
                 destE[1 * 3 + c1] += tmp;
                 destE[2 * 3 + c1] += flag * (I * tmp);
             }
