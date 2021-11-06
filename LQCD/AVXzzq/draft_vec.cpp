@@ -56,7 +56,7 @@ int main(){
         };
     for (int y = 0; y < subgrid[1]; y++) {
         for (int z = 0; z < subgrid[2]; z++) {
-            for (int t = 0; t < subgrid[3]; t++) {
+            for (int t = 0; t < subgrid[3]/4; t++) {
                 int x_u =
                     ((y + z + t + x_p) % 2 == cb || N_sub[0] == 1) ? subgrid[0] : subgrid[0] - 1;
                 Print(tsj(x_u));
