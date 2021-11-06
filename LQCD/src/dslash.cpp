@@ -1316,7 +1316,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     barrier_time_e += MPI_Wtime()-barrier_time_s;
     dslashoffd_time_e = MPI_Wtime();
     if (rank == 0){
-        printf("CALCU TIME: %lf, MSG TIME: %lf, DSLASHOFFD TIME: %lf, BARRIER TIME: %lf\n", calcu_time_e, msg_time_e, dslashoffd_time_e - dslashoffd_time_s, barrier_time_e);
+        printf("CALCU TIME: %lfms, MSG TIME: %lfms, BARRIER TIME: %lfms, DSLASHOFFD TIME: %lfms\n", calcu_time_e*1000, msg_time_e*1000, barrier_time_e*1000, (dslashoffd_time_e - dslashoffd_time_s)*1000);
     }
     delete[] send_x_b;
     delete[] resv_x_f;

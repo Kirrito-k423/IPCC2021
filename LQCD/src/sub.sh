@@ -11,10 +11,10 @@
 
 source /public1/soft/modules/module.sh
 module purge
-CC=gcc10.2.0
+CC=mpiicc
 CXX=mpiicpc
 CXX_FLAGS="-O3"
-raw_flags=" -I../include  -std=c++11"
+raw_flags="-fPIC -I../include  -std=c++11"
 
 MPIOPT=
 computetimes=
