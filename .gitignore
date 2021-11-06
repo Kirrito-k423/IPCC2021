@@ -1,2 +1,5 @@
 /exe/SLIC*
 /ppm/exe/*
+build
+*build/
+build/*
