@@ -4,7 +4,7 @@
  * @Author: Shaojie Tan
  * @Date: 2021-11-05 14:22:40
  * @LastEditors: Shaojie Tan
- * @LastEditTime: 2021-11-05 14:43:47
+ * @LastEditTime: 2021-11-05 23:20:32
  */
 #include <iostream>
 #include <complex>
@@ -17,8 +17,8 @@ int main()
 	complex<double> AE[12] = {
 		{0.40, 0.16}, {0.23, -0.66}, {0.23, 0.52},
 		{0.75, -0.27}, {0.42, 0.23}, {0.02, -0.38},
-		{-0.22, 0.37}, {0.24, -0.48}, {0.14, -0.71},
-		{0.38, -0.67}, {-0.11, 0.17}, {0.10, -0.59}};
+		{-0.22, 0.37}, {0.24, -0.48}, {0.14, -0.71}};
+		// {0.38, -0.67}, {-0.11, 0.17}, {0.10, -0.59}};
 	complex<double> srcO[12] = {
 		{0.68, 0.27}, {0.44, 0.76}, {0.27, 0.21},
 		{0.47, 0.61}, {0.67, 0.91}, {0.72, 0.71},
@@ -37,15 +37,15 @@ int main()
 				coreTmp = (srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]);
                 tmp = - coreTmp * half *
                       AE[c1 * 3 + c2];
-				printf("%.2f+%.2fi ", coreTmp.real(), coreTmp.imag());
-				printf("%.2f+%.2fi \n", tmp.real(), tmp.imag());
+				printf("coreTmp	%.2f+%.2fi ", coreTmp.real(), coreTmp.imag());
+				printf("tmp		%.2f+%.2fi \n", tmp.real(), tmp.imag());
                 destE[0 * 3 + c1] += tmp;
                 destE[3 * 3 + c1] += flag * (I * tmp);
 				coreTmp = (srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]);
                 tmp = - coreTmp * half *
                       AE[c1 * 3 + c2];
-				printf("%.2f+%.2fi ", coreTmp.real(), coreTmp.imag());
-				printf("%.2f+%.2fi \n", tmp.real(), tmp.imag());
+				printf("coreTmp	%.2f+%.2fi ", coreTmp.real(), coreTmp.imag());
+				printf("tmp		%.2f+%.2fi \n", tmp.real(), tmp.imag());
                 destE[1 * 3 + c1] += tmp;
                 destE[2 * 3 + c1] += flag * (I * tmp);
             }
@@ -63,7 +63,7 @@ int main()
 	}
 
 	printf("AE:\n");
-	for (int c1 = 0; c1 < 4; c1++)
+	for (int c1 = 0; c1 < 3; c1++)
 	{
 		for (int c2 = 0; c2 < 3; c2++)
 		{
