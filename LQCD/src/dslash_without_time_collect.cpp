@@ -4,6 +4,7 @@
 **/
 
 #include <mpi.h>
+#include <immintrin.h>
 #include "dslash.h"
 #include "operator.h"
 using namespace std;
@@ -38,10 +39,6 @@ void DslashOO(lattice_fermion &src, lattice_fermion &dest, const double mass)
 void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, const bool dag,
                 int cb)
 {
-    double calcu_time_s, msg_time_s, dslashoffd_time_s, barrier_time_s;
-    double calcu_time_e=0, msg_time_e=0, dslashoffd_time_e=0, barrier_time_e=0;
-
-    dslashoffd_time_s = MPI_Wtime();
     // sublattice
     int N_sub[4] = {src.site_vec[0] / src.subgs[0], src.site_vec[1] / src.subgs[1],
                     src.site_vec[2] / src.subgs[2], src.site_vec[3] / src.subgs[3]};
@@ -50,7 +47,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     int size;
     MPI_Comm_size(MPI_COMM_WORLD, &size);
-    calcu_time_s = MPI_Wtime();
+
     int site_x_f[4] = {(rank % N_sub[0] + 1) % N_sub[0], (rank / N_sub[0]) % N_sub[1],
                        (rank / (N_sub[1] * N_sub[0])) % N_sub[2],
                        rank / (N_sub[2] * N_sub[1] * N_sub[0])};
@@ -117,9 +114,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
     double *resv_x_f = new double[len_x_f * 6 * 2];
     double *send_x_b = new double[len_x_f * 6 * 2];
-    calcu_time_e += MPI_Wtime()-calcu_time_s;
     if (N_sub[0] != 1) {
-        calcu_time_s = MPI_Wtime();
         for (int i = 0; i < len_x_f * 6 * 2; i++) {
             send_x_b[i] = 0;
         }
@@ -153,14 +148,11 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                 }
             }
         }
-        calcu_time_e += MPI_Wtime()-calcu_time_s;
-        msg_time_s = MPI_Wtime();
+
         MPI_Isend(send_x_b, len_x_f * 6 * 2, MPI_DOUBLE, nodenum_x_b, 8 * rank, MPI_COMM_WORLD,
                   &reqs[8 * rank]);
         MPI_Irecv(resv_x_f, len_x_f * 6 * 2, MPI_DOUBLE, nodenum_x_f, 8 * nodenum_x_f,
                   MPI_COMM_WORLD, &reqr[8 * nodenum_x_f]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-        
     }
 
     int len_x_b = (subgrid[1] * subgrid[2] * subgrid[3] + 1 - cb) >> 1;
@@ -169,7 +161,6 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     double *send_x_f = new double[len_x_b * 6 * 2];
 
     if (N_sub[0] != 1) {
-        calcu_time_s = MPI_Wtime();
         for (int i = 0; i < len_x_b * 6 * 2; i++) {
             send_x_f[i] = 0;
         }
@@ -217,14 +208,11 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                 }
             }
         }
-        calcu_time_e += MPI_Wtime()-calcu_time_s;
-        msg_time_s = MPI_Wtime();
+
         MPI_Isend(send_x_f, len_x_b * 6 * 2, MPI_DOUBLE, nodenum_x_f, 8 * rank + 1, MPI_COMM_WORLD,
                   &reqs[8 * rank + 1]);
         MPI_Irecv(resv_x_b, len_x_b * 6 * 2, MPI_DOUBLE, nodenum_x_b, 8 * nodenum_x_b + 1,
                   MPI_COMM_WORLD, &reqr[8 * nodenum_x_b + 1]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-        
     }
 
     int len_y_f = subgrid[0] * subgrid[2] * subgrid[3];
@@ -232,7 +220,6 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     double *resv_y_f = new double[len_y_f * 6 * 2];
     double *send_y_b = new double[len_y_f * 6 * 2];
     if (N_sub[1] != 1) {
-        calcu_time_s = MPI_Wtime();
         for (int i = 0; i < len_y_f * 6 * 2; i++) {
             send_y_b[i] = 0;
         }
@@ -263,14 +250,11 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                 }
             }
         }
-        calcu_time_e += MPI_Wtime()-calcu_time_s;
-        msg_time_s = MPI_Wtime();
+
         MPI_Isend(send_y_b, len_y_f * 6 * 2, MPI_DOUBLE, nodenum_y_b, 8 * rank + 2, MPI_COMM_WORLD,
                   &reqs[8 * rank + 2]);
         MPI_Irecv(resv_y_f, len_y_f * 6 * 2, MPI_DOUBLE, nodenum_y_f, 8 * nodenum_y_f + 2,
                   MPI_COMM_WORLD, &reqr[8 * nodenum_y_f + 2]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-        
     }
 
     int len_y_b = subgrid[0] * subgrid[2] * subgrid[3];
@@ -279,7 +263,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     double *send_y_f = new double[len_y_b * 6 * 2];
 
     if (N_sub[1] != 1) {
-        calcu_time_s = MPI_Wtime();
+
         for (int i = 0; i < len_y_b * 6 * 2; i++) {
             send_y_f[i] = 0;
         }
@@ -320,14 +304,11 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                 }
             }
         }
-        calcu_time_e += MPI_Wtime()-calcu_time_s;
-        msg_time_s = MPI_Wtime();
+
         MPI_Isend(send_y_f, len_y_b * 6 * 2, MPI_DOUBLE, nodenum_y_f, 8 * rank + 3, MPI_COMM_WORLD,
                   &reqs[8 * rank + 3]);
         MPI_Irecv(resv_y_b, len_y_b * 6 * 2, MPI_DOUBLE, nodenum_y_b, 8 * nodenum_y_b + 3,
                   MPI_COMM_WORLD, &reqr[8 * nodenum_y_b + 3]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-        
     }
 
     int len_z_f = subgrid[0] * subgrid[1] * subgrid[3];
@@ -335,7 +316,6 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     double *resv_z_f = new double[len_z_f * 6 * 2];
     double *send_z_b = new double[len_z_f * 6 * 2];
     if (N_sub[2] != 1) {
-        calcu_time_s = MPI_Wtime();
         for (int i = 0; i < len_z_f * 6 * 2; i++) {
             send_z_b[i] = 0;
         }
@@ -367,14 +347,11 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                 }
             }
         }
-        calcu_time_e += MPI_Wtime()-calcu_time_s;
-        msg_time_s = MPI_Wtime();
+
         MPI_Isend(send_z_b, len_z_f * 6 * 2, MPI_DOUBLE, nodenum_z_b, 8 * rank + 4, MPI_COMM_WORLD,
                   &reqs[8 * rank + 4]);
         MPI_Irecv(resv_z_f, len_z_f * 6 * 2, MPI_DOUBLE, nodenum_z_f, 8 * nodenum_z_f + 4,
                   MPI_COMM_WORLD, &reqr[8 * nodenum_z_f + 4]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-        
     }
 
     int len_z_b = subgrid[0] * subgrid[1] * subgrid[3];
@@ -382,7 +359,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     double *resv_z_b = new double[len_z_b * 6 * 2];
     double *send_z_f = new double[len_z_b * 6 * 2];
     if (N_sub[2] != 1) {
-        calcu_time_s = MPI_Wtime();
+
         for (int i = 0; i < len_z_b * 6 * 2; i++) {
             send_z_f[i] = 0;
         }
@@ -423,14 +400,11 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                 }
             }
         }
-        calcu_time_e += MPI_Wtime()-calcu_time_s;
-        msg_time_s = MPI_Wtime();
+
         MPI_Isend(send_z_f, len_z_b * 6 * 2, MPI_DOUBLE, nodenum_z_f, 8 * rank + 5, MPI_COMM_WORLD,
                   &reqs[8 * rank + 5]);
         MPI_Irecv(resv_z_b, len_z_b * 6 * 2, MPI_DOUBLE, nodenum_z_b, 8 * nodenum_z_b + 5,
                   MPI_COMM_WORLD, &reqr[8 * nodenum_z_b + 5]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-        
     }
 
     int len_t_f = subgrid[0] * subgrid[1] * subgrid[2];
@@ -438,7 +412,6 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     double *resv_t_f = new double[len_t_f * 6 * 2];
     double *send_t_b = new double[len_t_f * 6 * 2];
     if (N_sub[3] != 1) {
-        calcu_time_s = MPI_Wtime();
         for (int i = 0; i < len_t_f * 6 * 2; i++) {
             send_t_b[i] = 0;
         }
@@ -470,14 +443,11 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                 }
             }
         }
-        calcu_time_e += MPI_Wtime()-calcu_time_s;
-        msg_time_s = MPI_Wtime();
+
         MPI_Isend(send_t_b, len_t_f * 6 * 2, MPI_DOUBLE, nodenum_t_b, 8 * rank + 6, MPI_COMM_WORLD,
                   &reqs[8 * rank + 6]);
         MPI_Irecv(resv_t_f, len_t_f * 6 * 2, MPI_DOUBLE, nodenum_t_f, 8 * nodenum_t_f + 6,
                   MPI_COMM_WORLD, &reqr[8 * nodenum_t_f + 6]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-        
     }
 
     int len_t_b = subgrid[0] * subgrid[1] * subgrid[2];
@@ -485,7 +455,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     double *resv_t_b = new double[len_t_b * 6 * 2];
     double *send_t_f = new double[len_t_b * 6 * 2];
     if (N_sub[3] != 1) {
-        calcu_time_s = MPI_Wtime();
+
         for (int i = 0; i < len_t_b * 6 * 2; i++) {
             send_t_f[i] = 0;
         }
@@ -526,69 +496,249 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                 }
             }
         }
-        calcu_time_e += MPI_Wtime()-calcu_time_s;
-        msg_time_s = MPI_Wtime();
+
         MPI_Isend(send_t_f, len_t_b * 6 * 2, MPI_DOUBLE, nodenum_t_f, 8 * rank + 7, MPI_COMM_WORLD,
                   &reqs[8 * rank + 7]);
         MPI_Irecv(resv_t_b, len_t_b * 6 * 2, MPI_DOUBLE, nodenum_t_b, 8 * nodenum_t_b + 7,
                   MPI_COMM_WORLD, &reqr[8 * nodenum_t_b + 7]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-        
     }
 
-    //////////////////////////////////////////////////////// no comunication /////////////////////////////////////////////////////////
-    calcu_time_s = MPI_Wtime();
-    for (int y = 0; y < subgrid[1]; y++) {
-        for (int z = 0; z < subgrid[2]; z++) {
-            for (int t = 0; t < subgrid[3]; t++) {
-                int x_u =
-                    ((y + z + t + x_p) % 2 == cb || N_sub[0] == 1) ? subgrid[0] : subgrid[0] - 1;
+    //////////////////////////////////////////////////////// no comunication
+    /////////////////////////////////////////////////////////
 
-                for (int x = 0; x < x_u; x++) {
+    // int count = 0;
 
-                    complex<double> *destE;
-                    complex<double> *AE;
-                    complex<double> tmp;
-                    int f_x;
-                    if ((y + z + t + x_p) % 2 == cb) {
-                        f_x = x;
-                    } else {
-                        f_x = (x + 1) % subgrid[0];
+    // for (int y = 0; y < subgrid[1]; y++) {
+    //     for (int z = 0; z < subgrid[2]; z++) {
+    //         for (int t = 0; t < subgrid[3]; t++) {
+    //             int x_u =
+    //                 ((y + z + t + x_p) % 2 == cb || N_sub[0] == 1) ? subgrid[0] : subgrid[0] - 1;
+
+    //             for (int x = 0; x < x_u; x++) {
+
+    //                 complex<double> *destE;
+    //                 complex<double> *AE;
+    //                 complex<double> tmp;
+    //                 int f_x;
+    //                 if ((y + z + t + x_p) % 2 == cb) {
+    //                     f_x = x;
+    //                 } else {
+    //                     f_x = (x + 1) % subgrid[0];
+    //                 }
+
+    //                 complex<double> *srcO = src.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
+    //                                                  subgrid[0] * subgrid[1] * z + subgrid[0] * y +
+    //                                                  f_x + (1 - cb) * subgrid_vol_cb) *
+    //                                                     12;
+
+    //                 destE = dest.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
+    //                                   subgrid[0] * subgrid[1] * z + subgrid[0] * y + x +
+    //                                   cb * subgrid_vol_cb) *
+    //                                      12;
+
+    //                 AE = U.A[0] +
+    //                      (subgrid[0] * subgrid[1] * subgrid[2] * t + subgrid[0] * subgrid[1] * z +
+    //                       subgrid[0] * y + x + cb * subgrid_vol_cb) *
+    //                          9;
+
+    //                 for (int c1 = 0; c1 < 3; c1++) {
+    //                     for (int c2 = 0; c2 < 3; c2++) {
+    //                         {
+    //                             tmp = -(srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]) * half *
+    //                                   AE[c1 * 3 + c2];
+    //                             destE[0 * 3 + c1] += tmp;
+    //                             destE[3 * 3 + c1] += flag * (I * tmp);
+    //                             tmp = -(srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * half *
+    //                                   AE[c1 * 3 + c2];
+    //                             destE[1 * 3 + c1] += tmp;
+    //                             destE[2 * 3 + c1] += flag * (I * tmp);
+    //                         }
+    //                     }
+    //                 }
+
+    //                 if (count < 10 && rank == 0) {
+    //                     printf("rank = %d x = %d y = %d z = %d t = %d\n", rank, x, y, z, t);
+    //                     printf("srcO:\n");
+    //                     for (int c1 = 0; c1 < 4; c1++) {
+    //                         for (int c2 = 0; c2 < 3; c2++) {
+    //                             printf("%.2f+%.2fi ", srcO[c1 * 3 + c2].real(), srcO[c1 * 3 + c2].imag());
+    //                         }
+    //                         printf("\n");
+    //                     }
+
+    //                     printf("AE:\n");
+    //                     for (int c1 = 0; c1 < 4; c1++) {
+    //                         for (int c2 = 0; c2 < 3; c2++) {
+    //                             printf("%.2f+%.2fi ", AE[c1 * 3 + c2].real(), AE[c1 * 3 + c2].imag());
+    //                         }
+    //                         printf("\n");
+    //                     }
+
+    //                     printf("destE:\n");
+    //                     for (int c1 = 0; c1 < 4; c1++) {
+    //                         for (int c2 = 0; c2 < 3; c2++) {
+    //                             printf("%.2f+%.2fi ", destE[c1 * 3 + c2].real(), destE[c1 * 3 + c2].imag());
+    //                         }
+    //                         printf("\n");
+    //                     }
+
+    //                     count += 1;
+    //                     getchar();
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
+    int count = 0;
+	for (int y = 0; y < subgrid[1]; y++) {
+		for (int z = 0; z < subgrid[2]; z++) {
+			for (int t = 0; t < subgrid[3]; t++) {
+				int x_u =
+					((y + z + t + x_p) % 2 == cb || N_sub[0] == 1) ? subgrid[0] : subgrid[0] - 1;
+
+				for (int x = 0; x < x_u; x++) {
+
+					complex<double> *destE;
+					complex<double> *AE;
+					complex<double> tmp;
+					int f_x;
+					if ((y + z + t + x_p) % 2 == cb) {
+					    f_x = x;
+					} else {
+					    f_x = (x + 1) % subgrid[0];
+					}
+
+					complex<double> *srcO = src.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
+									subgrid[0] * subgrid[1] * z + subgrid[0] * y +
+									f_x + (1 - cb) * subgrid_vol_cb) *
+									12;
+
+					destE = dest.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
+							subgrid[0] * subgrid[1] * z + subgrid[0] * y + x +
+							cb * subgrid_vol_cb) *
+								12;
+
+					AE = U.A[0] +
+						(subgrid[0] * subgrid[1] * subgrid[2] * t + subgrid[0] * subgrid[1] * z +
+						subgrid[0] * y + x + cb * subgrid_vol_cb) *
+						9;
+
+                    __m256d srcStart, srcStart2;
+                    __m256d vSrcReal[4], vSrcImag[4], vdestE, vAE;
+                    double tmpReal[4],tmpImag[4];
+
+                    __m256i mask = _mm256_set_epi32(0x0, 0x0, 0x0, 0x0, 0x80000000, 0x0, 0x80000000, 0x0); //之前反了
+                    for (int i = 0; i < 4; i++)
+                    {
+                        // srcStart = _mm256_loadu_pd(&srcO[3 * i + 0]);
+                        srcStart = _mm256_loadu_pd((double*)&srcO[3 * i + 0]);
+                        // srcStart2 = _mm256_loadu_pd(&srcO[3 * i + 2]);
+                        srcStart2 = _mm256_maskload_pd((double*)&srcO[3 * i + 2], mask);
+                        
+                        vSrcReal[i] = _mm256_unpacklo_pd(srcStart, srcStart2); // 四个实数，但是只要用3个 [A0r A2r  A1r 0 ]
+                        vSrcImag[i] = _mm256_unpackhi_pd(srcStart, srcStart2);
                     }
 
-                    complex<double> *srcO = src.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
-                                                     subgrid[0] * subgrid[1] * z + subgrid[0] * y +
-                                                     f_x + (1 - cb) * subgrid_vol_cb) *
-                                                        12;
-
-                    destE = dest.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
-                                      subgrid[0] * subgrid[1] * z + subgrid[0] * y + x +
-                                      cb * subgrid_vol_cb) *
-                                         12;
-
-                    AE = U.A[0] +
-                         (subgrid[0] * subgrid[1] * subgrid[2] * t + subgrid[0] * subgrid[1] * z +
-                          subgrid[0] * y + x + cb * subgrid_vol_cb) *
-                             9;
-
-                    for (int c1 = 0; c1 < 3; c1++) {
-                        for (int c2 = 0; c2 < 3; c2++) {
-                            {
-                                tmp = -(srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]) * half *
-                                      AE[c1 * 3 + c2];
-                                destE[0 * 3 + c1] += tmp;
-                                destE[3 * 3 + c1] += flag * (I * tmp);
-                                tmp = -(srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * half *
-                                      AE[c1 * 3 + c2];
-                                destE[1 * 3 + c1] += tmp;
-                                destE[2 * 3 + c1] += flag * (I * tmp);
-                            }
-                        }
+                    // vtmp = srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]
+                    // srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]
+                    __m256d vTmp1Real, vTmp1Imag, vTmp2Real, vTmp2Imag;
+                    if (!dag)
+                    {
+                        vTmp1Real = _mm256_add_pd(vSrcReal[0], vSrcImag[3]); //vSrcReal[0] + vSrcImag[3]
+                        vTmp1Imag = _mm256_sub_pd(vSrcImag[0], vSrcReal[3]);
+                        vTmp2Real = _mm256_add_pd(vSrcReal[1], vSrcImag[2]); //vSrcReal[0] + vSrcImag[3]
+                        vTmp2Imag = _mm256_sub_pd(vSrcImag[1], vSrcReal[2]);
                     }
-                }
-            }
-        }
-    }
+                    else
+                    {
+                        vTmp1Real = _mm256_sub_pd(vSrcReal[0], vSrcImag[3]);
+                        vTmp1Imag = _mm256_add_pd(vSrcImag[0], vSrcReal[3]);
+                        vTmp2Real = _mm256_sub_pd(vSrcReal[1], vSrcImag[2]); //vSrcReal[0] + vSrcImag[3]
+                        vTmp2Imag = _mm256_add_pd(vSrcImag[1], vSrcReal[2]);
+                    }
+
+                    // load AE
+                    __m256d vAEReal[3], vAEImag[3];
+                    for (int c1 = 0; c1 < 3; c1++)
+                    {
+                        srcStart = _mm256_loadu_pd((double *)&AE[3 * c1 + 0]);
+                        srcStart2 = _mm256_maskload_pd((double *)&AE[3 * c1 + 2], mask);
+                        vAEReal[c1] = _mm256_unpacklo_pd(srcStart, srcStart2); // 四个实数，但是好像只要用3个
+                        vAEImag[c1] = _mm256_unpackhi_pd(srcStart, srcStart2);
+                    }
+
+                    __m256d vHalf = _mm256_set1_pd(-0.5);
+                    for (int c1 = 0; c1 < 3; c1++)
+                    {
+                        // 另一种思路 step1Real = _mm256_set_epi64x(vTmp1Real[c2*64:(c2+1)*64],vTmp1Real[c2*64:(c2+1)*64],vTmp1Real[c2*64:(c2+1)*64],0);
+
+                        // 计算第一行的实数 (vTmp1Real * vAEReal - vAEimag * vTmp1imag) / -2
+                        __m256d vTmpC = _mm256_mul_pd(vAEImag[c1], vTmp1Imag);
+                        __m256d vTmp3Real = _mm256_fmsub_pd(vTmp1Real, vAEReal[c1], vTmpC);
+                        vTmp3Real = _mm256_mul_pd(vTmp3Real, vHalf);				// (vTmp1Real * AEReal - vAEimag * tmp1imag) / 2
+                        __m256d vTmpSumReal = _mm256_hadd_pd(vTmp3Real, vTmp3Real); // vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
+                        destE[0 * 3 + c1].real(((double *)&vTmpSumReal)[0] + ((double *)&vTmpSumReal)[2]);
+                        destE[3 * 3 + c1].imag(flag * (((double *)&vTmpSumReal)[0] + ((double *)&vTmpSumReal)[2]));
+
+                        // 计算第一行的虚部 (vTmp1Real * vAEimag + vAEReal * vTmp1imag) / -2
+                        vTmpC = _mm256_mul_pd(vAEReal[c1], vTmp1Imag);
+                        __m256d vTmp3Imag = _mm256_fmadd_pd(vTmp1Real, vAEImag[c1], vTmpC);
+                        vTmp3Imag = _mm256_mul_pd(vTmp3Imag, vHalf);				// (vTmp1Real * AEReal - vAEimag * tmp1imag) / 2
+                        __m256d vTmpSumImag = _mm256_hadd_pd(vTmp3Imag, vTmp3Imag); // vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
+                        destE[0 * 3 + c1].imag(((double *)&vTmpSumImag)[0] + ((double *)&vTmpSumImag)[2]);
+                        destE[3 * 3 + c1].real(-flag * (((double *)&vTmpSumImag)[0] + ((double *)&vTmpSumImag)[2]));
+
+                        // (vTmp2Real * vAEReal - vAEimag * vTmp2imag) / -2
+                        vTmpC = _mm256_mul_pd(vAEImag[c1], vTmp2Imag);
+                        vTmp3Real = _mm256_fmsub_pd(vTmp2Real, vAEReal[c1], vTmpC);
+                        vTmp3Real = _mm256_mul_pd(vTmp3Real, vHalf);		// (vTmp1Real * AEReal - vAEimag * tmp1imag) / 2
+                        vTmpSumReal = _mm256_hadd_pd(vTmp3Real, vTmp3Real); // vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
+                        destE[1 * 3 + c1].real(((double *)&vTmpSumReal)[0] + ((double *)&vTmpSumReal)[2]);
+                        destE[2 * 3 + c1].imag(flag * (((double *)&vTmpSumReal)[0] + ((double *)&vTmpSumReal)[2]));
+
+                        // (vTmp2Real * vAEimag + vAEReal * vTmp2imag) / -2
+                        vTmpC = _mm256_mul_pd(vAEReal[c1], vTmp2Imag);
+                        vTmp3Imag = _mm256_fmadd_pd(vTmp2Real, vAEImag[c1], vTmpC);
+                        vTmp3Imag = _mm256_mul_pd(vTmp3Imag, vHalf);		// (vTmp1Real * AEReal - vAEimag * tmp1imag) / 2
+                        vTmpSumImag = _mm256_hadd_pd(vTmp3Imag, vTmp3Imag); // vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
+                        destE[1 * 3 + c1].imag(((double *)&vTmpSumImag)[0] + ((double *)&vTmpSumImag)[2]);
+                        destE[2 * 3 + c1].real(-flag * (((double *)&vTmpSumImag)[0] + ((double *)&vTmpSumImag)[2]));
+	                }
+
+                    // if (count < 10 && rank == 0) {
+                    //     printf("rank = %d x = %d y = %d z = %d t = %d flag = %.0lf\n", rank, x, y, z, t, flag);
+                    //     printf("srcO:\n");
+                    //     for (int c1 = 0; c1 < 4; c1++) {
+                    //         for (int c2 = 0; c2 < 3; c2++) {
+                    //             printf("%.2f+%.2fi ", srcO[c1 * 3 + c2].real(), srcO[c1 * 3 + c2].imag());
+                    //         }
+                    //         printf("\n");
+                    //     }
+
+                    //     printf("AE:\n");
+                    //     for (int c1 = 0; c1 < 3; c1++) {
+                    //         for (int c2 = 0; c2 < 3; c2++) {
+                    //             printf("%.2f+%.2fi ", AE[c1 * 3 + c2].real(), AE[c1 * 3 + c2].imag());
+                    //         }
+                    //         printf("\n");
+                    //     }
+
+                    //     printf("destE:\n");
+                    //     for (int c1 = 0; c1 < 4; c1++) {
+                    //         for (int c2 = 0; c2 < 3; c2++) {
+                    //             printf("%.2f+%.2fi ", destE[c1 * 3 + c2].real(), destE[c1 * 3 + c2].imag());
+                    //         }
+                    //         printf("\n");
+                    //     }
+
+                    //     count += 1;
+                    //     getchar();
+                    // }
+				}
+			}
+		}
+	}
 
     for (int y = 0; y < subgrid[1]; y++) {
         for (int z = 0; z < subgrid[2]; z++) {
@@ -910,20 +1060,15 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
             }
         }
     }
-    calcu_time_e += MPI_Wtime()-calcu_time_s;
+
     //    printf(" rank =%i  ghost  \n ", rank);
 
     //////////////////////////////////////////////////////////////////////////////////////ghost//////////////////////////////////////////////////////////////////
 
-
-    //////////////////////////////////////////
-    //                   1                  //
-    //////////////////////////////////////////
     if (N_sub[0] != 1) {
-        msg_time_s = MPI_Wtime();
+
         MPI_Wait(&reqr[8 * nodenum_x_f], &star[8 * nodenum_x_f]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-        calcu_time_s = MPI_Wtime();
+
         int cont = 0;
         for (int y = 0; y < subgrid[1]; y++) {
             for (int z = 0; z < subgrid[2]; z++) {
@@ -965,27 +1110,58 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                 }
             }
         }
-        calcu_time_e += MPI_Wtime()-calcu_time_s;
-        msg_time_s = MPI_Wtime();
+
         MPI_Wait(&reqs[8 * rank], &stas[8 * rank]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
+
     } // if(N_sub[0]!=1)
 
     //    delete[] send_x_b;
     //    delete[] resv_x_f;
 
+    if (N_sub[0] != 1) {
+
+        MPI_Wait(&reqr[8 * nodenum_x_b + 1], &star[8 * nodenum_x_b + 1]);
+
+        int cont = 0;
+
+        for (int y = 0; y < subgrid[1]; y++) {
+            for (int z = 0; z < subgrid[2]; z++) {
+                for (int t = 0; t < subgrid[3]; t++) {
+                    if (((y + z + t + x_p) % 2) != cb) {
+                        continue;
+                    }
+
+                    int x = 0;
+
+                    complex<double> *srcO = (complex<double> *) (&resv_x_b[cont * 6 * 2]);
+                    cont += 1;
+
+                    complex<double> *destE = dest.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
+                                                       subgrid[0] * subgrid[1] * z +
+                                                       subgrid[0] * y + x + cb * subgrid_vol_cb) *
+                                                          12;
+
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        destE[0 * 3 + c1] += srcO[0 * 3 + c1];
+                        destE[3 * 3 + c1] += flag * (-I * srcO[0 * 3 + c1]);
+                        destE[1 * 3 + c1] += srcO[1 * 3 + c1];
+                        destE[2 * 3 + c1] += flag * (-I * srcO[1 * 3 + c1]);
+                    }
+                }
+            }
+        }
+
+        MPI_Wait(&reqs[8 * rank + 1], &stas[8 * rank + 1]);
+
+    } // if(N_sub[0]!=1)
 
     //    delete[] send_x_f;
     //    delete[] resv_x_b;
 
-    //////////////////////////////////////////
-    //                   3                  //
-    //////////////////////////////////////////
     if (N_sub[1] != 1) {
-        msg_time_s = MPI_Wtime();
+
         MPI_Wait(&reqr[8 * nodenum_y_f + 2], &star[8 * nodenum_y_f + 2]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-        calcu_time_s = MPI_Wtime();
+
         int cont = 0;
         for (int x = 0; x < subgrid[0]; x++) {
             for (int z = 0; z < subgrid[2]; z++) {
@@ -1024,24 +1200,18 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                 }
             }
         }
-        calcu_time_e += MPI_Wtime()-calcu_time_s;
-        msg_time_s = MPI_Wtime();
+
         MPI_Wait(&reqs[8 * rank + 2], &stas[8 * rank + 2]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
+
     } // if(N_sub[1]!=1)
 
     //    delete[] send_y_b;
     //    delete[] resv_y_f;
 
-
-    //////////////////////////////////////////
-    //                   4                  //
-    //////////////////////////////////////////
     if (N_sub[1] != 1) {
-        msg_time_s = MPI_Wtime();
+
         MPI_Wait(&reqr[8 * nodenum_y_b + 3], &star[8 * nodenum_y_b + 3]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-        calcu_time_s = MPI_Wtime();
+
         int cont = 0;
         for (int x = 0; x < subgrid[0]; x++) {
             for (int z = 0; z < subgrid[2]; z++) {
@@ -1068,64 +1238,18 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                 }
             }
         }
-        calcu_time_e += MPI_Wtime()-calcu_time_s;
-        msg_time_s = MPI_Wtime();
+
         MPI_Wait(&reqs[8 * rank + 3], &stas[8 * rank + 3]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
+
     }
 
     //    delete[] send_y_f;
     //    delete[] resv_y_b;
 
-
-    //////////////////////////////////////////
-    //                   6                  //
-    //////////////////////////////////////////
     if (N_sub[2] != 1) {
-        msg_time_s = MPI_Wtime();
-        MPI_Wait(&reqr[8 * nodenum_z_b + 5], &star[8 * nodenum_z_b + 5]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-        calcu_time_s = MPI_Wtime();
-        int cont = 0;
-        for (int x = 0; x < subgrid[0]; x++) {
-            for (int y = 0; y < subgrid[1]; y++) {
-                for (int t = 0; t < subgrid[3]; t++) {
-                    complex<double> *srcO = (complex<double> *) (&resv_z_b[cont * 6 * 2]);
 
-                    cont += 1;
-
-                    int z = 0;
-                    complex<double> *destE = dest.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
-                                                       subgrid[0] * subgrid[1] * z +
-                                                       subgrid[0] * y + x + cb * subgrid_vol_cb) *
-                                                          12;
-
-                    for (int c1 = 0; c1 < 3; c1++) {
-                        destE[0 * 3 + c1] += srcO[0 * 3 + c1];
-                        destE[2 * 3 + c1] += flag * (-I * srcO[0 * 3 + c1]);
-                        destE[1 * 3 + c1] += srcO[1 * 3 + c1];
-                        destE[3 * 3 + c1] += flag * (I * srcO[1 * 3 + c1]);
-                    }
-                }
-            }
-        }
-        calcu_time_e += MPI_Wtime()-calcu_time_s;
-        msg_time_s = MPI_Wtime();
-        MPI_Wait(&reqs[8 * rank + 5], &stas[8 * rank + 5]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-    } // if (N_sub[2] != 1)
-
-
-
-
-    //////////////////////////////////////////
-    //                   5                  //
-    //////////////////////////////////////////
-    if (N_sub[2] != 1) {
-        msg_time_s = MPI_Wtime();
         MPI_Wait(&reqr[8 * nodenum_z_f + 4], &star[8 * nodenum_z_f + 4]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-        calcu_time_s = MPI_Wtime();
+
         int cont = 0;
         for (int x = 0; x < subgrid[0]; x++) {
             for (int y = 0; y < subgrid[1]; y++) {
@@ -1164,37 +1288,27 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                 }
             }
         }
-        calcu_time_e += MPI_Wtime()-calcu_time_s;
-        msg_time_s = MPI_Wtime();
+
         MPI_Wait(&reqs[8 * rank + 4], &stas[8 * rank + 4]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
+
     } // if(N_sub[2]!=1)
 
     //    delete[] send_z_b;
     //    delete[] resv_z_f;
 
-    //////////////////////////////////////////
-    //                   2                  //
-    //////////////////////////////////////////
-    if (N_sub[0] != 1) {
-        msg_time_s = MPI_Wtime();
-        MPI_Wait(&reqr[8 * nodenum_x_b + 1], &star[8 * nodenum_x_b + 1]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-        calcu_time_s = MPI_Wtime();
+    if (N_sub[2] != 1) {
+
+        MPI_Wait(&reqr[8 * nodenum_z_b + 5], &star[8 * nodenum_z_b + 5]);
+
         int cont = 0;
-
-        for (int y = 0; y < subgrid[1]; y++) {
-            for (int z = 0; z < subgrid[2]; z++) {
+        for (int x = 0; x < subgrid[0]; x++) {
+            for (int y = 0; y < subgrid[1]; y++) {
                 for (int t = 0; t < subgrid[3]; t++) {
-                    if (((y + z + t + x_p) % 2) != cb) {
-                        continue;
-                    }
+                    complex<double> *srcO = (complex<double> *) (&resv_z_b[cont * 6 * 2]);
 
-                    int x = 0;
-
-                    complex<double> *srcO = (complex<double> *) (&resv_x_b[cont * 6 * 2]);
                     cont += 1;
 
+                    int z = 0;
                     complex<double> *destE = dest.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
                                                        subgrid[0] * subgrid[1] * z +
                                                        subgrid[0] * y + x + cb * subgrid_vol_cb) *
@@ -1202,70 +1316,25 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
                     for (int c1 = 0; c1 < 3; c1++) {
                         destE[0 * 3 + c1] += srcO[0 * 3 + c1];
-                        destE[3 * 3 + c1] += flag * (-I * srcO[0 * 3 + c1]);
+                        destE[2 * 3 + c1] += flag * (-I * srcO[0 * 3 + c1]);
                         destE[1 * 3 + c1] += srcO[1 * 3 + c1];
-                        destE[2 * 3 + c1] += flag * (-I * srcO[1 * 3 + c1]);
+                        destE[3 * 3 + c1] += flag * (I * srcO[1 * 3 + c1]);
                     }
                 }
             }
         }
-        calcu_time_e += MPI_Wtime()-calcu_time_s;
-        msg_time_s = MPI_Wtime();
-        MPI_Wait(&reqs[8 * rank + 1], &stas[8 * rank + 1]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-    } // if(N_sub[0]!=1)
 
+        MPI_Wait(&reqs[8 * rank + 5], &stas[8 * rank + 5]);
 
+    } // if (N_sub[2] != 1)
 
     // delete[] send_z_f;
     // delete[] resv_z_b;
 
-    //////////////////////////////////////////
-    //                   8                  //
-    //////////////////////////////////////////
     if (N_sub[3] != 1) {
-        msg_time_s = MPI_Wtime();
-        MPI_Wait(&reqr[8 * nodenum_t_b + 7], &star[8 * nodenum_t_b + 7]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-        calcu_time_s = MPI_Wtime();
-        int cont = 0;
-        for (int x = 0; x < subgrid[0]; x++) {
-            for (int y = 0; y < subgrid[1]; y++) {
-                for (int z = 0; z < subgrid[2]; z++) {
-                    complex<double> *srcO = (complex<double> *) (&resv_t_b[cont * 6 * 2]);
 
-                    cont += 1;
-                    int t = 0;
-                    complex<double> *destE = dest.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
-                                                       subgrid[0] * subgrid[1] * z +
-                                                       subgrid[0] * y + x + cb * subgrid_vol_cb) *
-                                                          12;
-
-                    for (int c1 = 0; c1 < 3; c1++) {
-                        destE[0 * 3 + c1] += srcO[0 * 3 + c1];
-                        destE[2 * 3 + c1] += flag * (srcO[0 * 3 + c1]);
-                        destE[1 * 3 + c1] += srcO[1 * 3 + c1];
-                        destE[3 * 3 + c1] += flag * (srcO[1 * 3 + c1]);
-                    }
-                }
-            }
-        }
-        calcu_time_e += MPI_Wtime()-calcu_time_s;
-        msg_time_s = MPI_Wtime();
-        MPI_Wait(&reqs[8 * rank + 7], &stas[8 * rank + 7]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-    } // if (N_sub[3] != 1)
-
-
-
-    //////////////////////////////////////////
-    //                   7                  //
-    //////////////////////////////////////////
-    if (N_sub[3] != 1) {
-        msg_time_s = MPI_Wtime();
         MPI_Wait(&reqr[8 * nodenum_t_f + 6], &star[8 * nodenum_t_f + 6]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
-        calcu_time_s = MPI_Wtime();
+
         int cont = 0;
         for (int x = 0; x < subgrid[0]; x++) {
             for (int y = 0; y < subgrid[1]; y++) {
@@ -1303,21 +1372,44 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                 }
             }
         }
-        calcu_time_e += MPI_Wtime()-calcu_time_s;
-        msg_time_s = MPI_Wtime();
 
         MPI_Wait(&reqs[8 * rank + 6], &stas[8 * rank + 6]);
-        msg_time_e += MPI_Wtime()-msg_time_s;
 
     }
 
-    barrier_time_s = MPI_Wtime();
+    if (N_sub[3] != 1) {
+
+        MPI_Wait(&reqr[8 * nodenum_t_b + 7], &star[8 * nodenum_t_b + 7]);
+
+        int cont = 0;
+        for (int x = 0; x < subgrid[0]; x++) {
+            for (int y = 0; y < subgrid[1]; y++) {
+                for (int z = 0; z < subgrid[2]; z++) {
+                    complex<double> *srcO = (complex<double> *) (&resv_t_b[cont * 6 * 2]);
+
+                    cont += 1;
+                    int t = 0;
+                    complex<double> *destE = dest.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
+                                                       subgrid[0] * subgrid[1] * z +
+                                                       subgrid[0] * y + x + cb * subgrid_vol_cb) *
+                                                          12;
+
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        destE[0 * 3 + c1] += srcO[0 * 3 + c1];
+                        destE[2 * 3 + c1] += flag * (srcO[0 * 3 + c1]);
+                        destE[1 * 3 + c1] += srcO[1 * 3 + c1];
+                        destE[3 * 3 + c1] += flag * (srcO[1 * 3 + c1]);
+                    }
+                }
+            }
+        }
+
+        MPI_Wait(&reqs[8 * rank + 7], &stas[8 * rank + 7]);
+
+    } // if (N_sub[3] != 1)
+
     MPI_Barrier(MPI_COMM_WORLD);
-    barrier_time_e += MPI_Wtime()-barrier_time_s;
-    dslashoffd_time_e = MPI_Wtime();
-    if (rank == 0){
-        printf("CALCU TIME: %lf, MSG TIME: %lf, DSLASHOFFD TIME: %lf, BARRIER TIME: %lf\n", calcu_time_e, msg_time_e, dslashoffd_time_e - dslashoffd_time_s, barrier_time_e);
-    }
+
     delete[] send_x_b;
     delete[] resv_x_f;
     delete[] send_x_f;
@@ -1337,5 +1429,4 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     delete[] resv_t_f;
     delete[] send_t_f;
     delete[] resv_t_b;
-
 }

@@ -7,13 +7,13 @@
 #SBATCH --exclude=
 #SBATCH --cpus-per-task=1
 #SBATCH --mail-type=FAIL
-#SBATCH --mail-user=spq12@mail.ustc.edu.cn
+#SBATCH --mail-user=ta1ly@mail.ustc.edu.cn
 
 source /public1/soft/modules/module.sh
 module purge
-CC=mpiicc
+CC=gcc10.2.0
 CXX=mpiicpc
-CXX_FLAGS=""
+CXX_FLAGS="-O3"
 raw_flags=" -I../include  -std=c++11"
 
 MPIOPT=
