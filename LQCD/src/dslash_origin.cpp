@@ -4,7 +4,6 @@
 **/
 
 #include <mpi.h>
-#include <immintrin.h>
 #include "dslash.h"
 #include "operator.h"
 using namespace std;
@@ -17,8 +16,7 @@ void DslashEE(lattice_fermion &src, lattice_fermion &dest, const double mass)
     int subgrid_vol = (src.subgs[0] * src.subgs[1] * src.subgs[2] * src.subgs[3]);
     int subgrid_vol_cb = (subgrid_vol) >> 1;
 
-    for (int i = 0; i < subgrid_vol_cb * 3 * 4; i++)
-    {
+    for (int i = 0; i < subgrid_vol_cb * 3 * 4; i++) {
         dest.A[i] = (a + mass) * src.A[i];
     }
 }
@@ -31,8 +29,7 @@ void DslashOO(lattice_fermion &src, lattice_fermion &dest, const double mass)
     int subgrid_vol = (src.subgs[0] * src.subgs[1] * src.subgs[2] * src.subgs[3]);
     int subgrid_vol_cb = (subgrid_vol) >> 1;
 
-    for (int i = subgrid_vol_cb * 3 * 4; i < subgrid_vol * 3 * 4; i++)
-    {
+    for (int i = subgrid_vol_cb * 3 * 4; i < subgrid_vol * 3 * 4; i++) {
         dest.A[i] = (a + mass) * src.A[i];
     }
 }
@@ -116,24 +113,18 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
     double *resv_x_f = new double[len_x_f * 6 * 2];
     double *send_x_b = new double[len_x_f * 6 * 2];
-    if (N_sub[0] != 1)
-    {
-        for (int i = 0; i < len_x_f * 6 * 2; i++)
-        {
+    if (N_sub[0] != 1) {
+        for (int i = 0; i < len_x_f * 6 * 2; i++) {
             send_x_b[i] = 0;
         }
 
         int cont = 0;
 
-        for (int y = 0; y < subgrid[1]; y++)
-        {
-            for (int z = 0; z < subgrid[2]; z++)
-            {
-                for (int t = 0; t < subgrid[3]; t++)
-                {
+        for (int y = 0; y < subgrid[1]; y++) {
+            for (int z = 0; z < subgrid[2]; z++) {
+                for (int t = 0; t < subgrid[3]; t++) {
 
-                    if ((y + z + t + x_p) % 2 == cb)
-                    {
+                    if ((y + z + t + x_p) % 2 == cb) {
                         continue;
                     }
                     int x = 0;
@@ -145,8 +136,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     int b = cont * 6;
                     cont += 1;
 
-                    for (int c2 = 0; c2 < 3; c2++)
-                    {
+                    for (int c2 = 0; c2 < 3; c2++) {
                         tmp = -(srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]) * half;
                         send_x_b[b * 2 + (0 * 3 + c2) * 2 + 0] = tmp.real();
                         send_x_b[b * 2 + (0 * 3 + c2) * 2 + 1] = tmp.imag();
@@ -169,23 +159,17 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     double *resv_x_b = new double[len_x_b * 6 * 2];
     double *send_x_f = new double[len_x_b * 6 * 2];
 
-    if (N_sub[0] != 1)
-    {
-        for (int i = 0; i < len_x_b * 6 * 2; i++)
-        {
+    if (N_sub[0] != 1) {
+        for (int i = 0; i < len_x_b * 6 * 2; i++) {
             send_x_f[i] = 0;
         }
 
         int cont = 0;
 
-        for (int y = 0; y < subgrid[1]; y++)
-        {
-            for (int z = 0; z < subgrid[2]; z++)
-            {
-                for (int t = 0; t < subgrid[3]; t++)
-                {
-                    if (((y + z + t + x_p) % 2) != cb)
-                    {
+        for (int y = 0; y < subgrid[1]; y++) {
+            for (int z = 0; z < subgrid[2]; z++) {
+                for (int t = 0; t < subgrid[3]; t++) {
+                    if (((y + z + t + x_p) % 2) != cb) {
                         continue;
                     }
 
@@ -205,10 +189,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
                     int b = cont * 6;
                     cont += 1;
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
-                        for (int c2 = 0; c2 < 3; c2++)
-                        {
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
                             tmp = -(srcO[0 * 3 + c2] + flag * I * srcO[3 * 3 + c2]) * half *
                                   conj(AO[c2 * 3 + c1]);
 
@@ -236,21 +218,16 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
     double *resv_y_f = new double[len_y_f * 6 * 2];
     double *send_y_b = new double[len_y_f * 6 * 2];
-    if (N_sub[1] != 1)
-    {
-        for (int i = 0; i < len_y_f * 6 * 2; i++)
-        {
+    if (N_sub[1] != 1) {
+        for (int i = 0; i < len_y_f * 6 * 2; i++) {
             send_y_b[i] = 0;
         }
 
         int cont = 0;
 
-        for (int x = 0; x < subgrid[0]; x++)
-        {
-            for (int z = 0; z < subgrid[2]; z++)
-            {
-                for (int t = 0; t < subgrid[3]; t++)
-                {
+        for (int x = 0; x < subgrid[0]; x++) {
+            for (int z = 0; z < subgrid[2]; z++) {
+                for (int t = 0; t < subgrid[3]; t++) {
                     int y = 0;
                     complex<double> tmp;
                     complex<double> *srcO = src.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
@@ -261,8 +238,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     int b = cont * 6;
                     cont += 1;
 
-                    for (int c2 = 0; c2 < 3; c2++)
-                    {
+                    for (int c2 = 0; c2 < 3; c2++) {
                         tmp = -(srcO[0 * 3 + c2] + flag * srcO[3 * 3 + c2]) * half;
                         send_y_b[b * 2 + (0 * 3 + c2) * 2 + 0] = tmp.real();
                         send_y_b[b * 2 + (0 * 3 + c2) * 2 + 1] = tmp.imag();
@@ -285,21 +261,16 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     double *resv_y_b = new double[len_y_b * 6 * 2];
     double *send_y_f = new double[len_y_b * 6 * 2];
 
-    if (N_sub[1] != 1)
-    {
+    if (N_sub[1] != 1) {
 
-        for (int i = 0; i < len_y_b * 6 * 2; i++)
-        {
+        for (int i = 0; i < len_y_b * 6 * 2; i++) {
             send_y_f[i] = 0;
         }
 
         int cont = 0;
-        for (int x = 0; x < subgrid[0]; x++)
-        {
-            for (int z = 0; z < subgrid[2]; z++)
-            {
-                for (int t = 0; t < subgrid[3]; t++)
-                {
+        for (int x = 0; x < subgrid[0]; x++) {
+            for (int z = 0; z < subgrid[2]; z++) {
+                for (int t = 0; t < subgrid[3]; t++) {
                     complex<double> tmp;
 
                     int y = subgrid[1] - 1;
@@ -316,10 +287,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
                     int b = cont * 6;
                     cont += 1;
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
-                        for (int c2 = 0; c2 < 3; c2++)
-                        {
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
 
                             tmp = -(srcO[0 * 3 + c2] - flag * srcO[3 * 3 + c2]) * half *
                                   conj(AO[c2 * 3 + c1]);
@@ -345,21 +314,16 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
     double *resv_z_f = new double[len_z_f * 6 * 2];
     double *send_z_b = new double[len_z_f * 6 * 2];
-    if (N_sub[2] != 1)
-    {
-        for (int i = 0; i < len_z_f * 6 * 2; i++)
-        {
+    if (N_sub[2] != 1) {
+        for (int i = 0; i < len_z_f * 6 * 2; i++) {
             send_z_b[i] = 0;
         }
 
         int cont = 0;
 
-        for (int x = 0; x < subgrid[0]; x++)
-        {
-            for (int y = 0; y < subgrid[1]; y++)
-            {
-                for (int t = 0; t < subgrid[3]; t++)
-                {
+        for (int x = 0; x < subgrid[0]; x++) {
+            for (int y = 0; y < subgrid[1]; y++) {
+                for (int t = 0; t < subgrid[3]; t++) {
                     int z = 0;
 
                     complex<double> tmp;
@@ -371,8 +335,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     int b = cont * 6;
                     cont += 1;
 
-                    for (int c2 = 0; c2 < 3; c2++)
-                    {
+                    for (int c2 = 0; c2 < 3; c2++) {
                         tmp = -(srcO[0 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * half;
                         send_z_b[b * 2 + (0 * 3 + c2) * 2 + 0] += tmp.real();
                         send_z_b[b * 2 + (0 * 3 + c2) * 2 + 1] += tmp.imag();
@@ -394,21 +357,16 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
     double *resv_z_b = new double[len_z_b * 6 * 2];
     double *send_z_f = new double[len_z_b * 6 * 2];
-    if (N_sub[2] != 1)
-    {
+    if (N_sub[2] != 1) {
 
-        for (int i = 0; i < len_z_b * 6 * 2; i++)
-        {
+        for (int i = 0; i < len_z_b * 6 * 2; i++) {
             send_z_f[i] = 0;
         }
 
         int cont = 0;
-        for (int x = 0; x < subgrid[0]; x++)
-        {
-            for (int y = 0; y < subgrid[1]; y++)
-            {
-                for (int t = 0; t < subgrid[3]; t++)
-                {
+        for (int x = 0; x < subgrid[0]; x++) {
+            for (int y = 0; y < subgrid[1]; y++) {
+                for (int t = 0; t < subgrid[3]; t++) {
                     complex<double> tmp;
 
                     int z = subgrid[2] - 1;
@@ -425,10 +383,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
                     int b = cont * 6;
                     cont += 1;
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
-                        for (int c2 = 0; c2 < 3; c2++)
-                        {
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
 
                             tmp = -(srcO[0 * 3 + c2] + flag * I * srcO[2 * 3 + c2]) * half *
                                   conj(AO[c2 * 3 + c1]);
@@ -454,21 +410,16 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
     double *resv_t_f = new double[len_t_f * 6 * 2];
     double *send_t_b = new double[len_t_f * 6 * 2];
-    if (N_sub[3] != 1)
-    {
-        for (int i = 0; i < len_t_f * 6 * 2; i++)
-        {
+    if (N_sub[3] != 1) {
+        for (int i = 0; i < len_t_f * 6 * 2; i++) {
             send_t_b[i] = 0;
         }
 
         int cont = 0;
 
-        for (int x = 0; x < subgrid[0]; x++)
-        {
-            for (int y = 0; y < subgrid[1]; y++)
-            {
-                for (int z = 0; z < subgrid[2]; z++)
-                {
+        for (int x = 0; x < subgrid[0]; x++) {
+            for (int y = 0; y < subgrid[1]; y++) {
+                for (int z = 0; z < subgrid[2]; z++) {
                     int t = 0;
 
                     complex<double> tmp;
@@ -480,8 +431,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     int b = cont * 6;
                     cont += 1;
 
-                    for (int c2 = 0; c2 < 3; c2++)
-                    {
+                    for (int c2 = 0; c2 < 3; c2++) {
                         tmp = -(srcO[0 * 3 + c2] - flag * srcO[2 * 3 + c2]) * half;
                         send_t_b[b * 2 + (0 * 3 + c2) * 2 + 0] += tmp.real();
                         send_t_b[b * 2 + (0 * 3 + c2) * 2 + 1] += tmp.imag();
@@ -503,21 +453,16 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
     double *resv_t_b = new double[len_t_b * 6 * 2];
     double *send_t_f = new double[len_t_b * 6 * 2];
-    if (N_sub[3] != 1)
-    {
+    if (N_sub[3] != 1) {
 
-        for (int i = 0; i < len_t_b * 6 * 2; i++)
-        {
+        for (int i = 0; i < len_t_b * 6 * 2; i++) {
             send_t_f[i] = 0;
         }
 
         int cont = 0;
-        for (int x = 0; x < subgrid[0]; x++)
-        {
-            for (int y = 0; y < subgrid[1]; y++)
-            {
-                for (int z = 0; z < subgrid[2]; z++)
-                {
+        for (int x = 0; x < subgrid[0]; x++) {
+            for (int y = 0; y < subgrid[1]; y++) {
+                for (int z = 0; z < subgrid[2]; z++) {
                     complex<double> tmp;
 
                     int t = subgrid[3] - 1;
@@ -534,10 +479,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
                     int b = cont * 6;
                     cont += 1;
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
-                        for (int c2 = 0; c2 < 3; c2++)
-                        {
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
 
                             tmp = -(srcO[0 * 3 + c2] + flag * srcO[2 * 3 + c2]) * half *
                                   conj(AO[c2 * 3 + c1]);
@@ -562,29 +505,21 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     //////////////////////////////////////////////////////// no comunication
     /////////////////////////////////////////////////////////
 
-    int count = 0;
-    for (int y = 0; y < subgrid[1]; y++)
-    {
-        for (int z = 0; z < subgrid[2]; z++)
-        {
-            for (int t = 0; t < subgrid[3]; t++)
-            {
+    for (int y = 0; y < subgrid[1]; y++) {
+        for (int z = 0; z < subgrid[2]; z++) {
+            for (int t = 0; t < subgrid[3]; t++) {
                 int x_u =
                     ((y + z + t + x_p) % 2 == cb || N_sub[0] == 1) ? subgrid[0] : subgrid[0] - 1;
 
-                for (int x = 0; x < x_u; x++)
-                {
+                for (int x = 0; x < x_u; x++) {
 
                     complex<double> *destE;
                     complex<double> *AE;
                     complex<double> tmp;
                     int f_x;
-                    if ((y + z + t + x_p) % 2 == cb)
-                    {
+                    if ((y + z + t + x_p) % 2 == cb) {
                         f_x = x;
-                    }
-                    else
-                    {
+                    } else {
                         f_x = (x + 1) % subgrid[0];
                     }
 
@@ -603,141 +538,40 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                           subgrid[0] * y + x + cb * subgrid_vol_cb) *
                              9;
 
-                    __m256d srcStart, srcStart2;
-                    __m256d vSrcReal[4], vSrcImag[4], vdestE, vAE;
-
-                    // load srcO
-                    __m256i mask = _mm256_set_epi32(0x0, 0x0, 0x0, 0x0, 0x80000000, 0x0, 0x80000000, 0x0); //之前反了
-                    for (int i = 0; i < 4; i++)
-                    {
-                        // srcStart = _mm256_loadu_pd(&srcO[3 * i + 0]);
-                        srcStart = _mm256_loadu_pd((double *)&srcO[3 * i + 0]);
-                        // srcStart2 = _mm256_loadu_pd(&srcO[3 * i + 2]);
-                        srcStart2 = _mm256_maskload_pd((double *)&srcO[3 * i + 2], mask);
-
-                        vSrcReal[i] = _mm256_unpacklo_pd(srcStart, srcStart2); // 四个实数，但是只要用3个 [A0r A2r  A1r 0 ]
-                        vSrcImag[i] = _mm256_unpackhi_pd(srcStart, srcStart2);
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
+                            {
+                                tmp = -(srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]) * half *
+                                      AE[c1 * 3 + c2];
+                                destE[0 * 3 + c1] += tmp;
+                                destE[3 * 3 + c1] += flag * (I * tmp);
+                                tmp = -(srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * half *
+                                      AE[c1 * 3 + c2];
+                                destE[1 * 3 + c1] += tmp;
+                                destE[2 * 3 + c1] += flag * (I * tmp);
+                            }
+                        }
                     }
-
-                    // vtmp = srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]
-                    // srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]
-                    // flag = (dag == true) ? -1 : 1;
-                    __m256d vTmp1Real, vTmp1Imag, vTmp2Real, vTmp2Imag;
-                    if (!dag)
-                    {
-                        vTmp1Real = _mm256_add_pd(vSrcReal[0], vSrcImag[3]); // vSrcReal[0] + vSrcImag[3]
-                        vTmp1Imag = _mm256_sub_pd(vSrcImag[0], vSrcReal[3]); // vSrcImag[0] - vSrcReal[3]
-                        vTmp2Real = _mm256_add_pd(vSrcReal[1], vSrcImag[2]); // vSrcReal[1] + vSrcImag[2]
-                        vTmp2Imag = _mm256_sub_pd(vSrcImag[1], vSrcReal[2]); // vSrcImag[1] - vSrcReal[2]
-                    }
-                    else
-                    {
-                        vTmp1Real = _mm256_sub_pd(vSrcReal[0], vSrcImag[3]);
-                        vTmp1Imag = _mm256_add_pd(vSrcImag[0], vSrcReal[3]);
-                        vTmp2Real = _mm256_sub_pd(vSrcReal[1], vSrcImag[2]);
-                        vTmp2Imag = _mm256_add_pd(vSrcImag[1], vSrcReal[2]);
-                    }
-
-                    // load AE
-                    __m256d vAEReal_c1, vAEImag_c1;
-                    __m256d vHalf = _mm256_set1_pd(-0.5);
-
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
-                        srcStart = _mm256_loadu_pd((double *)&AE[3 * c1 + 0]);
-                        srcStart2 = _mm256_maskload_pd((double *)&AE[3 * c1 + 2], mask);
-                        vAEReal_c1 = _mm256_unpacklo_pd(srcStart, srcStart2); // 四个实数，但是好像只要用3个
-                        vAEImag_c1 = _mm256_unpackhi_pd(srcStart, srcStart2);
-
-                        // 计算第一行的实数 (vTmp1Real * vAEReal - vAEimag * vTmp1imag) / -2
-                        __m256d vTmpReal = _mm256_fmsub_pd(vTmp1Real, vAEReal_c1, _mm256_mul_pd(vAEImag_c1, vTmp1Imag));
-                        vTmpReal = _mm256_mul_pd(vTmpReal, vHalf);
-                        // Compute vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
-                        __m256d vTmpSumReal = _mm256_hadd_pd(vTmpReal, vTmpReal);
-                        destE[0 * 3 + c1].real(((double *)&vTmpSumReal)[0] + ((double *)&vTmpSumReal)[2]);
-                        destE[3 * 3 + c1].imag(flag * (((double *)&vTmpSumReal)[0] + ((double *)&vTmpSumReal)[2]));
-
-                        // 计算第一行的虚部 (vTmp1Real * vAEimag + vAEReal * vTmp1imag) / -2
-                        __m256d vTmpImag = _mm256_fmadd_pd(vTmp1Real, vAEImag_c1, _mm256_mul_pd(vAEReal_c1, vTmp1Imag));
-                        vTmpImag = _mm256_mul_pd(vTmpImag, vHalf);
-                        // Compute vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
-                        __m256d vTmpSumImag = _mm256_hadd_pd(vTmpImag, vTmpImag);
-                        destE[0 * 3 + c1].imag(((double *)&vTmpSumImag)[0] + ((double *)&vTmpSumImag)[2]);
-                        destE[3 * 3 + c1].real(-flag * (((double *)&vTmpSumImag)[0] + ((double *)&vTmpSumImag)[2]));
-
-                        // 计算第二行的实部 (vTmp2Real * vAEReal - vAEimag * vTmp2imag) / -2
-                        vTmpReal = _mm256_fmsub_pd(vTmp2Real, vAEReal_c1, _mm256_mul_pd(vAEImag_c1, vTmp2Imag));
-                        vTmpReal = _mm256_mul_pd(vTmpReal, vHalf);
-                        // Compute vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
-                        vTmpSumReal = _mm256_hadd_pd(vTmpReal, vTmpReal);
-                        destE[1 * 3 + c1].real(((double *)&vTmpSumReal)[0] + ((double *)&vTmpSumReal)[2]);
-                        destE[2 * 3 + c1].imag(flag * (((double *)&vTmpSumReal)[0] + ((double *)&vTmpSumReal)[2]));
-
-                        // 计算第二行的虚部 (vTmp2Real * vAEimag + vAEReal * vTmp2imag) / -2
-                        vTmpImag = _mm256_fmadd_pd(vTmp2Real, vAEImag_c1, _mm256_mul_pd(vAEReal_c1, vTmp2Imag));
-                        vTmpImag = _mm256_mul_pd(vTmpImag, vHalf);
-                        // Compute vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
-                        vTmpSumImag = _mm256_hadd_pd(vTmpImag, vTmpImag);
-                        destE[1 * 3 + c1].imag(((double *)&vTmpSumImag)[0] + ((double *)&vTmpSumImag)[2]);
-                        destE[2 * 3 + c1].real(-flag * (((double *)&vTmpSumImag)[0] + ((double *)&vTmpSumImag)[2]));
-                    }
-
-                    // if (count < 10 && rank == 0) {
-                    //     printf("rank = %d x = %d y = %d z = %d t = %d flag = %.0lf\n", rank, x, y, z, t, flag);
-                    //     printf("srcO:\n");
-                    //     for (int c1 = 0; c1 < 4; c1++) {
-                    //         for (int c2 = 0; c2 < 3; c2++) {
-                    //             printf("%.2f+%.2fi ", srcO[c1 * 3 + c2].real(), srcO[c1 * 3 + c2].imag());
-                    //         }
-                    //         printf("\n");
-                    //     }
-
-                    //     printf("AE:\n");
-                    //     for (int c1 = 0; c1 < 3; c1++) {
-                    //         for (int c2 = 0; c2 < 3; c2++) {
-                    //             printf("%.2f+%.2fi ", AE[c1 * 3 + c2].real(), AE[c1 * 3 + c2].imag());
-                    //         }
-                    //         printf("\n");
-                    //     }
-
-                    //     printf("destE:\n");
-                    //     for (int c1 = 0; c1 < 4; c1++) {
-                    //         for (int c2 = 0; c2 < 3; c2++) {
-                    //             printf("%.2f+%.2fi ", destE[c1 * 3 + c2].real(), destE[c1 * 3 + c2].imag());
-                    //         }
-                    //         printf("\n");
-                    //     }
-
-                    //     count += 1;
-                    //     getchar();
-                    // }
                 }
             }
         }
     }
 
-    for (int y = 0; y < subgrid[1]; y++)
-    {
-        for (int z = 0; z < subgrid[2]; z++)
-        {
-            for (int t = 0; t < subgrid[3]; t++)
-            {
+    for (int y = 0; y < subgrid[1]; y++) {
+        for (int z = 0; z < subgrid[2]; z++) {
+            for (int t = 0; t < subgrid[3]; t++) {
                 int x_d = (((y + z + t + x_p) % 2) != cb || N_sub[0] == 1) ? 0 : 1;
 
-                for (int x = x_d; x < subgrid[0]; x++)
-                {
+                for (int x = x_d; x < subgrid[0]; x++) {
                     complex<double> *destE;
                     complex<double> *AO;
                     complex<double> tmp;
 
                     int b_x;
 
-                    if ((t + z + y + x_p) % 2 == cb)
-                    {
+                    if ((t + z + y + x_p) % 2 == cb) {
                         b_x = (x - 1 + subgrid[0]) % subgrid[0];
-                    }
-                    else
-                    {
+                    } else {
                         b_x = x;
                     }
 
@@ -756,80 +590,20 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                           subgrid[0] * y + b_x + (1 - cb) * subgrid_vol_cb) *
                              9;
 
-                    __m256d srcStart, srcStart2;
-                    __m256d vSrcReal[4], vSrcImag[4], vdestE, vAO;
-                    double tmpReal[4], tmpImag[4];
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
+                            tmp = -(srcO[0 * 3 + c2] + flag * I * srcO[3 * 3 + c2]) * half *
+                                  conj(AO[c2 * 3 + c1]);
 
-                    __m256i mask = _mm256_set_epi32(0x0, 0x0, 0x0, 0x0, 0x80000000, 0x0, 0x80000000, 0x0); //之前反了
-                    for (int i = 0; i < 4; i++)
-                    {
-                        // srcStart = _mm256_loadu_pd(&srcO[3 * i + 0]);
-                        srcStart = _mm256_loadu_pd((double *)&srcO[3 * i + 0]);
-                        // srcStart2 = _mm256_loadu_pd(&srcO[3 * i + 2]);
-                        srcStart2 = _mm256_maskload_pd((double *)&srcO[3 * i + 2], mask);
+                            destE[0 * 3 + c1] += tmp;
+                            destE[3 * 3 + c1] += flag * (-I * tmp);
 
-                        vSrcReal[i] = _mm256_unpacklo_pd(srcStart, srcStart2); // 四个实数，但是只要用3个 [A0r A2r  A1r 0 ]
-                        vSrcImag[i] = _mm256_unpackhi_pd(srcStart, srcStart2);
-                    }
+                            tmp = -(srcO[1 * 3 + c2] + flag * I * srcO[2 * 3 + c2]) * half *
+                                  conj(AO[c2 * 3 + c1]);
 
-                    // vtmp = srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]
-                    //  srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]
-                    __m256d vTmp1Real, vTmp1Imag, vTmp2Real, vTmp2Imag;
-                    if (dag != true)
-                    {
-                        vTmp1Real = _mm256_sub_pd(vSrcReal[0], vSrcImag[3]);
-                        vTmp1Imag = _mm256_add_pd(vSrcImag[0], vSrcReal[3]);
-                        vTmp2Real = _mm256_sub_pd(vSrcReal[1], vSrcImag[2]); //vSrcReal[0] + vSrcImag[3]
-                        vTmp2Imag = _mm256_add_pd(vSrcImag[1], vSrcReal[2]);
-                    }
-                    else
-                    {
-                        vTmp1Real = _mm256_add_pd(vSrcReal[0], vSrcImag[3]); //vSrcReal[0] + vSrcImag[3]
-                        vTmp1Imag = _mm256_sub_pd(vSrcImag[0], vSrcReal[3]);
-                        vTmp2Real = _mm256_add_pd(vSrcReal[1], vSrcImag[2]); //vSrcReal[0] + vSrcImag[3]
-                        vTmp2Imag = _mm256_sub_pd(vSrcImag[1], vSrcReal[2]);
-                    }
-
-                    // load AO
-                    __m256d vAOReal_c2, vAOImag_c2;
-                    __m256d vHalf = _mm256_set1_pd(-0.5);
-
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
-                        vAOReal_c2 = _mm256_set_pd(0, AO[1 * 3 + c1].real(), AO[2 * 3 + c1].real(), AO[0 * 3 + c1].real());
-                        vAOImag_c2 = _mm256_set_pd(0, AO[1 * 3 + c1].imag(), AO[2 * 3 + c1].imag(), AO[0 * 3 + c1].imag());
-
-                        // 计算第一行的实数 (vTmp1Real * vAOReal + vAOimag * vTmp1imag) / -2
-                        __m256d vTmpReal = _mm256_fmadd_pd(vTmp1Real, vAOReal_c2, _mm256_mul_pd(vAOImag_c2, vTmp1Imag));
-                        vTmpReal = _mm256_mul_pd(vTmpReal, vHalf);
-                        // Compute vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
-                        __m256d vTmpSumReal = _mm256_hadd_pd(vTmpReal, vTmpReal);
-                        destE[0 * 3 + c1].real(((double *)&vTmpSumReal)[0] + ((double *)&vTmpSumReal)[2]);
-                        destE[3 * 3 + c1].imag(-flag * (((double *)&vTmpSumReal)[0] + ((double *)&vTmpSumReal)[2]));
-
-                        // 计算第一行的虚部 (vTmp1Real * vAOimag - vAOReal * vTmp1imag) / -2
-                        __m256d vTmpImag = _mm256_fmsub_pd(vTmp1Real, vAOImag_c2, _mm256_mul_pd(vAOReal_c2, vTmp1Imag));
-                        vTmpImag = _mm256_mul_pd(vTmpImag, vHalf);
-                        // Compute vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
-                        __m256d vTmpSumImag = _mm256_hadd_pd(vTmpImag, vTmpImag);
-                        destE[0 * 3 + c1].imag(((double *)&vTmpSumImag)[0] + ((double *)&vTmpSumImag)[2]);
-                        destE[3 * 3 + c1].real(flag * (((double *)&vTmpSumImag)[0] + ((double *)&vTmpSumImag)[2]));
-
-                        // 计算第二行的实部 (vTmp2Real * vAOReal + vAOimag * vTmp2imag) / -2
-                        vTmpReal = _mm256_fmadd_pd(vTmp2Real, vAOReal_c2, _mm256_mul_pd(vAOImag_c2, vTmp2Imag));
-                        vTmpReal = _mm256_mul_pd(vTmpReal, vHalf);
-                        // Compute vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
-                        vTmpSumReal = _mm256_hadd_pd(vTmpReal, vTmpReal);
-                        destE[1 * 3 + c1].real(((double *)&vTmpSumReal)[0] + ((double *)&vTmpSumReal)[2]);
-                        destE[2 * 3 + c1].imag(-flag * (((double *)&vTmpSumReal)[0] + ((double *)&vTmpSumReal)[2]));
-
-                        // 计算第二行的虚部 (vTmp2Real * vAOimag - vAOReal * vTmp2imag) / -2
-                        vTmpImag = _mm256_fmsub_pd(vTmp2Real, vAOImag_c2, _mm256_mul_pd(vAOReal_c2, vTmp2Imag));
-                        vTmpImag = _mm256_mul_pd(vTmpImag, vHalf);
-                        // Compute vtmp3[2] + vtmp3[3], vtmp3[0] + vtmp3[1]
-                        vTmpSumImag = _mm256_hadd_pd(vTmpImag, vTmpImag);
-                        destE[1 * 3 + c1].imag(((double *)&vTmpSumImag)[0] + ((double *)&vTmpSumImag)[2]);
-                        destE[2 * 3 + c1].real(flag * (((double *)&vTmpSumImag)[0] + ((double *)&vTmpSumImag)[2]));
+                            destE[1 * 3 + c1] += tmp;
+                            destE[2 * 3 + c1] += flag * (-I * tmp);
+                        }
                     }
                 }
             }
@@ -837,14 +611,10 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     }
 
     int y_u = (N_sub[1] == 1) ? subgrid[1] : subgrid[1] - 1;
-    for (int x = 0; x < subgrid[0]; x++)
-    {
-        for (int y = 0; y < y_u; y++)
-        {
-            for (int z = 0; z < subgrid[2]; z++)
-            {
-                for (int t = 0; t < subgrid[3]; t++)
-                {
+    for (int x = 0; x < subgrid[0]; x++) {
+        for (int y = 0; y < y_u; y++) {
+            for (int z = 0; z < subgrid[2]; z++) {
+                for (int t = 0; t < subgrid[3]; t++) {
 
                     complex<double> tmp;
                     complex<double> *destE;
@@ -868,10 +638,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                           subgrid[0] * y + x + cb * subgrid_vol_cb) *
                              9;
 
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
-                        for (int c2 = 0; c2 < 3; c2++)
-                        {
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
                             tmp = -(srcO[0 * 3 + c2] + flag * srcO[3 * 3 + c2]) * half *
                                   AE[c1 * 3 + c2];
                             destE[0 * 3 + c1] += tmp;
@@ -888,14 +656,10 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     }
 
     int y_d = (N_sub[1] == 1) ? 0 : 1;
-    for (int x = 0; x < subgrid[0]; x++)
-    {
-        for (int y = y_d; y < subgrid[1]; y++)
-        {
-            for (int z = 0; z < subgrid[2]; z++)
-            {
-                for (int t = 0; t < subgrid[3]; t++)
-                {
+    for (int x = 0; x < subgrid[0]; x++) {
+        for (int y = y_d; y < subgrid[1]; y++) {
+            for (int z = 0; z < subgrid[2]; z++) {
+                for (int t = 0; t < subgrid[3]; t++) {
                     complex<double> *destE;
                     complex<double> *AO;
                     complex<double> tmp;
@@ -918,10 +682,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                           subgrid[0] * b_y + x + (1 - cb) * subgrid_vol_cb) *
                              9;
 
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
-                        for (int c2 = 0; c2 < 3; c2++)
-                        {
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
                             tmp = -(srcO[0 * 3 + c2] - flag * srcO[3 * 3 + c2]) * half *
                                   conj(AO[c2 * 3 + c1]);
                             destE[0 * 3 + c1] += tmp;
@@ -938,14 +700,10 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     }
 
     int z_u = (N_sub[2] == 1) ? subgrid[2] : subgrid[2] - 1;
-    for (int x = 0; x < subgrid[0]; x++)
-    {
-        for (int y = 0; y < subgrid[1]; y++)
-        {
-            for (int z = 0; z < z_u; z++)
-            {
-                for (int t = 0; t < subgrid[3]; t++)
-                {
+    for (int x = 0; x < subgrid[0]; x++) {
+        for (int y = 0; y < subgrid[1]; y++) {
+            for (int z = 0; z < z_u; z++) {
+                for (int t = 0; t < subgrid[3]; t++) {
 
                     int f_z = (z + 1) % subgrid[2];
 
@@ -967,10 +725,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                                     x + cb * subgrid_vol_cb) *
                                                        9;
 
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
-                        for (int c2 = 0; c2 < 3; c2++)
-                        {
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
 
                             tmp = -(srcO[0 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * half *
                                   AE[c1 * 3 + c2];
@@ -988,14 +744,10 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     }
 
     int z_d = (N_sub[2] == 1) ? 0 : 1;
-    for (int x = 0; x < subgrid[0]; x++)
-    {
-        for (int y = 0; y < subgrid[1]; y++)
-        {
-            for (int z = z_d; z < subgrid[2]; z++)
-            {
-                for (int t = 0; t < subgrid[3]; t++)
-                {
+    for (int x = 0; x < subgrid[0]; x++) {
+        for (int y = 0; y < subgrid[1]; y++) {
+            for (int z = z_d; z < subgrid[2]; z++) {
+                for (int t = 0; t < subgrid[3]; t++) {
 
                     complex<double> tmp;
                     complex<double> *destE;
@@ -1019,10 +771,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                           subgrid[0] * y + x + (1 - cb) * subgrid_vol_cb) *
                              9;
 
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
-                        for (int c2 = 0; c2 < 3; c2++)
-                        {
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
                             tmp = -(srcO[0 * 3 + c2] + flag * I * srcO[2 * 3 + c2]) * half *
                                   conj(AO[c2 * 3 + c1]);
                             destE[0 * 3 + c1] += tmp;
@@ -1040,14 +790,10 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
     int t_u = (N_sub[3] == 1) ? subgrid[3] : subgrid[3] - 1;
 
-    for (int x = 0; x < subgrid[0]; x++)
-    {
-        for (int y = 0; y < subgrid[1]; y++)
-        {
-            for (int z = 0; z < subgrid[2]; z++)
-            {
-                for (int t = 0; t < t_u; t++)
-                {
+    for (int x = 0; x < subgrid[0]; x++) {
+        for (int y = 0; y < subgrid[1]; y++) {
+            for (int z = 0; z < subgrid[2]; z++) {
+                for (int t = 0; t < t_u; t++) {
 
                     complex<double> tmp;
                     complex<double> *destE;
@@ -1070,10 +816,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                           subgrid[0] * y + x + cb * subgrid_vol_cb) *
                              9;
 
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
-                        for (int c2 = 0; c2 < 3; c2++)
-                        {
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
                             tmp = -(srcO[0 * 3 + c2] - flag * srcO[2 * 3 + c2]) * half *
                                   AE[c1 * 3 + c2];
                             destE[0 * 3 + c1] += tmp;
@@ -1090,14 +834,10 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     }
 
     int t_d = (N_sub[3] == 1) ? 0 : 1;
-    for (int x = 0; x < subgrid[0]; x++)
-    {
-        for (int y = 0; y < subgrid[1]; y++)
-        {
-            for (int z = 0; z < subgrid[2]; z++)
-            {
-                for (int t = t_d; t < subgrid[3]; t++)
-                {
+    for (int x = 0; x < subgrid[0]; x++) {
+        for (int y = 0; y < subgrid[1]; y++) {
+            for (int z = 0; z < subgrid[2]; z++) {
+                for (int t = t_d; t < subgrid[3]; t++) {
 
                     complex<double> *destE;
                     complex<double> *AO;
@@ -1121,10 +861,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
                     complex<double> tmp;
 
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
-                        for (int c2 = 0; c2 < 3; c2++)
-                        {
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
                             tmp = -(srcO[0 * 3 + c2] + flag * srcO[2 * 3 + c2]) * half *
                                   conj(AO[c2 * 3 + c1]);
                             destE[0 * 3 + c1] += tmp;
@@ -1144,20 +882,15 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
     //////////////////////////////////////////////////////////////////////////////////////ghost//////////////////////////////////////////////////////////////////
 
-    if (N_sub[0] != 1)
-    {
+    if (N_sub[0] != 1) {
 
         MPI_Wait(&reqr[8 * nodenum_x_f], &star[8 * nodenum_x_f]);
 
         int cont = 0;
-        for (int y = 0; y < subgrid[1]; y++)
-        {
-            for (int z = 0; z < subgrid[2]; z++)
-            {
-                for (int t = 0; t < subgrid[3]; t++)
-                {
-                    if ((y + z + t + x_p) % 2 == cb)
-                    {
+        for (int y = 0; y < subgrid[1]; y++) {
+            for (int z = 0; z < subgrid[2]; z++) {
+                for (int t = 0; t < subgrid[3]; t++) {
+                    if ((y + z + t + x_p) % 2 == cb) {
                         continue;
                     }
 
@@ -1167,7 +900,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
                     int x = subgrid[0] - 1;
 
-                    complex<double> *srcO = (complex<double> *)(&resv_x_f[cont * 6 * 2]);
+                    complex<double> *srcO = (complex<double> *) (&resv_x_f[cont * 6 * 2]);
 
                     cont += 1;
 
@@ -1181,10 +914,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                           subgrid[0] * y + x + cb * subgrid_vol_cb) *
                              9;
 
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
-                        for (int c2 = 0; c2 < 3; c2++)
-                        {
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
                             tmp = srcO[0 * 3 + c2] * AE[c1 * 3 + c2];
                             destE[0 * 3 + c1] += tmp;
                             destE[3 * 3 + c1] += flag * (I * tmp);
@@ -1204,27 +935,22 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     //    delete[] send_x_b;
     //    delete[] resv_x_f;
 
-    if (N_sub[0] != 1)
-    {
+    if (N_sub[0] != 1) {
 
         MPI_Wait(&reqr[8 * nodenum_x_b + 1], &star[8 * nodenum_x_b + 1]);
 
         int cont = 0;
 
-        for (int y = 0; y < subgrid[1]; y++)
-        {
-            for (int z = 0; z < subgrid[2]; z++)
-            {
-                for (int t = 0; t < subgrid[3]; t++)
-                {
-                    if (((y + z + t + x_p) % 2) != cb)
-                    {
+        for (int y = 0; y < subgrid[1]; y++) {
+            for (int z = 0; z < subgrid[2]; z++) {
+                for (int t = 0; t < subgrid[3]; t++) {
+                    if (((y + z + t + x_p) % 2) != cb) {
                         continue;
                     }
 
                     int x = 0;
 
-                    complex<double> *srcO = (complex<double> *)(&resv_x_b[cont * 6 * 2]);
+                    complex<double> *srcO = (complex<double> *) (&resv_x_b[cont * 6 * 2]);
                     cont += 1;
 
                     complex<double> *destE = dest.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
@@ -1232,8 +958,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                                        subgrid[0] * y + x + cb * subgrid_vol_cb) *
                                                           12;
 
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
+                    for (int c1 = 0; c1 < 3; c1++) {
                         destE[0 * 3 + c1] += srcO[0 * 3 + c1];
                         destE[3 * 3 + c1] += flag * (-I * srcO[0 * 3 + c1]);
                         destE[1 * 3 + c1] += srcO[1 * 3 + c1];
@@ -1250,18 +975,14 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     //    delete[] send_x_f;
     //    delete[] resv_x_b;
 
-    if (N_sub[1] != 1)
-    {
+    if (N_sub[1] != 1) {
 
         MPI_Wait(&reqr[8 * nodenum_y_f + 2], &star[8 * nodenum_y_f + 2]);
 
         int cont = 0;
-        for (int x = 0; x < subgrid[0]; x++)
-        {
-            for (int z = 0; z < subgrid[2]; z++)
-            {
-                for (int t = 0; t < subgrid[3]; t++)
-                {
+        for (int x = 0; x < subgrid[0]; x++) {
+            for (int z = 0; z < subgrid[2]; z++) {
+                for (int t = 0; t < subgrid[3]; t++) {
 
                     complex<double> tmp;
                     complex<double> *destE;
@@ -1269,7 +990,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
                     int y = subgrid[1] - 1;
 
-                    complex<double> *srcO = (complex<double> *)(&resv_y_f[cont * 6 * 2]);
+                    complex<double> *srcO = (complex<double> *) (&resv_y_f[cont * 6 * 2]);
 
                     cont += 1;
 
@@ -1283,10 +1004,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                           subgrid[0] * y + x + cb * subgrid_vol_cb) *
                              9;
 
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
-                        for (int c2 = 0; c2 < 3; c2++)
-                        {
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
                             tmp = srcO[0 * 3 + c2] * AE[c1 * 3 + c2];
                             destE[0 * 3 + c1] += tmp;
                             destE[3 * 3 + c1] += flag * (tmp);
@@ -1306,19 +1025,15 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     //    delete[] send_y_b;
     //    delete[] resv_y_f;
 
-    if (N_sub[1] != 1)
-    {
+    if (N_sub[1] != 1) {
 
         MPI_Wait(&reqr[8 * nodenum_y_b + 3], &star[8 * nodenum_y_b + 3]);
 
         int cont = 0;
-        for (int x = 0; x < subgrid[0]; x++)
-        {
-            for (int z = 0; z < subgrid[2]; z++)
-            {
-                for (int t = 0; t < subgrid[3]; t++)
-                {
-                    complex<double> *srcO = (complex<double> *)(&resv_y_b[cont * 6 * 2]);
+        for (int x = 0; x < subgrid[0]; x++) {
+            for (int z = 0; z < subgrid[2]; z++) {
+                for (int t = 0; t < subgrid[3]; t++) {
+                    complex<double> *srcO = (complex<double> *) (&resv_y_b[cont * 6 * 2]);
 
                     cont += 1;
 
@@ -1328,8 +1043,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                                        subgrid[0] * y + x + cb * subgrid_vol_cb) *
                                                           12;
 
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
+                    for (int c1 = 0; c1 < 3; c1++) {
                         destE[0 * 3 + c1] += srcO[0 * 3 + c1];
                         destE[3 * 3 + c1] -= flag * srcO[0 * 3 + c1];
                         destE[1 * 3 + c1] += srcO[1 * 3 + c1];
@@ -1343,23 +1057,20 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         }
 
         MPI_Wait(&reqs[8 * rank + 3], &stas[8 * rank + 3]);
+
     }
 
     //    delete[] send_y_f;
     //    delete[] resv_y_b;
 
-    if (N_sub[2] != 1)
-    {
+    if (N_sub[2] != 1) {
 
         MPI_Wait(&reqr[8 * nodenum_z_f + 4], &star[8 * nodenum_z_f + 4]);
 
         int cont = 0;
-        for (int x = 0; x < subgrid[0]; x++)
-        {
-            for (int y = 0; y < subgrid[1]; y++)
-            {
-                for (int t = 0; t < subgrid[3]; t++)
-                {
+        for (int x = 0; x < subgrid[0]; x++) {
+            for (int y = 0; y < subgrid[1]; y++) {
+                for (int t = 0; t < subgrid[3]; t++) {
 
                     complex<double> tmp;
                     complex<double> *destE;
@@ -1367,7 +1078,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
                     int z = subgrid[2] - 1;
 
-                    complex<double> *srcO = (complex<double> *)(&resv_z_f[cont * 6 * 2]);
+                    complex<double> *srcO = (complex<double> *) (&resv_z_f[cont * 6 * 2]);
 
                     cont += 1;
 
@@ -1381,10 +1092,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                           subgrid[0] * y + x + cb * subgrid_vol_cb) *
                              9;
 
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
-                        for (int c2 = 0; c2 < 3; c2++)
-                        {
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
                             tmp = srcO[0 * 3 + c2] * AE[c1 * 3 + c2];
                             destE[0 * 3 + c1] += tmp;
                             destE[2 * 3 + c1] += flag * (I * tmp);
@@ -1404,19 +1113,15 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     //    delete[] send_z_b;
     //    delete[] resv_z_f;
 
-    if (N_sub[2] != 1)
-    {
+    if (N_sub[2] != 1) {
 
         MPI_Wait(&reqr[8 * nodenum_z_b + 5], &star[8 * nodenum_z_b + 5]);
 
         int cont = 0;
-        for (int x = 0; x < subgrid[0]; x++)
-        {
-            for (int y = 0; y < subgrid[1]; y++)
-            {
-                for (int t = 0; t < subgrid[3]; t++)
-                {
-                    complex<double> *srcO = (complex<double> *)(&resv_z_b[cont * 6 * 2]);
+        for (int x = 0; x < subgrid[0]; x++) {
+            for (int y = 0; y < subgrid[1]; y++) {
+                for (int t = 0; t < subgrid[3]; t++) {
+                    complex<double> *srcO = (complex<double> *) (&resv_z_b[cont * 6 * 2]);
 
                     cont += 1;
 
@@ -1426,8 +1131,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                                        subgrid[0] * y + x + cb * subgrid_vol_cb) *
                                                           12;
 
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
+                    for (int c1 = 0; c1 < 3; c1++) {
                         destE[0 * 3 + c1] += srcO[0 * 3 + c1];
                         destE[2 * 3 + c1] += flag * (-I * srcO[0 * 3 + c1]);
                         destE[1 * 3 + c1] += srcO[1 * 3 + c1];
@@ -1444,25 +1148,21 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     // delete[] send_z_f;
     // delete[] resv_z_b;
 
-    if (N_sub[3] != 1)
-    {
+    if (N_sub[3] != 1) {
 
         MPI_Wait(&reqr[8 * nodenum_t_f + 6], &star[8 * nodenum_t_f + 6]);
 
         int cont = 0;
-        for (int x = 0; x < subgrid[0]; x++)
-        {
-            for (int y = 0; y < subgrid[1]; y++)
-            {
-                for (int z = 0; z < subgrid[2]; z++)
-                {
+        for (int x = 0; x < subgrid[0]; x++) {
+            for (int y = 0; y < subgrid[1]; y++) {
+                for (int z = 0; z < subgrid[2]; z++) {
 
                     complex<double> tmp;
                     complex<double> *destE;
                     complex<double> *AE;
                     int t = subgrid[3] - 1;
 
-                    complex<double> *srcO = (complex<double> *)(&resv_t_f[cont * 6 * 2]);
+                    complex<double> *srcO = (complex<double> *) (&resv_t_f[cont * 6 * 2]);
 
                     cont += 1;
 
@@ -1476,10 +1176,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                           subgrid[0] * y + x + cb * subgrid_vol_cb) *
                              9;
 
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
-                        for (int c2 = 0; c2 < 3; c2++)
-                        {
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
                             tmp = srcO[0 * 3 + c2] * AE[c1 * 3 + c2];
                             destE[0 * 3 + c1] += tmp;
                             destE[2 * 3 + c1] -= flag * (tmp);
@@ -1493,21 +1191,18 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         }
 
         MPI_Wait(&reqs[8 * rank + 6], &stas[8 * rank + 6]);
+
     }
 
-    if (N_sub[3] != 1)
-    {
+    if (N_sub[3] != 1) {
 
         MPI_Wait(&reqr[8 * nodenum_t_b + 7], &star[8 * nodenum_t_b + 7]);
 
         int cont = 0;
-        for (int x = 0; x < subgrid[0]; x++)
-        {
-            for (int y = 0; y < subgrid[1]; y++)
-            {
-                for (int z = 0; z < subgrid[2]; z++)
-                {
-                    complex<double> *srcO = (complex<double> *)(&resv_t_b[cont * 6 * 2]);
+        for (int x = 0; x < subgrid[0]; x++) {
+            for (int y = 0; y < subgrid[1]; y++) {
+                for (int z = 0; z < subgrid[2]; z++) {
+                    complex<double> *srcO = (complex<double> *) (&resv_t_b[cont * 6 * 2]);
 
                     cont += 1;
                     int t = 0;
@@ -1516,8 +1211,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                                        subgrid[0] * y + x + cb * subgrid_vol_cb) *
                                                           12;
 
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
+                    for (int c1 = 0; c1 < 3; c1++) {
                         destE[0 * 3 + c1] += srcO[0 * 3 + c1];
                         destE[2 * 3 + c1] += flag * (srcO[0 * 3 + c1]);
                         destE[1 * 3 + c1] += srcO[1 * 3 + c1];
