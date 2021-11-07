@@ -113,6 +113,7 @@ int load_gauge(std::complex<double> *gauge[4], std::string &filename, int *subgs
                 xg[2] = xg0[2] + xs[2];
                 for (xs[1] = 0; xs[1] < subgs[1]; xs[1]++) {
                     xg[1] = xg0[1] + xs[1];
+                    xg[0] = xg0[0];
                     idx_sub = site2index(xs, subgs);
                     Offset = Offset0 + 72 * sizeof(double) * site2index(xg, site_vec);
 #ifndef NO_MPI_IO

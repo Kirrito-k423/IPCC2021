@@ -13,7 +13,7 @@ source /public1/soft/modules/module.sh
 module purge
 CC=mpiicc
 CXX=mpiicpc
-CXX_FLAGS="-O3"
+CXX_FLAGS=""
 raw_flags="-fPIC -I../include  -std=c++11"
 
 MPIOPT=
@@ -26,4 +26,4 @@ module load mpi/intel/20.4.3
 
 make clean
 make CC=$CC CXX=$CXX CXX_FLAGS="${CXX_FLAGS}${raw_flags}" TARGET=$taskname
-mpirun ./$taskname 0.005  ../data/ipcc_gauge_24_72  24 24 24 72  6 12 12 9 > ./log/$taskname$computetimes.log
+mpirun ./$taskname 0.005  ../data/ipcc_gauge_48_96  48 48 48 96  12 24 24 12 > ./log/3_$taskname$computetimes.log
