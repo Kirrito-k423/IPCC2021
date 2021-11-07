@@ -21,7 +21,9 @@ int main(int argc, char **argv)
     int rank, nsize;
     MPI_Comm_size(MPI_COMM_WORLD, &nsize);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
+    if (rank == 0){
+        printf("mission start!\n");
+    }
     int site_vec[4] = {8, 8, 8, 8}; // 总格子大小； site_vec = { Lt Lx Ly Lz }；
     int subgs[4] = {8, 8, 8, 8};    // 子格子大小, 进程数 = \prod_{i=0}^3 subgs[i] ;
     double Mass = 0.05;
