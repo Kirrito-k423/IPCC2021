@@ -681,36 +681,6 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                         destE[1 * 3 + c1].imag(((double *)&vTmpSumImag)[0] + ((double *)&vTmpSumImag)[2]);
                         destE[2 * 3 + c1].real(-flag * (((double *)&vTmpSumImag)[0] + ((double *)&vTmpSumImag)[2]));
                     }
-
-                    // if (count < 10 && rank == 0) {
-                    //     printf("rank = %d x = %d y = %d z = %d t = %d flag = %.0lf\n", rank, x, y, z, t, flag);
-                    //     printf("srcO:\n");
-                    //     for (int c1 = 0; c1 < 4; c1++) {
-                    //         for (int c2 = 0; c2 < 3; c2++) {
-                    //             printf("%.2f+%.2fi ", srcO[c1 * 3 + c2].real(), srcO[c1 * 3 + c2].imag());
-                    //         }
-                    //         printf("\n");
-                    //     }
-
-                    //     printf("AE:\n");
-                    //     for (int c1 = 0; c1 < 3; c1++) {
-                    //         for (int c2 = 0; c2 < 3; c2++) {
-                    //             printf("%.2f+%.2fi ", AE[c1 * 3 + c2].real(), AE[c1 * 3 + c2].imag());
-                    //         }
-                    //         printf("\n");
-                    //     }
-
-                    //     printf("destE:\n");
-                    //     for (int c1 = 0; c1 < 4; c1++) {
-                    //         for (int c2 = 0; c2 < 3; c2++) {
-                    //             printf("%.2f+%.2fi ", destE[c1 * 3 + c2].real(), destE[c1 * 3 + c2].imag());
-                    //         }
-                    //         printf("\n");
-                    //     }
-
-                    //     count += 1;
-                    //     getchar();
-                    // }
                 }
             }
         }
