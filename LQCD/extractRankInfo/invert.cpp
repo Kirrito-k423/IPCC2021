@@ -91,7 +91,7 @@ int CGinvert(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, cons
     const int nodenum_t_f = get_nodenum(site_t_f, N_sub, 4);
 
 
-    // int subgrid[4] = {src.subgs[0], src.subgs[1], src.subgs[2], src.subgs[3]};
+    int subgrid[4] = {src.subgs[0], src.subgs[1], src.subgs[2], src.subgs[3]};
     int subgrid_vol = (subgrid[0] * subgrid[1] * subgrid[2] * subgrid[3]);
     // int subgrid_vol_cb = (subgrid_vol) >> 1;
     const int x_p = ((rank / N_sub[0]) % N_sub[1]) * subgrid[1] +
@@ -218,7 +218,7 @@ void Dslash(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, const
     dest = dest + tmp;
     Dslashoffd(src, tmp, U, dagger, 0,
         N_sub, rank,  size, 
-        snodenum_x_b,  nodenum_x_f, 
+        nodenum_x_b,  nodenum_x_f, 
         nodenum_y_b,  nodenum_y_f, 
         nodenum_z_b,  nodenum_z_f, 
         nodenum_t_b,  nodenum_t_f, 
