@@ -111,11 +111,11 @@ int CGinvert(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, cons
 //                 )
     Dslash(src, Mdb, U, mass, true,
         N_sub, rank,  size, 
-            site_x_f, site_x_b, nodenum_x_b,  nodenum_x_f, 
-            site_y_f, site_y_b, nodenum_y_b,  nodenum_y_f, 
-            site_z_f, site_z_b, nodenum_z_b,  nodenum_z_f, 
-            site_t_f, site_t_b, nodenum_t_b,  nodenum_t_f, 
-            subgrid_vol, x_p
+        nodenum_x_b,  nodenum_x_f, 
+        nodenum_y_b,  nodenum_y_f, 
+        nodenum_z_b,  nodenum_z_f, 
+        nodenum_t_b,  nodenum_t_f, 
+        subgrid_vol, x_p
     );
     for (int i = 0; i < dest.size; i++) {
         dest.A[i] = 1.0 * rand() / RAND_MAX;
@@ -129,20 +129,20 @@ int CGinvert(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, cons
     }
 #endif
     Dslash(dest, tmp, U, mass, false,
-       N_sub, rank,  size, 
-            site_x_f, site_x_b, nodenum_x_b,  nodenum_x_f, 
-            site_y_f, site_y_b, nodenum_y_b,  nodenum_y_f, 
-            site_z_f, site_z_b, nodenum_z_b,  nodenum_z_f, 
-            site_t_f, site_t_b, nodenum_t_b,  nodenum_t_f, 
-            subgrid_vol, x_p
+        N_sub, rank,  size, 
+        nodenum_x_b,  nodenum_x_f, 
+        nodenum_y_b,  nodenum_y_f, 
+        nodenum_z_b,  nodenum_z_f, 
+        nodenum_t_b,  nodenum_t_f, 
+        subgrid_vol, x_p
     );
     Dslash(tmp, r0, U, mass, true,
         N_sub, rank,  size, 
-            site_x_f, site_x_b, nodenum_x_b,  nodenum_x_f, 
-            site_y_f, site_y_b, nodenum_y_b,  nodenum_y_f, 
-            site_z_f, site_z_b, nodenum_z_b,  nodenum_z_f, 
-            site_t_f, site_t_b, nodenum_t_b,  nodenum_t_f, 
-            subgrid_vol, x_p
+        nodenum_x_b,  nodenum_x_f, 
+        nodenum_y_b,  nodenum_y_f, 
+        nodenum_z_b,  nodenum_z_f, 
+        nodenum_t_b,  nodenum_t_f, 
+        subgrid_vol, x_p
     );
 
     for (int i = 0; i < Mdb.size; i++) {
@@ -161,19 +161,19 @@ int CGinvert(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, cons
         }
         tsjtime[roundNum++]=MPI_Wtime();
         Dslash(p, qq, U, mass, false,
-             N_sub, rank,  size, 
-            site_x_f, site_x_b, nodenum_x_b,  nodenum_x_f, 
-            site_y_f, site_y_b, nodenum_y_b,  nodenum_y_f, 
-            site_z_f, site_z_b, nodenum_z_b,  nodenum_z_f, 
-            site_t_f, site_t_b, nodenum_t_b,  nodenum_t_f, 
+            N_sub, rank,  size, 
+            nodenum_x_b,  nodenum_x_f, 
+            nodenum_y_b,  nodenum_y_f, 
+            nodenum_z_b,  nodenum_z_f, 
+            nodenum_t_b,  nodenum_t_f, 
             subgrid_vol, x_p
         );
         Dslash(qq, q, U, mass, true,
             N_sub, rank,  size, 
-            site_x_f, site_x_b, nodenum_x_b,  nodenum_x_f, 
-            site_y_f, site_y_b, nodenum_y_b,  nodenum_y_f, 
-            site_z_f, site_z_b, nodenum_z_b,  nodenum_z_f, 
-            site_t_f, site_t_b, nodenum_t_b,  nodenum_t_f, 
+            nodenum_x_b,  nodenum_x_f, 
+            nodenum_y_b,  nodenum_y_f, 
+            nodenum_z_b,  nodenum_z_f, 
+            nodenum_t_b,  nodenum_t_f, 
             subgrid_vol, x_p
         );
         tsjtime[roundNum++]=MPI_Wtime();
@@ -207,10 +207,10 @@ int CGinvert(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, cons
 void Dslash(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, const double mass,
             const bool dagger,
             int * N_sub,int rank, int size, 
-            int * site_x_f, int * site_x_b, const int nodenum_x_b, const int nodenum_x_f, 
-            int * site_y_f, int * site_y_b, const int nodenum_y_b, const int nodenum_y_f, 
-            int * site_z_f, int * site_z_b, const int nodenum_z_b, const int nodenum_z_f, 
-            int * site_t_f, int * site_t_b, const int nodenum_t_b, const int nodenum_t_f, 
+            const int nodenum_x_b, const int nodenum_x_f, 
+            const int nodenum_y_b, const int nodenum_y_f, 
+            const int nodenum_z_b, const int nodenum_z_f, 
+            const int nodenum_t_b, const int nodenum_t_f, 
             int subgrid_vol, const int x_p
                 )
 {
@@ -222,19 +222,19 @@ void Dslash(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, const
     dest = dest + tmp;
     Dslashoffd(src, tmp, U, dagger, 0,
         N_sub, rank,  size, 
-        site_x_f, site_x_b, nodenum_x_b,  nodenum_x_f, 
-        site_y_f, site_y_b, nodenum_y_b,  nodenum_y_f, 
-        site_z_f, site_z_b, nodenum_z_b,  nodenum_z_f, 
-        site_t_f, site_t_b, nodenum_t_b,  nodenum_t_f, 
+        snodenum_x_b,  nodenum_x_f, 
+        nodenum_y_b,  nodenum_y_f, 
+        nodenum_z_b,  nodenum_z_f, 
+        nodenum_t_b,  nodenum_t_f, 
         subgrid_vol, x_p
     ); // cb=0, EO
     dest = dest + tmp;
     Dslashoffd(src, tmp, U, dagger, 1, 
         N_sub, rank,  size, 
-        site_x_f, site_x_b, nodenum_x_b,  nodenum_x_f, 
-        site_y_f, site_y_b, nodenum_y_b,  nodenum_y_f, 
-        site_z_f, site_z_b, nodenum_z_b,  nodenum_z_f, 
-        site_t_f, site_t_b, nodenum_t_b,  nodenum_t_f, 
+        nodenum_x_b,  nodenum_x_f, 
+        nodenum_y_b,  nodenum_y_f, 
+        nodenum_z_b,  nodenum_z_f, 
+        nodenum_t_b,  nodenum_t_f, 
         subgrid_vol, x_p
     );
     dest = dest + tmp;
