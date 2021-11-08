@@ -4,3 +4,6 @@ build
 *build/
 build/*
 .DS*
+*.o
+main
+*.so
