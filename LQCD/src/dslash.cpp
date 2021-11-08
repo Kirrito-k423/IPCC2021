@@ -118,6 +118,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     double *resv_x_f = new double[len_x_f * 6 * 2];
     double *send_x_b = new double[len_x_f * 6 * 2];
     calcu_time_e += MPI_Wtime()-calcu_time_s;
+    if(rank == 0){
+        printf("GET NODE:%lf\n", calcu_time_e*1000);
+    }
     if (N_sub[0] != 1) {
         calcu_time_s = MPI_Wtime();
         for (int i = 0; i < len_x_f * 6 * 2; i++) {
@@ -536,6 +539,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         
     }
 
+    if(rank == 0){
+        printf("PART1:%lf\n", calcu_time_e*1000);
+    }
     //////////////////////////////////////////////////////// no comunication /////////////////////////////////////////////////////////
     calcu_time_s = MPI_Wtime();
     for (int y = 0; y < subgrid[1]; y++) {
@@ -912,7 +918,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     }
     calcu_time_e += MPI_Wtime()-calcu_time_s;
     //    printf(" rank =%i  ghost  \n ", rank);
-
+    if(rank == 0){
+        printf("PART2:%lf\n", calcu_time_e*1000);
+    }
     //////////////////////////////////////////////////////////////////////////////////////ghost//////////////////////////////////////////////////////////////////
 
 
@@ -1311,6 +1319,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
     }
 
+    if(rank == 0){
+        printf("PART3:%lf\n", calcu_time_e*1000);
+    }
     barrier_time_s = MPI_Wtime();
     MPI_Barrier(MPI_COMM_WORLD);
     barrier_time_e += MPI_Wtime()-barrier_time_s;
