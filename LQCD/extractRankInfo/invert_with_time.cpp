@@ -22,7 +22,12 @@ int CGinvert(complex<double> *src_p, complex<double> *dest_p, complex<double> *g
 }
 
 int CGinvert(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, const double mass,
-             const int max, const double accuracy)
+             const int max, const double accuracy){
+    return 0;
+}
+
+int CGinvert(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, const double mass,
+             const int max, const double accuracy, double * tsjtime, int roundNum)
 {
     int myrank;
     MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
@@ -148,7 +153,9 @@ int CGinvert(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, cons
     for (int i = 0; i < Mdb.size; i++) {
         r0.A[i] = Mdb.A[i] - r0.A[i];
     }
+    tsjtime[roundNum++]=MPI_Wtime();
     for (int f = 1; f < max; f++) {
+        tsjtime[roundNum++]=MPI_Wtime();
         if (f == 1) {
             for (int i = 0; i < r0.size; i++)
                 p.A[i] = r0.A[i];
@@ -157,6 +164,7 @@ int CGinvert(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, cons
             for (int i = 0; i < r0.size; i++)
                 p.A[i] = r0.A[i] + beta * p.A[i];
         }
+        tsjtime[roundNum++]=MPI_Wtime();
         Dslash(p, qq, U, mass, false,
             N_sub, rank,  size, 
             nodenum_x_b,  nodenum_x_f, 
@@ -173,6 +181,7 @@ int CGinvert(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, cons
             nodenum_t_b,  nodenum_t_f, 
             subgrid_vol, x_p
         );
+        tsjtime[roundNum++]=MPI_Wtime();
         aphi = vector_p(r0, r0) / vector_p(p, q);
 
         for (int i = 0; i < dest.size; i++)
