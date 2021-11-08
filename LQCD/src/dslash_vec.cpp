@@ -562,7 +562,11 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     //////////////////////////////////////////////////////// no comunication
     /////////////////////////////////////////////////////////
 
-    int count = 0;
+    const int srcO_scale = subgrid[0] * subgrid[1] * subgrid[2] * 12;
+    const int destE_scale = subgrid[0] * subgrid[1] * subgrid[2] * 12;
+    const int AO_scale = subgrid[0] * subgrid[1] * subgrid[2] * 9;
+    const int AE_scale = subgrid[0] * subgrid[1] * subgrid[2] * 9;
+
     for (int y = 0; y < subgrid[1]; y++)
     {
         for (int z = 0; z < subgrid[2]; z++)
@@ -690,8 +694,164 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         for (int z = 0; z < subgrid[2]; z++) {
             for (int t = 0; t < subgrid[3]; t++) {
                 int x_d = (((y + z + t + x_p) % 2) != cb || N_sub[0] == 1) ? 0 : 1;
+             
+                const __m128i srcO_vindex = _mm_set_epi32(6 * srcO_scale, 4 * srcO_scale, 2 * srcO_scale, 0 * srcO_scale);
+                const __m128i destE_vindex = srcO_vindex;
+                const __m128i AO_vindex = _mm_set_epi32(6 * AO_scale, 4 * AO_scale, 2 * AO_scale, 0 * AO_scale);
 
-                for (int x = x_d; x < subgrid[0]; x++) {
+                int x = x_d;
+                for (; x + 3 < subgrid[0]; x += 4) {
+                    int b_x;
+
+                    if ((t + z + y + x_p) % 2 == cb) {
+                        b_x = (x - 1 + subgrid[0]) % subgrid[0];
+                    } else {
+                        b_x = x;
+                    }
+                    complex<double> *srcO = src.A +
+                        (subgrid[0] * subgrid[1] * subgrid[2] * t + subgrid[0] * subgrid[1] * z + subgrid[0] * y + b_x + (1 - cb) * subgrid_vol_cb) * 12;
+                    complex<double> *destE = dest.A +
+                        (subgrid[0] * subgrid[1] * subgrid[2] * t + subgrid[0] * subgrid[1] * z + subgrid[0] * y + x + cb * subgrid_vol_cb) * 12;
+                    complex<double> *AO = U.A[0] +
+                        (subgrid[0] * subgrid[1] * subgrid[2] * t + subgrid[0] * subgrid[1] * z + subgrid[0] * y + b_x + (1 - cb) * subgrid_vol_cb) * 9;
+
+                    /*
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
+                            tmp = -(srcO[0 * 3 + c2] + flag * I * srcO[3 * 3 + c2]) * half *
+                                  conj(AO[c2 * 3 + c1]);
+
+                            destE[0 * 3 + c1] += tmp;
+                            destE[3 * 3 + c1] += flag * (-I * tmp);
+
+                            tmp = -(srcO[1 * 3 + c2] + flag * I * srcO[2 * 3 + c2]) * half *
+                                  conj(AO[c2 * 3 + c1]);
+
+                            destE[1 * 3 + c1] += tmp;
+                            destE[2 * 3 + c1] += flag * (-I * tmp);
+                        }
+                    }      
+                    */          
+
+                    __m256d vtmpReal, vtmpImag, vtmp2Real, vtmp2Imag, vAOReal, vAOImag;
+                    const __m256d vNHalf = _mm256_set1_pd(-0.5), vZero = _mm256_set1_pd(0.0);
+
+                    double storeReal[4], storeImag[4];
+                    const int gather_scale = 8; // one index = 8 bytes
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
+                            vAOReal = _mm256_i32gather_pd(reinterpret_cast<double*>(&AO[c2 * 3 + c1]), AO_vindex, gather_scale);
+                            vAOImag = _mm256_i32gather_pd(reinterpret_cast<double*>(&AO[c2 * 3 + c1]) + 1, AO_vindex, gather_scale);
+                            vAOReal = _mm256_mul_pd(vAOReal, vNHalf);
+                            vAOImag = _mm256_sub_pd(vZero, _mm256_mul_pd(vAOImag, vNHalf));
+                            // vAO = conj(-half * AO[c1 * 3 + c2])
+                            // don't touch vAO from now on
+
+                            vtmpReal = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[0 * 3 + c2]), srcO_vindex, gather_scale);
+                            vtmpImag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[0 * 3 + c2]) + 1, srcO_vindex, gather_scale);
+                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[3 * 3 + c2]), srcO_vindex, gather_scale);
+                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[3 * 3 + c2]) + 1, srcO_vindex, gather_scale);
+
+                            // dag --> flag = -1
+                            if (dag) {
+                                vtmpReal = _mm256_add_pd(vtmpReal, vtmp2Imag);
+                                vtmpImag = _mm256_sub_pd(vtmpImag, vtmp2Real);
+                            } else {
+                                vtmpReal = _mm256_sub_pd(vtmpReal, vtmp2Imag);
+                                vtmpImag = _mm256_add_pd(vtmpImag, vtmp2Real);
+                            }
+                            vtmp2Real = vtmpReal, vtmp2Imag = vtmpImag;
+                            // tmp2 = srcO[0 * 3 + c2] + flag * I * srcO[3 * 3 + c2]
+
+                            // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
+                            vtmpReal = _mm256_sub_pd(_mm256_mul_pd(vtmp2Real, vAOReal), _mm256_mul_pd(vtmp2Imag, vAOImag));
+                            vtmpImag = _mm256_add_pd(_mm256_mul_pd(vtmp2Real, vAOImag), _mm256_mul_pd(vtmp2Imag, vAOReal));
+                            // result now in vtmp = (srcO[0 * 3 + c2] + flag * I * srcO[3 * 3 + c2]) * conj(-half * AO[c1 * 3 + c2])
+
+                            // reuse vtmp2 for destE
+                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[0 * 3 + c1]), destE_vindex, gather_scale);
+                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[0 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
+                            vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
+                            _mm256_storeu_pd(storeReal, vtmp2Real);
+                            _mm256_storeu_pd(storeImag, vtmp2Imag);
+                            for (int i = 0; i < 4; i++) {
+                                destE[0 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
+                            }
+                            // destE[0 * 3 + c1] += tmp;
+
+                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[3 * 3 + c1]), destE_vindex, gather_scale);
+                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[3 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            if (dag) {
+                                vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpImag);
+                                vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpReal);
+                            } else {
+                                vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpImag);
+                                vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpReal);
+                            }
+                            _mm256_storeu_pd(storeReal, vtmp2Real);
+                            _mm256_storeu_pd(storeImag, vtmp2Imag);
+                            for (int i = 0; i < 4; i++) {
+                                destE[2 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
+                            }
+                            // destE[3 * 3 + c1] += flag * (-I * tmp);
+
+
+                            vtmpReal = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[1 * 3 + c2]), srcO_vindex, gather_scale);
+                            vtmpImag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[1 * 3 + c2]) + 1, srcO_vindex, gather_scale);
+                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[2 * 3 + c2]), srcO_vindex, gather_scale);
+                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[2 * 3 + c2]) + 1, srcO_vindex, gather_scale);
+
+                            if (dag) {
+                                vtmpReal = _mm256_add_pd(vtmpReal, vtmp2Imag);
+                                vtmpImag = _mm256_sub_pd(vtmpImag, vtmp2Real);
+                            } else {
+                                vtmpReal = _mm256_sub_pd(vtmpReal, vtmp2Imag);
+                                vtmpImag = _mm256_add_pd(vtmpImag, vtmp2Real);
+                            }
+                            vtmp2Real = vtmpReal, vtmp2Imag = vtmpImag;
+                            // tmp2 = srcO[1 * 3 + c2] + flag * I * srcO[2 * 3 + c2]
+
+                            // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
+                            vtmpReal = _mm256_sub_pd(_mm256_mul_pd(vtmp2Real, vAOReal), _mm256_mul_pd(vtmp2Imag, vAOImag));
+                            vtmpImag = _mm256_add_pd(_mm256_mul_pd(vtmp2Real, vAOImag), _mm256_mul_pd(vtmp2Imag, vAOReal));
+                            // result now in vtmp = (srcO[1 * 3 + c2] + flag * I * srcO[2 * 3 + c2]) * (-half * AO[c1 * 3 + c2])
+
+                            // reuse vtmp2 for destE
+                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[1 * 3 + c1]), destE_vindex, gather_scale);
+                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[1 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
+                            vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
+                            _mm256_storeu_pd(storeReal, vtmp2Real);
+                            _mm256_storeu_pd(storeImag, vtmp2Imag);
+                            for (int i = 0; i < 4; i++) {
+                                destE[1 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
+                            }
+                            // destE[1 * 3 + c1] += tmp;
+
+                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[2 * 3 + c1]), destE_vindex, gather_scale);
+                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[2 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            if (dag) {
+                                vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpImag);
+                                vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpReal);
+                            } else {
+                                vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpImag);
+                                vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpReal);
+                            }
+                            _mm256_storeu_pd(storeReal, vtmp2Real);
+                            _mm256_storeu_pd(storeImag, vtmp2Imag);
+                            for (int i = 0; i < 4; i++) {
+                                destE[2 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
+                            }
+                            // destE[2 * 3 + c1] += flag * (-I * tmp);
+                        }
+                    }
+                }
+                
+                if (x == subgrid[0])
+                    continue;
+
+                for (; x < subgrid[0]; x++) {
                     complex<double> *destE;
                     complex<double> *AO;
                     complex<double> tmp;
@@ -738,11 +898,6 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
             }
         }
     }
-
-    const int srcO_scale = subgrid[0] * subgrid[1] * subgrid[2] * 12;
-    const int destE_scale = subgrid[0] * subgrid[1] * subgrid[2] * 12;
-    const int AO_scale = subgrid[0] * subgrid[1] * subgrid[2] * 9;
-    const int AE_scale = subgrid[0] * subgrid[1] * subgrid[2] * 9;
 
     int y_u = (N_sub[1] == 1) ? subgrid[1] : subgrid[1] - 1;
     for (int x = 0; x < subgrid[0]; x++) {
