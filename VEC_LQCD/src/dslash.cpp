@@ -1389,6 +1389,9 @@ calcu_time_e += MPI_Wtime()-calcu_time_s;
         msg_time_s = MPI_Wtime();
         MPI_Wait(&reqr[8 * nodenum_x_f], &star[8 * nodenum_x_f]);
         msg_time_e += MPI_Wtime()-msg_time_s;
+        if (rank == 0){
+            printf("wait1: %.3lf\t", MPI_Wtime() - msg_time_s);
+        }
         calcu_time_s = MPI_Wtime();
         int cont = 0;
         for (int t = 0; t < subgrid[3]; t++) {
@@ -1444,6 +1447,9 @@ calcu_time_e += MPI_Wtime()-calcu_time_s;
         msg_time_s = MPI_Wtime();
         MPI_Wait(&reqr[8 * nodenum_x_b + 1], &star[8 * nodenum_x_b + 1]);
         msg_time_e += MPI_Wtime()-msg_time_s;
+        if (rank == 0){
+            printf("wait2: %.3lf\t", MPI_Wtime() - msg_time_s);
+        }
         calcu_time_s = MPI_Wtime();
         int cont = 0;
 
@@ -1488,6 +1494,9 @@ calcu_time_e += MPI_Wtime()-calcu_time_s;
         msg_time_s = MPI_Wtime();
         MPI_Wait(&reqr[8 * nodenum_y_f + 2], &star[8 * nodenum_y_f + 2]);
         msg_time_e += MPI_Wtime()-msg_time_s;
+        if (rank == 0){
+            printf("wait3: %.3lf\t", MPI_Wtime() - msg_time_s);
+        }
         calcu_time_s = MPI_Wtime();
         int cont = 0;
         for (int t = 0; t < subgrid[3]; t++) {
@@ -1542,6 +1551,9 @@ calcu_time_e += MPI_Wtime()-calcu_time_s;
         msg_time_s = MPI_Wtime();
         MPI_Wait(&reqr[8 * nodenum_y_b + 3], &star[8 * nodenum_y_b + 3]);
         msg_time_e += MPI_Wtime()-msg_time_s;
+        if (rank == 0){
+            printf("wait4: %.3lf\t", MPI_Wtime() - msg_time_s);
+        }
         calcu_time_s = MPI_Wtime();
         int cont = 0;
         for (int t = 0; t < subgrid[3]; t++) {
@@ -1584,6 +1596,9 @@ calcu_time_e += MPI_Wtime()-calcu_time_s;
         msg_time_s = MPI_Wtime();
         MPI_Wait(&reqr[8 * nodenum_z_f + 4], &star[8 * nodenum_z_f + 4]);
         msg_time_e += MPI_Wtime()-msg_time_s;
+        if (rank == 0){
+            printf("wait5: %.3lf\t", MPI_Wtime() - msg_time_s);
+        }
         calcu_time_s = MPI_Wtime();
         int cont = 0;
         for (int t = 0; t < subgrid[3]; t++) {
@@ -1639,6 +1654,9 @@ calcu_time_e += MPI_Wtime()-calcu_time_s;
         msg_time_s = MPI_Wtime();
         MPI_Wait(&reqr[8 * nodenum_z_b + 5], &star[8 * nodenum_z_b + 5]);
         msg_time_e += MPI_Wtime()-msg_time_s;
+        if (rank == 0){
+            printf("wait6: %.3lf\t", MPI_Wtime() - msg_time_s);
+        }
         calcu_time_s = MPI_Wtime();
         int cont = 0;
         for (int t = 0; t < subgrid[3]; t++) {
@@ -1678,6 +1696,9 @@ calcu_time_e += MPI_Wtime()-calcu_time_s;
         msg_time_s = MPI_Wtime();
         MPI_Wait(&reqr[8 * nodenum_t_f + 6], &star[8 * nodenum_t_f + 6]);
         msg_time_e += MPI_Wtime()-msg_time_s;
+        if (rank == 0){
+            printf("wait7: %.3lf\t", MPI_Wtime() - msg_time_s);
+        }
         calcu_time_s = MPI_Wtime();
         int cont = 0;
         for (int z = 0; z < subgrid[2]; z++) {
@@ -1732,6 +1753,9 @@ calcu_time_e += MPI_Wtime()-calcu_time_s;
         msg_time_s = MPI_Wtime();
         MPI_Wait(&reqr[8 * nodenum_t_b + 7], &star[8 * nodenum_t_b + 7]);
         msg_time_e += MPI_Wtime()-msg_time_s;
+        if (rank == 0){
+            printf("wait8: %.3lf\t", MPI_Wtime() - msg_time_s);
+        }
         calcu_time_s = MPI_Wtime();
         int cont = 0;
         for (int z = 0; z < subgrid[2]; z++) {

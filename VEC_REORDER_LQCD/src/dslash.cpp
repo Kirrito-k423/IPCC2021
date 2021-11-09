@@ -4,9 +4,9 @@
 **/
 
 #include <mpi.h>
-#include <immintrin.h>
 #include "dslash.h"
 #include "operator.h"
+#include <immintrin.h>
 using namespace std;
 
 void DslashEE(lattice_fermion &src, lattice_fermion &dest, const double mass)
@@ -17,8 +17,7 @@ void DslashEE(lattice_fermion &src, lattice_fermion &dest, const double mass)
     int subgrid_vol = (src.subgs[0] * src.subgs[1] * src.subgs[2] * src.subgs[3]);
     int subgrid_vol_cb = (subgrid_vol) >> 1;
 
-    for (int i = 0; i < subgrid_vol_cb * 3 * 4; i++)
-    {
+    for (int i = 0; i < subgrid_vol_cb * 3 * 4; i++) {
         dest.A[i] = (a + mass) * src.A[i];
     }
 }
@@ -31,11 +30,12 @@ void DslashOO(lattice_fermion &src, lattice_fermion &dest, const double mass)
     int subgrid_vol = (src.subgs[0] * src.subgs[1] * src.subgs[2] * src.subgs[3]);
     int subgrid_vol_cb = (subgrid_vol) >> 1;
 
-    for (int i = subgrid_vol_cb * 3 * 4; i < subgrid_vol * 3 * 4; i++)
-    {
+    for (int i = subgrid_vol_cb * 3 * 4; i < subgrid_vol * 3 * 4; i++) {
         dest.A[i] = (a + mass) * src.A[i];
     }
 }
+
+
 
 // cb = 0  EO  ;  cb = 1 OE
 void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, const bool dag,
@@ -114,8 +114,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     if(rank == 0){
         printf("GET NODE:%.3lfms\t", calcu_time_e*1000);
     }
-    dest.clean();
+    
     calcu_time_s = MPI_Wtime();
+    dest.clean();
     MPI_Request reqs[8 * size];
     MPI_Request reqr[8 * size];
     MPI_Status stas[8 * size];
@@ -548,15 +549,11 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     if(rank == 0){
         printf("PART1:%.3lfms\t", calcu_time_e*1000);
     }
-
-    //////////////////////////////////////////////////////// no comunication
-    /////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////// no comunication /////////////////////////////////////////////////////////
     calcu_time_s = MPI_Wtime();
-    
-
-    for (int y = 0; y < subgrid[1]; y++) {
+    for (int t = 0; t < subgrid[3]; t++) {
         for (int z = 0; z < subgrid[2]; z++) {
-            for (int t = 0; t < subgrid[3]; t++) {
+            for (int y = 0; y < subgrid[1]; y++) {
                 int x_u =
                     ((y + z + t + x_p) % 2 == cb || N_sub[0] == 1) ? subgrid[0] : subgrid[0] - 1;
 
@@ -606,9 +603,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         }
     }
 
-    for (int y = 0; y < subgrid[1]; y++) {
+    for (int t = 0; t < subgrid[3]; t++) {
         for (int z = 0; z < subgrid[2]; z++) {
-            for (int t = 0; t < subgrid[3]; t++) {
+            for (int y = 0; y < subgrid[1]; y++) {
                 int x_d = (((y + z + t + x_p) % 2) != cb || N_sub[0] == 1) ? 0 : 1;
 
                 for (int x = x_d; x < subgrid[0]; x++) {
@@ -659,11 +656,10 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         }
     }
 
-
-    int srcO_scale = 12;
-    int destE_scale = 12;
-    int AO_scale = 9;
-    int AE_scale = 9;
+    const int srcO_scale = 12;
+    const int destE_scale = 12;
+    const int AO_scale = 9;
+    const int AE_scale = 9;
 
     int y_u = (N_sub[1] == 1) ? subgrid[1] : subgrid[1] - 1;
     for (int t = 0; t < subgrid[3]; t++) {
@@ -1394,7 +1390,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
             }
         }
     }
-calcu_time_e += MPI_Wtime()-calcu_time_s;
+    calcu_time_e += MPI_Wtime()-calcu_time_s;
     //    printf(" rank =%i  ghost  \n ", rank);
     if(rank == 0){
         printf("PART2:%.3lfms\t", calcu_time_e*1000);
