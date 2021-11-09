@@ -1,0 +1,73 @@
+  Mass  0.005
+  gauge file  ../data/ipcc_gauge_48_96
+  lattice size  48 48 48 96
+  subgrid size  12 24 24 12
+CG: 1 iter, rsd |r| = 24156.7
+CG: 2 iter, rsd |r| = 6405.62
+CG: 3 iter, rsd |r| = 2931.35
+CG: 4 iter, rsd |r| = 1131.79
+CG: 5 iter, rsd |r| = 568.401
+CG: 6 iter, rsd |r| = 317.04
+CG: 7 iter, rsd |r| = 184.641
+CG: 8 iter, rsd |r| = 110.68
+CG: 9 iter, rsd |r| = 59.8181
+CG: 10 iter, rsd |r| = 36.5518
+CG: 11 iter, rsd |r| = 20.7449
+CG: 12 iter, rsd |r| = 13.0305
+CG: 13 iter, rsd |r| = 7.12415
+CG: 14 iter, rsd |r| = 4.38485
+CG: 15 iter, rsd |r| = 2.49713
+CG: 16 iter, rsd |r| = 1.54787
+CG: 17 iter, rsd |r| = 0.871381
+CG: 18 iter, rsd |r| = 0.522206
+CG: 19 iter, rsd |r| = 0.305478
+CG: 20 iter, rsd |r| = 0.183062
+CG: 21 iter, rsd |r| = 0.107665
+CG: 22 iter, rsd |r| = 0.0624779
+CG: 23 iter, rsd |r| = 0.037663
+CG: 24 iter, rsd |r| = 0.0218712
+CG: 25 iter, rsd |r| = 0.0132438
+CG: 26 iter, rsd |r| = 0.00753318
+CG: 27 iter, rsd |r| = 0.0045936
+CG: 28 iter, rsd |r| = 0.00264019
+CG: 29 iter, rsd |r| = 0.0016048
+CG: 30 iter, rsd |r| = 0.000917652
+CG: 31 iter, rsd |r| = 0.000554198
+CG: 32 iter, rsd |r| = 0.000323539
+CG: 33 iter, rsd |r| = 0.000193755
+CG: 34 iter, rsd |r| = 0.000113585
+CG: 35 iter, rsd |r| = 6.69961e-05
+CG: 36 iter, rsd |r| = 3.99018e-05
+CG: 37 iter, rsd |r| = 2.33153e-05
+CG: 38 iter, rsd |r| = 1.39561e-05
+CG: 39 iter, rsd |r| = 8.06855e-06
+CG: 40 iter, rsd |r| = 4.8741e-06
+CG: 41 iter, rsd |r| = 2.81716e-06
+CG: 42 iter, rsd |r| = 1.69874e-06
+CG: 43 iter, rsd |r| = 9.79585e-07
+CG: 44 iter, rsd |r| = 5.89977e-07
+CG: 45 iter, rsd |r| = 3.43048e-07
+CG: 46 iter, rsd |r| = 2.05064e-07
+CG: 47 iter, rsd |r| = 1.19835e-07
+CG: 48 iter, rsd |r| = 7.11065e-08
+CG: 49 iter, rsd |r| = 4.19853e-08
+CG: 50 iter, rsd |r| = 2.46783e-08
+CG: 51 iter, rsd |r| = 1.46655e-08
+CG: 52 iter, rsd |r| = 8.55627e-09
+CG: 53 iter, rsd |r| = 5.12305e-09
+CG: 54 iter, rsd |r| = 2.97638e-09
+CG: 55 iter, rsd |r| = 1.78596e-09
+CG: 56 iter, rsd |r| = 1.03489e-09
+CG: 57 iterations, convergence residual |r| = 6.20809e-10
+Source and Gauge, time: 4.81965
+CG invert, time: 47.5895
+Total time: 52.4092
+Result checking ...
+ [ Accuracy = 1e-09 ]
+===================================
+|b| = 9216.07    |x| = 2666.62
+(Mb, Mb) = (1.70163e+09,1.78533e-12)    (b, MMb) = (1.70163e+09,-2.41744e-09)
+(Mx, Mx) = (8.4936e+07,-2.12155e-14)    (x, MMx) = (8.4936e+07,6.11635e-11)
+|M x -b| = 2.10913e-10
+|M^dagger M x - Mdb| = 1.04291e-09
+===================================

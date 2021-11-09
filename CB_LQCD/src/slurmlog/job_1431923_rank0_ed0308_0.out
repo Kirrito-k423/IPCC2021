@@ -1,0 +1,5 @@
+rm -rf liblattice.so dslash.o lattice_fermion.o lattice_gauge.o invert.o  check.o load_gauge.o main
+mpiicpc -fPIC -I../include -march=core-avx2  -std=c++11 -o dslash.o -c dslash.cpp
+mpiicpc -fPIC -I../include -march=core-avx2  -std=c++11 -o lattice_fermion.o -c lattice_fermion.cpp
+slurmstepd: error: *** JOB 1431923 ON ed0308 CANCELLED AT 2021-11-09T16:21:00 ***
+make: *** [lattice_fermion.o] Terminated

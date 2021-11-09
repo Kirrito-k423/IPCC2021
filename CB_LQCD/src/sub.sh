@@ -14,10 +14,10 @@ module purge
 CC=mpiicc
 CXX=mpiicpc
 CXX_FLAGS=""
-raw_flags="-fast -fPIC -I../include -march=core-avx2  -std=c++11"
+raw_flags="-fPIC -I../include -march=core-avx2  -std=c++11"
 
 MPIOPT=
-computetimes='-static'
+computetimes='cb'
 taskname=so_${CC}_${CXX}_${CXX_FLAGS}_${computetimes}
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK

@@ -1,7 +1,7 @@
-CC       = mpiicc
-CXX      = mpiicpc
+CC       = mpicc
+CXX      = mpicxx
 
-CXX_FLAGS = -fPIC -I../include  -std=c++11 -march=core-avx2
+CXX_FLAGS = -fPIC -I../include  -std=c++11
 #CXX_FLAGS = -fPIC -I../include -DVERBOSE_SIMPLE 
 #CXX_FLAGS = -fPIC -I../include -DDEBUG -DLIME -NO_MPI_IO -g
 LINK_FLAGS = -lmpi
@@ -20,7 +20,7 @@ ${SLIB}: ${OBJS}
 	${CXX} --shared $^ -o $@ 
 
 ${TARGET}: main.cpp ${SLIB}
-	${CXX} ${CXX_FLAGS} -Wl,-rpath=./ ${LINK_FLAGS} -o $@  $< 
+	${CXX} ${CXX_FLAGS} -Wl,-rpath=./ ${LINK_FLAGS} -o $@  $< -L./ -llattice
 
 fmt:
 	@#cd .. && git ls-files -- '*.cpp' '*.h' | xargs clang-format -i -style=file

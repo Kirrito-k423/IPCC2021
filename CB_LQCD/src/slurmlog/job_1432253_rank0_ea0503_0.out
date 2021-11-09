@@ -6,4 +6,4 @@ mpiicpc -fPIC -I../include -march=core-avx2  -std=c++11 -o invert.o -c invert.cp
 mpiicpc -fPIC -I../include -march=core-avx2  -std=c++11 -o check.o -c check.cpp
 mpiicpc -fPIC -I../include -march=core-avx2  -std=c++11 -o load_gauge.o -c load_gauge.cpp
 mpiicpc --shared dslash.o lattice_fermion.o lattice_gauge.o invert.o check.o load_gauge.o -o liblattice.so 
-mpiicpc -fPIC -I../include -march=core-avx2  -std=c++11 -Wl,-rpath=./ -lmpi -o so_mpiicc_mpiicpc__cb_1  main.cpp -L./ -llattice
+mpiicpc -fPIC -I../include -march=core-avx2  -std=c++11 -Wl,-rpath=./ -lmpi -o so_mpiicc_mpiicpc__cb  main.cpp -L./ -llattice
