@@ -1347,10 +1347,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     for (int t = t_d; t < subgrid[3]; t++) {
         int b_t = (t - 1 + subgrid[3]) % subgrid[3];
         for (int z = 0; z < subgrid[2]; z++) {
-            for (int x = 0; x < subgrid[0]; x++) {
-                for (int y = 0; y < subgrid[1]; y++) {
-            
-                
+            for (int y = 0; y < subgrid[1]; y++) {
+                for (int x = 0; x < subgrid[0]; x++) {
 
                     complex<double> *destE;
                     complex<double> *AO;
