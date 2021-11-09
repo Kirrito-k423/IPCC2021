@@ -99,7 +99,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     const int nodenum_t_f = get_nodenum(site_t_f, N_sub, 4);
 
 
-    double flag = (dag == true) ? -1 : 1;
+    const double flag = (dag == true) ? -1 : 1;
 
     int subgrid[4] = {src.subgs[0], src.subgs[1], src.subgs[2], src.subgs[3]};
     int subgrid_vol = (subgrid[0] * subgrid[1] * subgrid[2] * subgrid[3]);
@@ -583,16 +583,14 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
-                            {
-                                tmp = -(srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]) * half *
-                                      AE[c1 * 3 + c2];
-                                destE[0 * 3 + c1] += tmp;
-                                destE[3 * 3 + c1] += flag * (I * tmp);
-                                tmp = -(srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * half *
-                                      AE[c1 * 3 + c2];
-                                destE[1 * 3 + c1] += tmp;
-                                destE[2 * 3 + c1] += flag * (I * tmp);
-                            }
+                            tmp = -(srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]) * half *
+                                    AE[c1 * 3 + c2];
+                            destE[0 * 3 + c1] += tmp;
+                            destE[3 * 3 + c1] += flag * (I * tmp);
+                            tmp = -(srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * half *
+                                    AE[c1 * 3 + c2];
+                            destE[1 * 3 + c1] += tmp;
+                            destE[2 * 3 + c1] += flag * (I * tmp);
                         }
                     }
                 }
@@ -658,7 +656,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     const int AO_scale = 9;
     const int AE_scale = 9;
     const int gather_scale = 8;
-    double bufAReal[9][4], bufAImag[9][4], bufsrcReal[12][4], bufsrcImag[12][4], bufdestReal[12][4], bufdestImag[12][4];
+    const __m256d vNHalf = _mm256_set1_pd(-0.5), vZero = _mm256_set1_pd(0.0);
+    alignas(32) double bufAReal[9][4], bufAImag[9][4], bufsrcReal[12][4], bufsrcImag[12][4], bufdestReal[12][4], bufdestImag[12][4];
 
     int y_u = (N_sub[1] == 1) ? subgrid[1] : subgrid[1] - 1;
     for (int t = 0; t < subgrid[3]; t++) {
@@ -683,7 +682,6 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     complex<double> * const destE = destE_base + x * destE_scale;
                     complex<double> * const AE = AE_base + x * AE_scale;
                     __m256d vtmpReal, vtmpImag, vtmp2Real, vtmp2Imag, vAEReal, vAEImag;
-                    const __m256d vNHalf = _mm256_set1_pd(-0.5), vZero = _mm256_set1_pd(0.0);
 
                     for (int i = 0; i < 9; i++) {
                         for (int s = 0; s < 4; s++) {
@@ -705,17 +703,17 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     }
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
-                            vAEReal = _mm256_loadu_pd(bufAReal[c1 * 3 + c2]);
-                            vAEImag = _mm256_loadu_pd(bufAImag[c1 * 3 + c2]);
+                            vAEReal = _mm256_load_pd(bufAReal[c1 * 3 + c2]);
+                            vAEImag = _mm256_load_pd(bufAImag[c1 * 3 + c2]);
                             vAEReal = _mm256_mul_pd(vAEReal, vNHalf); // multiply AE by -0.5: saves some instructions later
                             vAEImag = _mm256_mul_pd(vAEImag, vNHalf);
                             // vAE = -half * AE[c1 * 3 + c2]
                             // don't touch vAE from now on
 
-                            vtmpReal = _mm256_loadu_pd(bufsrcReal[0 * 3 + c2]);
-                            vtmpImag = _mm256_loadu_pd(bufsrcImag[0 * 3 + c2]);
-                            vtmp2Real = _mm256_loadu_pd(bufsrcReal[3 * 3 + c2]);
-                            vtmp2Imag = _mm256_loadu_pd(bufsrcImag[3 * 3 + c2]);
+                            vtmpReal = _mm256_load_pd(bufsrcReal[0 * 3 + c2]);
+                            vtmpImag = _mm256_load_pd(bufsrcImag[0 * 3 + c2]);
+                            vtmp2Real = _mm256_load_pd(bufsrcReal[3 * 3 + c2]);
+                            vtmp2Imag = _mm256_load_pd(bufsrcImag[3 * 3 + c2]);
 
                             // dag --> flag = -1
                             if (dag) {
@@ -733,16 +731,16 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             // result now in vtmp = (srcO[0 * 3 + c2] + flag * srcO[3 * 3 + c2]) * (-half * AE[c1 * 3 + c2])
 
                             // reuse vtmp2 for destE
-                            vtmp2Real = _mm256_loadu_pd(bufdestReal[0 * 3 + c1]);
-                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[0 * 3 + c1]);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[0 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[0 * 3 + c1]);
                             vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                             vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
-                            _mm256_storeu_pd(bufdestReal[0 * 3 + c1], vtmp2Real);
-                            _mm256_storeu_pd(bufdestImag[0 * 3 + c1], vtmp2Imag);
+                            _mm256_store_pd(bufdestReal[0 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[0 * 3 + c1], vtmp2Imag);
                             // destE[0 * 3 + c1] += tmp;
 
-                            vtmp2Real = _mm256_loadu_pd(bufdestReal[3 * 3 + c1]);
-                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[3 * 3 + c1]);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[3 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[3 * 3 + c1]);
                             if (dag) {
                                 vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpReal);
                                 vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpImag);
@@ -750,15 +748,15 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                 vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                                 vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
                             }
-                            _mm256_storeu_pd(bufdestReal[3 * 3 + c1], vtmp2Real);
-                            _mm256_storeu_pd(bufdestImag[3 * 3 + c1], vtmp2Imag);
+                            _mm256_store_pd(bufdestReal[3 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[3 * 3 + c1], vtmp2Imag);
                             // destE[3 * 3 + c1] += flag * (tmp);
 
 
-                            vtmpReal = _mm256_loadu_pd(bufsrcReal[1 * 3 + c2]);
-                            vtmpImag = _mm256_loadu_pd(bufsrcImag[1 * 3 + c2]);
-                            vtmp2Real = _mm256_loadu_pd(bufsrcReal[2 * 3 + c2]);
-                            vtmp2Imag = _mm256_loadu_pd(bufsrcImag[2 * 3 + c2]);
+                            vtmpReal = _mm256_load_pd(bufsrcReal[1 * 3 + c2]);
+                            vtmpImag = _mm256_load_pd(bufsrcImag[1 * 3 + c2]);
+                            vtmp2Real = _mm256_load_pd(bufsrcReal[2 * 3 + c2]);
+                            vtmp2Imag = _mm256_load_pd(bufsrcImag[2 * 3 + c2]);
 
                             if (dag) {
                                 vtmp2Real = _mm256_add_pd(vtmpReal, vtmp2Real);
@@ -775,14 +773,14 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             // result now in vtmp = (srcO[1 * 3 + c2] - flag * srcO[2 * 3 + c2]) * (-half * AE[c1 * 3 + c2])
 
                             // reuse vtmp2 for destE
-                            vtmp2Real = _mm256_loadu_pd(bufdestReal[1 * 3 + c1]);
-                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[1 * 3 + c1]);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[1 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[1 * 3 + c1]);
                             vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                             vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
-                            _mm256_storeu_pd(bufdestReal[1 * 3 + c1], vtmp2Real);
-                            _mm256_storeu_pd(bufdestImag[1 * 3 + c1], vtmp2Imag);
-                            vtmp2Real = _mm256_loadu_pd(bufdestReal[2 * 3 + c1]);
-                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[2 * 3 + c1]);
+                            _mm256_store_pd(bufdestReal[1 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[1 * 3 + c1], vtmp2Imag);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[2 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[2 * 3 + c1]);
                             if (dag) {
                                 vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                                 vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
@@ -790,8 +788,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                 vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpReal);
                                 vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpImag);
                             }
-                            _mm256_storeu_pd(bufdestReal[2 * 3 + c1], vtmp2Real);
-                            _mm256_storeu_pd(bufdestImag[2 * 3 + c1], vtmp2Imag);
+                            _mm256_store_pd(bufdestReal[2 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[2 * 3 + c1], vtmp2Imag);
                         }
                     }
                     for (int i = 0; i < 12; i++) {
@@ -852,7 +850,6 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
             for (int y = y_d; y < subgrid[1]; y++) {
                 int b_y = (y - 1 + subgrid[1]) % subgrid[1];
 
-
                 complex<double> * const srcO_base = src.A +
                     (subgrid[0] * subgrid[1] * z + subgrid[0] * b_y + subgrid[0] * subgrid[1] * subgrid[2] * t + (1 - cb) * subgrid_vol_cb) * 12;
                 complex<double> * const destE_base = dest.A +
@@ -863,7 +860,6 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                 const __m128i srcO_vindex = _mm_set_epi32(6 * srcO_scale, 4 * srcO_scale, 2 * srcO_scale, 0 * srcO_scale);
                 const __m128i destE_vindex = srcO_vindex;
                 const __m128i AO_vindex = _mm_set_epi32(6 * AO_scale, 4 * AO_scale, 2 * AO_scale, 0 * AO_scale);
-                const __m256d vNHalf = _mm256_set1_pd(-0.5), vZero = _mm256_set1_pd(0.0);
 
                 for (int x = 0; x < subgrid[0]; x += 4) {
                     complex<double> * const srcO = srcO_base + x * srcO_scale;
@@ -908,17 +904,17 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     }
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
-                            vAOReal = _mm256_loadu_pd(bufAReal[c2 * 3 + c1]);
-                            vAOImag = _mm256_loadu_pd(bufAImag[c2 * 3 + c1]);
+                            vAOReal = _mm256_load_pd(bufAReal[c2 * 3 + c1]);
+                            vAOImag = _mm256_load_pd(bufAImag[c2 * 3 + c1]);
                             vAOReal = _mm256_mul_pd(vAOReal, vNHalf);
                             vAOImag = _mm256_sub_pd(vZero, _mm256_mul_pd(vAOImag, vNHalf)); // conj(AO)
                             // vAO = conj(-half * AO[c2 * 3 + c1])
                             // don't touch vAO from now on
 
-                            vtmpReal = _mm256_loadu_pd(bufsrcReal[0 * 3 + c2]);
-                            vtmpImag = _mm256_loadu_pd(bufsrcImag[0 * 3 + c2]);
-                            vtmp2Real = _mm256_loadu_pd(bufsrcReal[3 * 3 + c2]);
-                            vtmp2Imag = _mm256_loadu_pd(bufsrcImag[3 * 3 + c2]);
+                            vtmpReal = _mm256_load_pd(bufsrcReal[0 * 3 + c2]);
+                            vtmpImag = _mm256_load_pd(bufsrcImag[0 * 3 + c2]);
+                            vtmp2Real = _mm256_load_pd(bufsrcReal[3 * 3 + c2]);
+                            vtmp2Imag = _mm256_load_pd(bufsrcImag[3 * 3 + c2]);
 
                             if (dag) {
                                 vtmp2Real = _mm256_add_pd(vtmpReal, vtmp2Real);
@@ -935,16 +931,16 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             // result now in vtmp = (srcO[0 * 3 + c2] - flag * srcO[3 * 3 + c2]) * conj(-half * AO[c2 * 3 + c1])
 
                             // reuse vtmp2 for destE
-                            vtmp2Real = _mm256_loadu_pd(bufdestReal[0 * 3 + c1]);
-                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[0 * 3 + c1]);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[0 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[0 * 3 + c1]);
                             vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                             vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
-                            _mm256_storeu_pd(bufdestReal[0 * 3 + c1], vtmp2Real);
-                            _mm256_storeu_pd(bufdestImag[0 * 3 + c1], vtmp2Imag);
+                            _mm256_store_pd(bufdestReal[0 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[0 * 3 + c1], vtmp2Imag);
                             // destE[0 * 3 + c1] += tmp;
 
-                            vtmp2Real = _mm256_loadu_pd(bufdestReal[3 * 3 + c1]);
-                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[3 * 3 + c1]);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[3 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[3 * 3 + c1]);
                             if (dag) {
                                 vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                                 vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
@@ -952,15 +948,15 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                 vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpReal);
                                 vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpImag);
                             }
-                            _mm256_storeu_pd(bufdestReal[3 * 3 + c1], vtmp2Real);
-                            _mm256_storeu_pd(bufdestImag[3 * 3 + c1], vtmp2Imag);
+                            _mm256_store_pd(bufdestReal[3 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[3 * 3 + c1], vtmp2Imag);
                             // destE[3 * 3 + c1] -= flag * (tmp);
 
 
-                            vtmpReal = _mm256_loadu_pd(bufsrcReal[1 * 3 + c2]);
-                            vtmpImag = _mm256_loadu_pd(bufsrcImag[1 * 3 + c2]);
-                            vtmp2Real = _mm256_loadu_pd(bufsrcReal[2 * 3 + c2]);
-                            vtmp2Imag = _mm256_loadu_pd(bufsrcImag[2 * 3 + c2]);
+                            vtmpReal = _mm256_load_pd(bufsrcReal[1 * 3 + c2]);
+                            vtmpImag = _mm256_load_pd(bufsrcImag[1 * 3 + c2]);
+                            vtmp2Real = _mm256_load_pd(bufsrcReal[2 * 3 + c2]);
+                            vtmp2Imag = _mm256_load_pd(bufsrcImag[2 * 3 + c2]);
 
                             if (dag) {
                                 vtmp2Real = _mm256_sub_pd(vtmpReal, vtmp2Real);
@@ -975,16 +971,16 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAOImag, _mm256_mul_pd(vtmp2Imag, vAOReal));
 
                             // reuse vtmp2 for destE
-                            vtmp2Real = _mm256_loadu_pd(bufdestReal[1 * 3 + c1]);
-                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[1 * 3 + c1]);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[1 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[1 * 3 + c1]);
                             vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                             vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
-                            _mm256_storeu_pd(bufdestReal[1 * 3 + c1], vtmp2Real);
-                            _mm256_storeu_pd(bufdestImag[1 * 3 + c1], vtmp2Imag);
+                            _mm256_store_pd(bufdestReal[1 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[1 * 3 + c1], vtmp2Imag);
                             // destE[1 * 3 + c1] += tmp;
 
-                            vtmp2Real = _mm256_loadu_pd(bufdestReal[2 * 3 + c1]);
-                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[2 * 3 + c1]);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[2 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[2 * 3 + c1]);
                             if (dag) {
                                 vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpReal);
                                 vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpImag);
@@ -992,8 +988,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                 vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                                 vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
                             }
-                            _mm256_storeu_pd(bufdestReal[2 * 3 + c1], vtmp2Real);
-                            _mm256_storeu_pd(bufdestImag[2 * 3 + c1], vtmp2Imag);
+                            _mm256_store_pd(bufdestReal[2 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[2 * 3 + c1], vtmp2Imag);
                             // destE[2 * 3 + c1] += flag * (tmp);
                         }
                     }
@@ -1047,7 +1043,6 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     complex<double> * const destE = destE_base + x * destE_scale;
                     complex<double> * const AE = AE_base + x * AE_scale;
                     __m256d vtmpReal, vtmpImag, vtmp2Real, vtmp2Imag, vAEReal, vAEImag;
-                    const __m256d vNHalf = _mm256_set1_pd(-0.5), vZero = _mm256_set1_pd(0.0);
 
                     for (int i = 0; i < 9; i++) {
                         for (int s = 0; s < 4; s++) {
@@ -1069,17 +1064,17 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     }
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
-                            vAEReal = _mm256_loadu_pd(bufAReal[c1 * 3 + c2]);
-                            vAEImag = _mm256_loadu_pd(bufAImag[c1 * 3 + c2]);
+                            vAEReal = _mm256_load_pd(bufAReal[c1 * 3 + c2]);
+                            vAEImag = _mm256_load_pd(bufAImag[c1 * 3 + c2]);
                             vAEReal = _mm256_mul_pd(vAEReal, vNHalf); // multiply AE by -0.5: saves some instructions later
                             vAEImag = _mm256_mul_pd(vAEImag, vNHalf);
                             // vAE = -half * AE[c1 * 3 + c2]
                             // don't touch vAE from now on
 
-                            vtmpReal = _mm256_loadu_pd(bufsrcReal[0 * 3 + c2]);
-                            vtmpImag = _mm256_loadu_pd(bufsrcImag[0 * 3 + c2]);
-                            vtmp2Real = _mm256_loadu_pd(bufsrcReal[2 * 3 + c2]);
-                            vtmp2Imag = _mm256_loadu_pd(bufsrcImag[2 * 3 + c2]);
+                            vtmpReal = _mm256_load_pd(bufsrcReal[0 * 3 + c2]);
+                            vtmpImag = _mm256_load_pd(bufsrcImag[0 * 3 + c2]);
+                            vtmp2Real = _mm256_load_pd(bufsrcReal[2 * 3 + c2]);
+                            vtmp2Imag = _mm256_load_pd(bufsrcImag[2 * 3 + c2]);
 
                             // dag --> flag = -1
                             if (dag) {
@@ -1098,16 +1093,16 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             // result now in vtmp = (srcO[0 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * (-half * AE[c1 * 3 + c2])
 
                             // reuse vtmp2 for destE
-                            vtmp2Real = _mm256_loadu_pd(bufdestReal[0 * 3 + c1]);
-                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[0 * 3 + c1]);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[0 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[0 * 3 + c1]);
                             vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                             vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
-                            _mm256_storeu_pd(bufdestReal[0 * 3 + c1], vtmp2Real);
-                            _mm256_storeu_pd(bufdestImag[0 * 3 + c1], vtmp2Imag);
+                            _mm256_store_pd(bufdestReal[0 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[0 * 3 + c1], vtmp2Imag);
                             // destE[0 * 3 + c1] += tmp;
 
-                            vtmp2Real = _mm256_loadu_pd(bufdestReal[2 * 3 + c1]);
-                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[2 * 3 + c1]);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[2 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[2 * 3 + c1]);
                             if (dag) {
                                 vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpImag);
                                 vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpReal);
@@ -1115,15 +1110,15 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                 vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpImag);
                                 vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpReal);
                             }
-                            _mm256_storeu_pd(bufdestReal[2 * 3 + c1], vtmp2Real);
-                            _mm256_storeu_pd(bufdestImag[2 * 3 + c1], vtmp2Imag);
+                            _mm256_store_pd(bufdestReal[2 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[2 * 3 + c1], vtmp2Imag);
                             // destE[2 * 3 + c1] += flag * (I * tmp);
 
 
-                            vtmpReal = _mm256_loadu_pd(bufsrcReal[1 * 3 + c2]);
-                            vtmpImag = _mm256_loadu_pd(bufsrcImag[1 * 3 + c2]);
-                            vtmp2Real = _mm256_loadu_pd(bufsrcReal[3 * 3 + c2]);
-                            vtmp2Imag = _mm256_loadu_pd(bufsrcImag[3 * 3 + c2]);
+                            vtmpReal = _mm256_load_pd(bufsrcReal[1 * 3 + c2]);
+                            vtmpImag = _mm256_load_pd(bufsrcImag[1 * 3 + c2]);
+                            vtmp2Real = _mm256_load_pd(bufsrcReal[3 * 3 + c2]);
+                            vtmp2Imag = _mm256_load_pd(bufsrcImag[3 * 3 + c2]);
 
                             if (dag) {
                                 vtmpReal = _mm256_add_pd(vtmpReal, vtmp2Imag);
@@ -1141,14 +1136,14 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             // result now in vtmp = (srcO[1 * 3 + c2] - flag * srcO[2 * 3 + c2]) * (-half * AE[c1 * 3 + c2])
 
                             // reuse vtmp2 for destE
-                            vtmp2Real = _mm256_loadu_pd(bufdestReal[1 * 3 + c1]);
-                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[1 * 3 + c1]);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[1 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[1 * 3 + c1]);
                             vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                             vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
-                            _mm256_storeu_pd(bufdestReal[1 * 3 + c1], vtmp2Real);
-                            _mm256_storeu_pd(bufdestImag[1 * 3 + c1], vtmp2Imag);
-                            vtmp2Real = _mm256_loadu_pd(bufdestReal[3 * 3 + c1]);
-                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[3 * 3 + c1]);
+                            _mm256_store_pd(bufdestReal[1 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[1 * 3 + c1], vtmp2Imag);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[3 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[3 * 3 + c1]);
                             if (dag) {
                                 vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpImag);
                                 vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpReal);
@@ -1156,8 +1151,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                 vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpImag);
                                 vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpReal);
                             }
-                            _mm256_storeu_pd(bufdestReal[3 * 3 + c1], vtmp2Real);
-                            _mm256_storeu_pd(bufdestImag[3 * 3 + c1], vtmp2Imag);
+                            _mm256_store_pd(bufdestReal[3 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[3 * 3 + c1], vtmp2Imag);
                         }
                     }
                     for (int i = 0; i < 12; i++) {
@@ -1208,7 +1203,6 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     complex<double> * const destE = destE_base + x * destE_scale;
                     complex<double> * const AO = AO_base + x * AO_scale;
                     __m256d vtmpReal, vtmpImag, vtmp2Real, vtmp2Imag, vAOReal, vAOImag;
-                    const __m256d vNHalf = _mm256_set1_pd(-0.5), vZero = _mm256_set1_pd(0.0);
 
                     for (int i = 0; i < 9; i++) {
                         for (int s = 0; s < 4; s++) {
@@ -1230,17 +1224,17 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     }
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
-                            vAOReal = _mm256_loadu_pd(bufAReal[c2 * 3 + c1]);
-                            vAOImag = _mm256_loadu_pd(bufAImag[c2 * 3 + c1]);
+                            vAOReal = _mm256_load_pd(bufAReal[c2 * 3 + c1]);
+                            vAOImag = _mm256_load_pd(bufAImag[c2 * 3 + c1]);
                             vAOReal = _mm256_mul_pd(vAOReal, vNHalf);
                             vAOImag = _mm256_sub_pd(vZero, _mm256_mul_pd(vAOImag, vNHalf));
-                            // vAO = conj(-half * AO[c1 * 3 + c2])
+                            // vAO = conj(-half * AO[c2 * 3 + c1])
                             // don't touch vAO from now on
 
-                            vtmpReal = _mm256_loadu_pd(bufsrcReal[0 * 3 + c2]);
-                            vtmpImag = _mm256_loadu_pd(bufsrcImag[0 * 3 + c2]);
-                            vtmp2Real = _mm256_loadu_pd(bufsrcReal[2 * 3 + c2]);
-                            vtmp2Imag = _mm256_loadu_pd(bufsrcImag[2 * 3 + c2]);
+                            vtmpReal = _mm256_load_pd(bufsrcReal[0 * 3 + c2]);
+                            vtmpImag = _mm256_load_pd(bufsrcImag[0 * 3 + c2]);
+                            vtmp2Real = _mm256_load_pd(bufsrcReal[2 * 3 + c2]);
+                            vtmp2Imag = _mm256_load_pd(bufsrcImag[2 * 3 + c2]);
 
                             // dag --> flag = -1
                             if (dag) {
@@ -1256,19 +1250,19 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
                             vtmpReal = _mm256_fmsub_pd(vtmp2Real, vAOReal, _mm256_mul_pd(vtmp2Imag, vAOImag));
                             vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAOImag, _mm256_mul_pd(vtmp2Imag, vAOReal));
-                            // result now in vtmp = (srcO[0 * 3 + c2] + flag * I * srcO[2 * 3 + c2]) * conj(-half * AO[c1 * 3 + c2])
+                            // result now in vtmp = (srcO[0 * 3 + c2] + flag * I * srcO[2 * 3 + c2]) * conj(-half * AO[c2 * 3 + c1])
 
                             // reuse vtmp2 for destE
-                            vtmp2Real = _mm256_loadu_pd(bufdestReal[0 * 3 + c1]);
-                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[0 * 3 + c1]);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[0 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[0 * 3 + c1]);
                             vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                             vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
-                            _mm256_storeu_pd(bufdestReal[0 * 3 + c1], vtmp2Real);
-                            _mm256_storeu_pd(bufdestImag[0 * 3 + c1], vtmp2Imag);
+                            _mm256_store_pd(bufdestReal[0 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[0 * 3 + c1], vtmp2Imag);
                             // destE[0 * 3 + c1] += tmp;
 
-                            vtmp2Real = _mm256_loadu_pd(bufdestReal[2 * 3 + c1]);
-                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[2 * 3 + c1]);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[2 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[2 * 3 + c1]);
                             if (dag) {
                                 vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpImag);
                                 vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpReal);
@@ -1276,15 +1270,15 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                 vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpImag);
                                 vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpReal);
                             }
-                            _mm256_storeu_pd(bufdestReal[2 * 3 + c1], vtmp2Real);
-                            _mm256_storeu_pd(bufdestImag[2 * 3 + c1], vtmp2Imag);
+                            _mm256_store_pd(bufdestReal[2 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[2 * 3 + c1], vtmp2Imag);
                             // destE[2 * 3 + c1] += flag * (-I * tmp);
 
 
-                            vtmpReal = _mm256_loadu_pd(bufsrcReal[1 * 3 + c2]);
-                            vtmpImag = _mm256_loadu_pd(bufsrcImag[1 * 3 + c2]);
-                            vtmp2Real = _mm256_loadu_pd(bufsrcReal[3 * 3 + c2]);
-                            vtmp2Imag = _mm256_loadu_pd(bufsrcImag[3 * 3 + c2]);
+                            vtmpReal = _mm256_load_pd(bufsrcReal[1 * 3 + c2]);
+                            vtmpImag = _mm256_load_pd(bufsrcImag[1 * 3 + c2]);
+                            vtmp2Real = _mm256_load_pd(bufsrcReal[3 * 3 + c2]);
+                            vtmp2Imag = _mm256_load_pd(bufsrcImag[3 * 3 + c2]);
 
                             if (dag) {
                                 vtmpReal = _mm256_sub_pd(vtmpReal, vtmp2Imag);
@@ -1302,14 +1296,14 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             // result now in vtmp = (srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * (-half * AO[c1 * 3 + c2])
 
                             // reuse vtmp2 for destE
-                            vtmp2Real = _mm256_loadu_pd(bufdestReal[1 * 3 + c1]);
-                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[1 * 3 + c1]);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[1 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[1 * 3 + c1]);
                             vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                             vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
-                            _mm256_storeu_pd(bufdestReal[1 * 3 + c1], vtmp2Real);
-                            _mm256_storeu_pd(bufdestImag[1 * 3 + c1], vtmp2Imag);
-                            vtmp2Real = _mm256_loadu_pd(bufdestReal[3 * 3 + c1]);
-                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[3 * 3 + c1]);
+                            _mm256_store_pd(bufdestReal[1 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[1 * 3 + c1], vtmp2Imag);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[3 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[3 * 3 + c1]);
                             if (dag) {
                                 vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpImag);
                                 vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpReal);
@@ -1317,8 +1311,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                 vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpImag);
                                 vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpReal);
                             }
-                            _mm256_storeu_pd(bufdestReal[3 * 3 + c1], vtmp2Real);
-                            _mm256_storeu_pd(bufdestImag[3 * 3 + c1], vtmp2Imag);
+                            _mm256_store_pd(bufdestReal[3 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[3 * 3 + c1], vtmp2Imag);
                         }
                     }
                     for (int i = 0; i < 12; i++) {
@@ -1342,30 +1336,39 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         int f_t = (t + 1) % subgrid[3];
         for (int z = 0; z < subgrid[2]; z++) {
             for (int y = 0; y < subgrid[1]; y++) {
-                for (int x = 0; x < subgrid[0]; x++) {
+                complex<double> *srcO_base = src.A +
+                    (subgrid[0] * subgrid[1] * subgrid[2] * f_t + subgrid[0] * subgrid[1] * z + subgrid[0] * y + (1 - cb) * subgrid_vol_cb) * 12;
+                complex<double> *destE_base = dest.A +
+                    (subgrid[0] * subgrid[1] * subgrid[2] * t + subgrid[0] * subgrid[1] * z + subgrid[0] * y + cb * subgrid_vol_cb) * 12;
+                complex<double> *AE_base = U.A[3] +
+                        (subgrid[0] * subgrid[1] * subgrid[2] * t + subgrid[0] * subgrid[1] * z + subgrid[0] * y + cb * subgrid_vol_cb) * 9;
 
+                for (int x = 0; x < subgrid[0]; x += 4) {
+                    complex<double> * const srcO = srcO_base + x * srcO_scale;
+                    complex<double> * const destE = destE_base + x * destE_scale;
+                    complex<double> * const AE = AE_base + x * AE_scale;
+                    __m256d vtmpReal, vtmpImag, vtmp2Real, vtmp2Imag, vAEReal, vAEImag;
 
-                    complex<double> tmp;
-                    complex<double> *destE;
-                    complex<double> *AE;
+                    for (int i = 0; i < 9; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufAReal[i][s] = AE[i + s * AE_scale].real();
+                            bufAImag[i][s] = AE[i + s * AE_scale].imag();
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufsrcReal[i][s] = srcO[i + s * srcO_scale].real();
+                            bufsrcImag[i][s] = srcO[i + s * srcO_scale].imag();
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufdestReal[i][s] = destE[i + s * destE_scale].real();
+                            bufdestImag[i][s] = destE[i + s * destE_scale].imag();
+                        }
+                    }
 
-
-
-                    complex<double> *srcO = src.A + (subgrid[0] * subgrid[1] * subgrid[2] * f_t +
-                                                     subgrid[0] * subgrid[1] * z + subgrid[0] * y +
-                                                     x + (1 - cb) * subgrid_vol_cb) *
-                                                        12;
-
-                    destE = dest.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
-                                      subgrid[0] * subgrid[1] * z + subgrid[0] * y + x +
-                                      cb * subgrid_vol_cb) *
-                                         12;
-
-                    AE = U.A[3] +
-                         (subgrid[0] * subgrid[1] * subgrid[2] * t + subgrid[0] * subgrid[1] * z +
-                          subgrid[0] * y + x + cb * subgrid_vol_cb) *
-                             9;
-
+                    /*
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
                             tmp = -(srcO[0 * 3 + c2] - flag * srcO[2 * 3 + c2]) * half *
@@ -1378,6 +1381,104 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             destE[3 * 3 + c1] -= flag * (tmp);
                         }
                     }
+                    */
+                   for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
+                            vAEReal = _mm256_load_pd(bufAReal[c1 * 3 + c2]);
+                            vAEImag = _mm256_load_pd(bufAImag[c1 * 3 + c2]);
+                            vAEReal = _mm256_mul_pd(vAEReal, vNHalf); // multiply AE by -0.5: saves some instructions later
+                            vAEImag = _mm256_mul_pd(vAEImag, vNHalf);
+                            // vAE = -half * AE[c1 * 3 + c2]
+                            // don't touch vAE from now on
+
+                            vtmpReal = _mm256_load_pd(bufsrcReal[0 * 3 + c2]);
+                            vtmpImag = _mm256_load_pd(bufsrcImag[0 * 3 + c2]);
+                            vtmp2Real = _mm256_load_pd(bufsrcReal[2 * 3 + c2]);
+                            vtmp2Imag = _mm256_load_pd(bufsrcImag[2 * 3 + c2]);
+
+                            // dag --> flag = -1
+                            if (dag) {
+                                vtmp2Real = _mm256_add_pd(vtmpReal, vtmp2Real);
+                                vtmp2Imag = _mm256_add_pd(vtmpImag, vtmp2Imag);
+                            } else {
+                                vtmp2Real = _mm256_sub_pd(vtmpReal, vtmp2Real);
+                                vtmp2Imag = _mm256_sub_pd(vtmpImag, vtmp2Imag);
+                            }
+                            // tmp2 = srcO[0 * 3 + c2] - flag * srcO[2 * 3 + c2]
+
+                            // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
+                            vtmpReal = _mm256_fmsub_pd(vtmp2Real, vAEReal, _mm256_mul_pd(vtmp2Imag, vAEImag));
+                            vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAEImag, _mm256_mul_pd(vtmp2Imag, vAEReal));
+                            // result now in vtmp = (srcO[0 * 3 + c2] - flag * srcO[2 * 3 + c2]) * (-half * AE[c1 * 3 + c2])
+
+                            // reuse vtmp2 for destE
+                            vtmp2Real = _mm256_load_pd(bufdestReal[0 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[0 * 3 + c1]);
+                            vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
+                            vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
+                            _mm256_store_pd(bufdestReal[0 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[0 * 3 + c1], vtmp2Imag);
+                            // destE[0 * 3 + c1] += tmp;
+
+                            vtmp2Real = _mm256_load_pd(bufdestReal[2 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[2 * 3 + c1]);
+                            if (dag) {
+                                vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
+                                vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
+                            } else {
+                                vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpReal);
+                                vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpImag);
+                            }
+                            _mm256_store_pd(bufdestReal[2 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[2 * 3 + c1], vtmp2Imag);
+                            // destE[2 * 3 + c1] -= flag * (tmp);
+
+
+                            vtmpReal = _mm256_load_pd(bufsrcReal[1 * 3 + c2]);
+                            vtmpImag = _mm256_load_pd(bufsrcImag[1 * 3 + c2]);
+                            vtmp2Real = _mm256_load_pd(bufsrcReal[3 * 3 + c2]);
+                            vtmp2Imag = _mm256_load_pd(bufsrcImag[3 * 3 + c2]);
+
+                            if (dag) {
+                                vtmp2Real = _mm256_add_pd(vtmpReal, vtmp2Real);
+                                vtmp2Imag = _mm256_add_pd(vtmpImag, vtmp2Imag);
+                            } else {
+                                vtmp2Real = _mm256_sub_pd(vtmpReal, vtmp2Real);
+                                vtmp2Imag = _mm256_sub_pd(vtmpImag, vtmp2Imag);
+                            }
+                            // tmp2 = srcO[1 * 3 + c2] - flag * srcO[3 * 3 + c2]
+
+                            // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
+                            vtmpReal = _mm256_fmsub_pd(vtmp2Real, vAEReal, _mm256_mul_pd(vtmp2Imag, vAEImag));
+                            vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAEImag, _mm256_mul_pd(vtmp2Imag, vAEReal));
+                            // result now in vtmp = (srcO[1 * 3 + c2] - flag * srcO[3 * 3 + c2]) * (-half * AE[c1 * 3 + c2])
+
+                            // reuse vtmp2 for destE
+                            vtmp2Real = _mm256_load_pd(bufdestReal[1 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[1 * 3 + c1]);
+                            vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
+                            vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
+                            _mm256_store_pd(bufdestReal[1 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[1 * 3 + c1], vtmp2Imag);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[3 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[3 * 3 + c1]);
+                            if (dag) {
+                                vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
+                                vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
+                            } else {
+                                vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpReal);
+                                vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpImag);
+                            }
+                            _mm256_store_pd(bufdestReal[3 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[3 * 3 + c1], vtmp2Imag);
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            destE[i + s * destE_scale].real(bufdestReal[i][s]);
+                            destE[i + s * destE_scale].imag(bufdestImag[i][s]);
+                        }
+                    }
                 }
             }
         }
@@ -1388,30 +1489,38 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         int b_t = (t - 1 + subgrid[3]) % subgrid[3];
         for (int z = 0; z < subgrid[2]; z++) {
             for (int y = 0; y < subgrid[1]; y++) {
-                for (int x = 0; x < subgrid[0]; x++) {
+                complex<double> *srcO_base = src.A +
+                    (subgrid[0] * subgrid[1] * subgrid[2] * b_t + subgrid[0] * subgrid[1] * z + subgrid[0] * y + (1 - cb) * subgrid_vol_cb) * 12;
+                complex<double> *destE_base = dest.A +
+                    (subgrid[0] * subgrid[1] * subgrid[2] * t + subgrid[0] * subgrid[1] * z + subgrid[0] * y + cb * subgrid_vol_cb) * 12;
+                complex<double> *AO_base = U.A[3] +
+                        (subgrid[0] * subgrid[1] * subgrid[2] * b_t + subgrid[0] * subgrid[1] * z + subgrid[0] * y + (1 - cb) * subgrid_vol_cb) * 9;
 
-                    complex<double> *destE;
-                    complex<double> *AO;
+                for (int x = 0; x < subgrid[0]; x += 4) {
+                    complex<double> * const srcO = srcO_base + x * srcO_scale;
+                    complex<double> * const destE = destE_base + x * destE_scale;
+                    complex<double> * const AO = AO_base + x * AO_scale;
+                    __m256d vtmpReal, vtmpImag, vtmp2Real, vtmp2Imag, vAOReal, vAOImag;
 
-
-
-                    complex<double> *srcO = src.A + (subgrid[0] * subgrid[1] * subgrid[2] * b_t +
-                                                     subgrid[0] * subgrid[1] * z + subgrid[0] * y +
-                                                     x + (1 - cb) * subgrid_vol_cb) *
-                                                        12;
-
-                    destE = dest.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
-                                      subgrid[0] * subgrid[1] * z + subgrid[0] * y + x +
-                                      cb * subgrid_vol_cb) *
-                                         12;
-
-                    AO = U.A[3] +
-                         (subgrid[0] * subgrid[1] * subgrid[2] * b_t + subgrid[0] * subgrid[1] * z +
-                          subgrid[0] * y + x + (1 - cb) * subgrid_vol_cb) *
-                             9;
-
-                    complex<double> tmp;
-
+                    for (int i = 0; i < 9; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufAReal[i][s] = AO[i + s * AO_scale].real();
+                            bufAImag[i][s] = AO[i + s * AO_scale].imag();
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufsrcReal[i][s] = srcO[i + s * srcO_scale].real();
+                            bufsrcImag[i][s] = srcO[i + s * srcO_scale].imag();
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufdestReal[i][s] = destE[i + s * destE_scale].real();
+                            bufdestImag[i][s] = destE[i + s * destE_scale].imag();
+                        }
+                    }
+                    /*
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
                             tmp = -(srcO[0 * 3 + c2] + flag * srcO[2 * 3 + c2]) * half *
@@ -1422,6 +1531,106 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                   conj(AO[c2 * 3 + c1]);
                             destE[1 * 3 + c1] += tmp;
                             destE[3 * 3 + c1] += flag * (tmp);
+                        }
+                    }
+                    */
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
+                            vAOReal = _mm256_load_pd(bufAReal[c2 * 3 + c1]);
+                            vAOImag = _mm256_load_pd(bufAImag[c2 * 3 + c1]);
+                            vAOReal = _mm256_mul_pd(vAOReal, vNHalf);
+                            vAOImag = _mm256_sub_pd(vZero, _mm256_mul_pd(vAOImag, vNHalf));
+                            // vAO = conj(-half * AO[c2 * 3 + c1])
+                            // don't touch vAO from now on
+
+                            vtmpReal = _mm256_load_pd(bufsrcReal[0 * 3 + c2]);
+                            vtmpImag = _mm256_load_pd(bufsrcImag[0 * 3 + c2]);
+                            vtmp2Real = _mm256_load_pd(bufsrcReal[2 * 3 + c2]);
+                            vtmp2Imag = _mm256_load_pd(bufsrcImag[2 * 3 + c2]);
+
+                            // dag --> flag = -1
+                            if (dag) {
+                                vtmpReal = _mm256_sub_pd(vtmpReal, vtmp2Real);
+                                vtmpImag = _mm256_sub_pd(vtmpImag, vtmp2Imag);
+                            } else {
+                                vtmpReal = _mm256_add_pd(vtmpReal, vtmp2Real);
+                                vtmpImag = _mm256_add_pd(vtmpImag, vtmp2Imag);
+                            }
+                            vtmp2Real = vtmpReal, vtmp2Imag = vtmpImag;
+                            // tmp2 = (srcO[0 * 3 + c2] + flag * srcO[2 * 3 + c2])
+
+                            // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
+                            vtmpReal = _mm256_fmsub_pd(vtmp2Real, vAOReal, _mm256_mul_pd(vtmp2Imag, vAOImag));
+                            vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAOImag, _mm256_mul_pd(vtmp2Imag, vAOReal));
+                            // result now in vtmp = (srcO[0 * 3 + c2] + flag * srcO[2 * 3 + c2]) * conj(-half * AO[c2 * 3 + c1])
+
+                            // reuse vtmp2 for destE
+                            vtmp2Real = _mm256_load_pd(bufdestReal[0 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[0 * 3 + c1]);
+                            vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
+                            vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
+                            _mm256_store_pd(bufdestReal[0 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[0 * 3 + c1], vtmp2Imag);
+                            // destE[0 * 3 + c1] += tmp;
+
+                            vtmp2Real = _mm256_load_pd(bufdestReal[2 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[2 * 3 + c1]);
+                            if (dag) {
+                                vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpReal);
+                                vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpImag);
+                            } else {
+                                vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
+                                vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
+                            }
+                            _mm256_store_pd(bufdestReal[2 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[2 * 3 + c1], vtmp2Imag);
+                            // destE[2 * 3 + c1] += flag * (-I * tmp);
+
+
+                            vtmpReal = _mm256_load_pd(bufsrcReal[1 * 3 + c2]);
+                            vtmpImag = _mm256_load_pd(bufsrcImag[1 * 3 + c2]);
+                            vtmp2Real = _mm256_load_pd(bufsrcReal[3 * 3 + c2]);
+                            vtmp2Imag = _mm256_load_pd(bufsrcImag[3 * 3 + c2]);
+
+                            if (dag) {
+                                vtmpReal = _mm256_sub_pd(vtmpReal, vtmp2Real);
+                                vtmpImag = _mm256_sub_pd(vtmpImag, vtmp2Imag);
+                            } else {
+                                vtmpReal = _mm256_add_pd(vtmpReal, vtmp2Real);
+                                vtmpImag = _mm256_add_pd(vtmpImag, vtmp2Imag);
+                            }
+                            vtmp2Real = vtmpReal, vtmp2Imag = vtmpImag;
+                            // tmp2 = srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]
+
+                            // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
+                            vtmpReal = _mm256_fmsub_pd(vtmp2Real, vAOReal, _mm256_mul_pd(vtmp2Imag, vAOImag));
+                            vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAOImag, _mm256_mul_pd(vtmp2Imag, vAOReal));
+                            // result now in vtmp = (srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * (-half * AO[c1 * 3 + c2])
+
+                            // reuse vtmp2 for destE
+                            vtmp2Real = _mm256_load_pd(bufdestReal[1 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[1 * 3 + c1]);
+                            vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
+                            vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
+                            _mm256_store_pd(bufdestReal[1 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[1 * 3 + c1], vtmp2Imag);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[3 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[3 * 3 + c1]);
+                            if (dag) {
+                                vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpReal);
+                                vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpImag);
+                            } else {
+                                vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
+                                vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
+                            }
+                            _mm256_store_pd(bufdestReal[3 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[3 * 3 + c1], vtmp2Imag);
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            destE[i + s * destE_scale].real(bufdestReal[i][s]);
+                            destE[i + s * destE_scale].imag(bufdestImag[i][s]);
                         }
                     }
                 }
