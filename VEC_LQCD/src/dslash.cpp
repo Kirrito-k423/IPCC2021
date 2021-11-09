@@ -557,9 +557,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     const int AO_scale = subgrid[0] * subgrid[1] * subgrid[2] * 9;
     const int AE_scale = subgrid[0] * subgrid[1] * subgrid[2] * 9;
 
-    for (int y = 0; y < subgrid[1]; y++) {
+    for (int t = 0; t < subgrid[3]; t++) {
         for (int z = 0; z < subgrid[2]; z++) {
-            for (int t = 0; t < subgrid[3]; t++) {
+            for (int y = 0; y < subgrid[1]; y++) {
                 int x_u =
                     ((y + z + t + x_p) % 2 == cb || N_sub[0] == 1) ? subgrid[0] : subgrid[0] - 1;
 
@@ -609,9 +609,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         }
     }
 
-    for (int y = 0; y < subgrid[1]; y++) {
+    for (int t = 0; t < subgrid[3]; t++) {
         for (int z = 0; z < subgrid[2]; z++) {
-            for (int t = 0; t < subgrid[3]; t++) {
+            for (int y = 0; y < subgrid[1]; y++) {
                 int x_d = (((y + z + t + x_p) % 2) != cb || N_sub[0] == 1) ? 0 : 1;
 
                 for (int x = x_d; x < subgrid[0]; x++) {
