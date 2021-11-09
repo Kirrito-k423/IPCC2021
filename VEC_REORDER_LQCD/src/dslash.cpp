@@ -548,6 +548,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     const int destE_scale = 12;
     const int AO_scale = 9;
     const int AE_scale = 9;
+    const int grid_scaleX = 1;
     const int grid_scaleY = subgrid[0];
     const int grid_scaleZ = subgrid[0] * subgrid[1];
     const int grid_scaleT = subgrid[0] * subgrid[1] * subgrid[2];
@@ -562,13 +563,14 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + (1 - cb) * subgrid_vol_cb) * 12;
                 complex<double> * const destE_base = dest.A +
                     (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + cb * subgrid_vol_cb) * 12;
-                complex<double> * const AE_base = U.A[1] +
+                complex<double> * const AE_base = U.A[0] +
                     (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + cb * subgrid_vol_cb) * 9;
 
-                int x_u = ((y + z + t + x_p) % 2 == cb || N_sub[0] == 1) ? subgrid[0] : subgrid[0] - 1;
+                const bool flag_cb = (y + z + t + x_p) % 2 == cb;
+                int x_u = (flag_cb || N_sub[0] == 1) ? subgrid[0] : subgrid[0] - 1;
                 for (int x = 0; x < x_u; x++) {
                     int f_x;
-                    if ((y + z + t + x_p) % 2 == cb) {
+                    if (flag_cb) {
                         f_x = x;
                     } else {
                         f_x = (x + 1) % subgrid[0];
@@ -603,16 +605,17 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + (1 - cb) * subgrid_vol_cb) * 12;
                 complex<double> * const destE_base = dest.A +
                     (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + cb * subgrid_vol_cb) * 12;
-                complex<double> * const AO_base = U.A[1] +
+                complex<double> * const AO_base = U.A[0] +
                     (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + (1 - cb) * subgrid_vol_cb) * 9;
 
-                int x_d = (((y + z + t + x_p) % 2) != cb || N_sub[0] == 1) ? 0 : 1;
+                const bool flag_cb = (y + z + t + x_p) % 2 != cb;
+                int x_d = (flag_cb || N_sub[0] == 1) ? 0 : 1;
                 for (int x = x_d; x < subgrid[0]; x++) {
                     int b_x;
-                    if ((t + z + y + x_p) % 2 == cb) {
-                        b_x = (x - 1 + subgrid[0]) % subgrid[0];
-                    } else {
+                    if (flag_cb) {
                         b_x = x;
+                    } else {
+                        b_x = (x - 1 + subgrid[0]) % subgrid[0];
                     }
 
                     complex<double> *srcO = srcO_base + b_x * srcO_scale;
