@@ -72,6 +72,7 @@ int main(int argc, char **argv)
             printf("  subgrid size  %d %d %d %d\n", subgs[0], subgs[1], subgs[2], subgs[3]);
         }
     }
+
     // set seed
     int seed = rank + seedr;
     srand(seed);
@@ -99,16 +100,7 @@ int main(int argc, char **argv)
 
     // solve: M^\dagger M * dest = M^\dagger src
     lattice_fermion dest(subgs, site_vec);
-
-    // src = U^{-1} * src
-    lattice_fermion srcLInv(subgs, site_vec);
-    LInv(src,srcLInv,U,Mass);
-
-    CGinvert2(srcLInv, dest, U, Mass, MaxCG, Accuracy);
-
-    // dest= L^{-1}*dest
-    lattice_fermion FinalDest(subgs, site_vec);
-    UInv(dest,FinalDest,U,Mass);
+    CGinvert(src, dest, U, Mass, MaxCG, Accuracy);
 
     // WALL TIME END;
     double end_t = MPI_Wtime();
@@ -122,7 +114,7 @@ int main(int argc, char **argv)
     }
 
     // Check
-    check(src, FinalDest, U, Mass);
+    check(src, dest, U, Mass);
 
     delete[] source;
     MPI_Finalize();
