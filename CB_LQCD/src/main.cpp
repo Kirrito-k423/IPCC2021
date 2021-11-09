@@ -21,9 +21,7 @@ int main(int argc, char **argv)
     int rank, nsize;
     MPI_Comm_size(MPI_COMM_WORLD, &nsize);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    if (rank == 0){
-        printf("mission start!\n");
-    }
+
     int site_vec[4] = {8, 8, 8, 8}; // 总格子大小； site_vec = { Lt Lx Ly Lz }；
     int subgs[4] = {8, 8, 8, 8};    // 子格子大小, 进程数 = \prod_{i=0}^3 subgs[i] ;
     double Mass = 0.05;
@@ -74,7 +72,7 @@ int main(int argc, char **argv)
             printf("  subgrid size  %d %d %d %d\n", subgs[0], subgs[1], subgs[2], subgs[3]);
         }
     }
-
+    // fprintf(stderr, "tsj 1\n");
     // set seed
     int seed = rank + seedr;
     srand(seed);
@@ -102,7 +100,19 @@ int main(int argc, char **argv)
 
     // solve: M^\dagger M * dest = M^\dagger src
     lattice_fermion dest(subgs, site_vec);
-    CGinvert(src, dest, U, Mass, MaxCG, Accuracy);
+
+    // fprintf(stderr, "tsj 2\n");
+    // src = U^{-1} * src
+    lattice_fermion srcLInv(subgs, site_vec);
+    LInv(src,srcLInv,U,Mass);
+
+    // fprintf(stderr, "tsj 3\n");
+    CGinvert2(srcLInv, dest, U, Mass, MaxCG, Accuracy);
+
+    // fprintf(stderr, "tsj 4\n");
+    // dest= L^{-1}*dest
+    lattice_fermion FinalDest(subgs, site_vec);
+    UInv(dest,FinalDest,U,Mass);
 
     // WALL TIME END;
     double end_t = MPI_Wtime();
@@ -116,7 +126,7 @@ int main(int argc, char **argv)
     }
 
     // Check
-    check(src, dest, U, Mass);
+    check(src, FinalDest, U, Mass);
 
     delete[] source;
     MPI_Finalize();

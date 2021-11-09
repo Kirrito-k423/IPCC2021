@@ -1,0 +1,9 @@
+rm -rf liblattice.so dslash.o lattice_fermion.o lattice_gauge.o invert.o  check.o load_gauge.o main
+mpiicpc -fPIC -I../include -march=core-avx2  -std=c++11 -o dslash.o -c dslash.cpp
+mpiicpc -fPIC -I../include -march=core-avx2  -std=c++11 -o lattice_fermion.o -c lattice_fermion.cpp
+mpiicpc -fPIC -I../include -march=core-avx2  -std=c++11 -o lattice_gauge.o -c lattice_gauge.cpp
+mpiicpc -fPIC -I../include -march=core-avx2  -std=c++11 -o invert.o -c invert.cpp
+mpiicpc -fPIC -I../include -march=core-avx2  -std=c++11 -o check.o -c check.cpp
+mpiicpc -fPIC -I../include -march=core-avx2  -std=c++11 -o load_gauge.o -c load_gauge.cpp
+mpiicpc --shared dslash.o lattice_fermion.o lattice_gauge.o invert.o check.o load_gauge.o -o liblattice.so 
+mpiicpc -fPIC -I../include -march=core-avx2  -std=c++11 -Wl,-rpath=./ -lmpi -o so_mpiicc_mpiicpc__cb_1  main.cpp -L./ -llattice

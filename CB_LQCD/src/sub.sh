@@ -14,11 +14,11 @@ module purge
 CC=mpiicc
 CXX=mpiicpc
 CXX_FLAGS=""
-raw_flags="-fPIC -I../include  -std=c++11"
+raw_flags="-fast -fPIC -I../include -march=core-avx2  -std=c++11"
 
 MPIOPT=
-computetimes=
-taskname=so_${CC}_${CXX}_${CXX_FLAGS}
+computetimes='-static'
+taskname=so_${CC}_${CXX}_${CXX_FLAGS}_${computetimes}
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 module load intel/20.4.3
@@ -26,4 +26,4 @@ module load mpi/intel/20.4.3
 
 make clean
 make CC=$CC CXX=$CXX CXX_FLAGS="${CXX_FLAGS}${raw_flags}" TARGET=$taskname
-mpirun ./$taskname 0.005  ../data/ipcc_gauge_48_96  48 48 48 96  12 24 24 12 > ./log/3_$taskname$computetimes.log
+mpirun ./$taskname 0.005  ../data/ipcc_gauge_48_96 48 48 48 96 12 24 24 12 > ./log/3_$taskname.log

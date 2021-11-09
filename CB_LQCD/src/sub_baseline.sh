@@ -17,12 +17,12 @@ CXX_FLAGS=""
 raw_flags="-fPIC -I../include  -std=c++11"
 
 MPIOPT=
-computetimes=
+computetimes=1
 taskname=so_${CC}_${CXX}_${CXX_FLAGS}
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
-module load intel/2017.5
-module load mpi/intel/2017.5
+module load intel/20.4.3
+module load mpi/intel/20.4.3
 
 make clean
 make CC=$CC CXX=$CXX CXX_FLAGS="${CXX_FLAGS}${raw_flags}" TARGET=$taskname
