@@ -27,7 +27,7 @@ fmt:
 	find .. -name "*.cpp" -or -name "*.h" | xargs clang-format -i -style=file
 
 run:
-	mpirun -n 32 ./main 0.005  ../data/ipcc_gauge_24_72  24 24 24 72  6 12 12 36
+	mpirun -n 32 ./main 0.005  ~/data/ipcc_gauge_24_72  24 24 24 72  6 12 12 36
 
 prof:
 	mpirun -n 8 vtune -collect hotspots -trace-mpi -result-dir profiling ./main 0.005 ../data/ipcc_gauge_24_72 24 24 24 72  12 12 24 36

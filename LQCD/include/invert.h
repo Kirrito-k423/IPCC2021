@@ -18,7 +18,17 @@ int CGinvert(std::complex<double> *src_p, std::complex<double> *dest_p,
 int CGinvert(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, const double mass,
              const int max, const double accuracy);
 
+int CGinvert2(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, const double mass,
+             const int max, const double accuracy);
+
 void Dslash(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, const double mass,
             const bool dagger);
+
+void Dslash_tilde(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, const double mass,
+            const bool dagger);
+
+void LInv(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, const double mass);
+
+void UInv(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, const double mass);
 
 #endif //LATTICE_invert_H

@@ -1,0 +1,144 @@
+  Mass  0.005
+  gauge file  ../data/ipcc_gauge_32_64
+  lattice size  32 32 32 64
+  subgrid size  8 16 16 8
+CG: 1 iter, rsd |r| = 20268
+CG: 2 iter, rsd |r| = 9384.71
+CG: 3 iter, rsd |r| = 5079.16
+CG: 4 iter, rsd |r| = 3050.29
+CG: 5 iter, rsd |r| = 1956.75
+CG: 6 iter, rsd |r| = 1319.92
+CG: 7 iter, rsd |r| = 926.256
+CG: 8 iter, rsd |r| = 671.479
+CG: 9 iter, rsd |r| = 499.073
+CG: 10 iter, rsd |r| = 377.976
+CG: 11 iter, rsd |r| = 289.959
+CG: 12 iter, rsd |r| = 224.686
+CG: 13 iter, rsd |r| = 175.358
+CG: 14 iter, rsd |r| = 137.693
+CG: 15 iter, rsd |r| = 108.67
+CG: 16 iter, rsd |r| = 86.0784
+CG: 17 iter, rsd |r| = 68.3263
+CG: 18 iter, rsd |r| = 54.332
+CG: 19 iter, rsd |r| = 43.2912
+CG: 20 iter, rsd |r| = 34.5353
+CG: 21 iter, rsd |r| = 27.5814
+CG: 22 iter, rsd |r| = 22.0312
+CG: 23 iter, rsd |r| = 17.6045
+CG: 24 iter, rsd |r| = 14.0753
+CG: 25 iter, rsd |r| = 11.2538
+CG: 26 iter, rsd |r| = 8.99577
+CG: 27 iter, rsd |r| = 7.19624
+CG: 28 iter, rsd |r| = 5.75834
+CG: 29 iter, rsd |r| = 4.60678
+CG: 30 iter, rsd |r| = 3.68484
+CG: 31 iter, rsd |r| = 2.94788
+CG: 32 iter, rsd |r| = 2.35728
+CG: 33 iter, rsd |r| = 1.88561
+CG: 34 iter, rsd |r| = 1.50755
+CG: 35 iter, rsd |r| = 1.20465
+CG: 36 iter, rsd |r| = 0.962341
+CG: 37 iter, rsd |r| = 0.768916
+CG: 38 iter, rsd |r| = 0.613871
+CG: 39 iter, rsd |r| = 0.489963
+CG: 40 iter, rsd |r| = 0.391158
+CG: 41 iter, rsd |r| = 0.312214
+CG: 42 iter, rsd |r| = 0.249185
+CG: 43 iter, rsd |r| = 0.198818
+CG: 44 iter, rsd |r| = 0.158591
+CG: 45 iter, rsd |r| = 0.126565
+CG: 46 iter, rsd |r| = 0.101021
+CG: 47 iter, rsd |r| = 0.0806353
+CG: 48 iter, rsd |r| = 0.0643704
+CG: 49 iter, rsd |r| = 0.051386
+CG: 50 iter, rsd |r| = 0.0410224
+CG: 51 iter, rsd |r| = 0.0327424
+CG: 52 iter, rsd |r| = 0.0261377
+CG: 53 iter, rsd |r| = 0.0208745
+CG: 54 iter, rsd |r| = 0.0166714
+CG: 55 iter, rsd |r| = 0.0133091
+CG: 56 iter, rsd |r| = 0.0106276
+CG: 57 iter, rsd |r| = 0.00848771
+CG: 58 iter, rsd |r| = 0.00678016
+CG: 59 iter, rsd |r| = 0.0054132
+CG: 60 iter, rsd |r| = 0.00432114
+CG: 61 iter, rsd |r| = 0.00344917
+CG: 62 iter, rsd |r| = 0.0027532
+CG: 63 iter, rsd |r| = 0.00219718
+CG: 64 iter, rsd |r| = 0.00175357
+CG: 65 iter, rsd |r| = 0.00139988
+CG: 66 iter, rsd |r| = 0.00111746
+CG: 67 iter, rsd |r| = 0.000891964
+CG: 68 iter, rsd |r| = 0.000711881
+CG: 69 iter, rsd |r| = 0.000568441
+CG: 70 iter, rsd |r| = 0.000453736
+CG: 71 iter, rsd |r| = 0.000362053
+CG: 72 iter, rsd |r| = 0.000288935
+CG: 73 iter, rsd |r| = 0.00023064
+CG: 74 iter, rsd |r| = 0.000184067
+CG: 75 iter, rsd |r| = 0.000146889
+CG: 76 iter, rsd |r| = 0.000117224
+CG: 77 iter, rsd |r| = 9.36319e-05
+CG: 78 iter, rsd |r| = 7.47656e-05
+CG: 79 iter, rsd |r| = 5.97119e-05
+CG: 80 iter, rsd |r| = 4.76684e-05
+CG: 81 iter, rsd |r| = 3.80546e-05
+CG: 82 iter, rsd |r| = 3.03895e-05
+CG: 83 iter, rsd |r| = 2.42703e-05
+CG: 84 iter, rsd |r| = 1.93949e-05
+CG: 85 iter, rsd |r| = 1.54936e-05
+CG: 86 iter, rsd |r| = 1.23736e-05
+CG: 87 iter, rsd |r| = 9.87887e-06
+CG: 88 iter, rsd |r| = 7.89171e-06
+CG: 89 iter, rsd |r| = 6.30203e-06
+CG: 90 iter, rsd |r| = 5.03354e-06
+CG: 91 iter, rsd |r| = 4.02013e-06
+CG: 92 iter, rsd |r| = 3.2111e-06
+CG: 93 iter, rsd |r| = 2.56407e-06
+CG: 94 iter, rsd |r| = 2.04819e-06
+CG: 95 iter, rsd |r| = 1.63642e-06
+CG: 96 iter, rsd |r| = 1.30708e-06
+CG: 97 iter, rsd |r| = 1.04383e-06
+CG: 98 iter, rsd |r| = 8.33418e-07
+CG: 99 iter, rsd |r| = 6.65624e-07
+CG: 100 iter, rsd |r| = 5.3189e-07
+CG: 101 iter, rsd |r| = 4.24925e-07
+CG: 102 iter, rsd |r| = 3.39394e-07
+CG: 103 iter, rsd |r| = 2.71157e-07
+CG: 104 iter, rsd |r| = 2.16679e-07
+CG: 105 iter, rsd |r| = 1.73112e-07
+CG: 106 iter, rsd |r| = 1.38213e-07
+CG: 107 iter, rsd |r| = 1.10417e-07
+CG: 108 iter, rsd |r| = 8.82083e-08
+CG: 109 iter, rsd |r| = 7.04566e-08
+CG: 110 iter, rsd |r| = 5.62752e-08
+CG: 111 iter, rsd |r| = 4.49478e-08
+CG: 112 iter, rsd |r| = 3.59072e-08
+CG: 113 iter, rsd |r| = 2.86742e-08
+CG: 114 iter, rsd |r| = 2.29132e-08
+CG: 115 iter, rsd |r| = 1.83016e-08
+CG: 116 iter, rsd |r| = 1.46212e-08
+CG: 117 iter, rsd |r| = 1.16743e-08
+CG: 118 iter, rsd |r| = 9.32377e-09
+CG: 119 iter, rsd |r| = 7.4475e-09
+CG: 120 iter, rsd |r| = 5.94858e-09
+CG: 121 iter, rsd |r| = 4.75258e-09
+CG: 122 iter, rsd |r| = 3.79483e-09
+CG: 123 iter, rsd |r| = 3.03016e-09
+CG: 124 iter, rsd |r| = 2.41868e-09
+CG: 125 iter, rsd |r| = 1.93081e-09
+CG: 126 iter, rsd |r| = 1.54159e-09
+CG: 127 iter, rsd |r| = 1.23098e-09
+CG: 128 iterations, convergence residual |r| = 9.83176e-10
+Source and Gauge, time: 3.48397
+CG invert, time: 13.0655
+Total time: 16.5494
+Result checking ...
+ [ Accuracy = 1e-09 ]
+===================================
+|b| = 4096.25    |x| = 1192.06
+(Mb, Mb) = (3.3634e+08,-5.97157e-13)    (b, MMb) = (3.3634e+08,-7.15772e-10)
+(Mx, Mx) = (1.67792e+07,4.17463e-14)    (x, MMx) = (1.67792e+07,-2.0691e-11)
+|M x -b| = 3.95347e-10
+|M^dagger M x - Mdb| = 9.83378e-10
+===================================

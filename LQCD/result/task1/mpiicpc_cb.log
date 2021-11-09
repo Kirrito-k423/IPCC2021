@@ -1,0 +1,64 @@
+  Mass  0.005
+  gauge file  ../data/ipcc_gauge_24_72
+  lattice size  24 24 24 72
+  subgrid size  6 6 6 36
+CG: 1 iter, rsd |r| = 6138.88
+CG: 2 iter, rsd |r| = 1534.64
+CG: 3 iter, rsd |r| = 728.594
+CG: 4 iter, rsd |r| = 310.343
+CG: 5 iter, rsd |r| = 174.433
+CG: 6 iter, rsd |r| = 85.9424
+CG: 7 iter, rsd |r| = 49.1881
+CG: 8 iter, rsd |r| = 25.5856
+CG: 9 iter, rsd |r| = 14.3872
+CG: 10 iter, rsd |r| = 7.7029
+CG: 11 iter, rsd |r| = 4.21981
+CG: 12 iter, rsd |r| = 2.2972
+CG: 13 iter, rsd |r| = 1.23189
+CG: 14 iter, rsd |r| = 0.68177
+CG: 15 iter, rsd |r| = 0.360907
+CG: 16 iter, rsd |r| = 0.202054
+CG: 17 iter, rsd |r| = 0.106375
+CG: 18 iter, rsd |r| = 0.0600448
+CG: 19 iter, rsd |r| = 0.0314493
+CG: 20 iter, rsd |r| = 0.0177139
+CG: 21 iter, rsd |r| = 0.00927696
+CG: 22 iter, rsd |r| = 0.0052151
+CG: 23 iter, rsd |r| = 0.00274861
+CG: 24 iter, rsd |r| = 0.00153516
+CG: 25 iter, rsd |r| = 0.000814547
+CG: 26 iter, rsd |r| = 0.000451581
+CG: 27 iter, rsd |r| = 0.00024188
+CG: 28 iter, rsd |r| = 0.000132915
+CG: 29 iter, rsd |r| = 7.18282e-05
+CG: 30 iter, rsd |r| = 3.90565e-05
+CG: 31 iter, rsd |r| = 2.13507e-05
+CG: 32 iter, rsd |r| = 1.15593e-05
+CG: 33 iter, rsd |r| = 6.36812e-06
+CG: 34 iter, rsd |r| = 3.41422e-06
+CG: 35 iter, rsd |r| = 1.88649e-06
+CG: 36 iter, rsd |r| = 1.00668e-06
+CG: 37 iter, rsd |r| = 5.58922e-07
+CG: 38 iter, rsd |r| = 2.98037e-07
+CG: 39 iter, rsd |r| = 1.65762e-07
+CG: 40 iter, rsd |r| = 8.85126e-08
+CG: 41 iter, rsd |r| = 4.92678e-08
+CG: 42 iter, rsd |r| = 2.63963e-08
+CG: 43 iter, rsd |r| = 1.46278e-08
+CG: 44 iter, rsd |r| = 7.86635e-09
+CG: 45 iter, rsd |r| = 4.33717e-09
+CG: 46 iter, rsd |r| = 2.34381e-09
+CG: 47 iter, rsd |r| = 1.28435e-09
+CG: 48 iterations, convergence residual |r| = 6.98674e-10
+Source and Gauge, time: 1.52589
+CG invert, time: 2.10402
+Total time: 3.62991
+Result checking ...
+ [ Accuracy = 1e-09 ]
+===================================
+|b| = 2821.88    |x| = 821.732
+(Mb, Mb) = (1.59573e+08,-9.4658e-13)    (b, MMb) = (1.59573e+08,3.27418e-11)
+(Mx, Mx) = (7.96303e+06,-5.28937e-14)    (x, MMx) = (7.96303e+06,-1.93268e-11)
+|M x -b| = 2.46701e-10
+|M^dagger M x - Mdb| = 1.21327e-09
+===================================
