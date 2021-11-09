@@ -554,12 +554,12 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     const int grid_scaleT = subgrid[0] * subgrid[1] * subgrid[2];
     const __m256d vNHalf = _mm256_set1_pd(-0.5), vZero = _mm256_set1_pd(0.0);
     alignas(32) double bufAReal[9][4], bufAImag[9][4], bufsrcReal[12][4], bufsrcImag[12][4], bufdestReal[12][4], bufdestImag[12][4];
-    memset(bufAReal, 0, sizeof(bufAReal));
-    memset(bufAImag, 0, sizeof(bufAImag));
-    memset(bufsrcReal, 0, sizeof(bufsrcReal));
-    memset(bufsrcImag, 0, sizeof(bufsrcImag));
-    memset(bufdestReal, 0, sizeof(bufdestReal));
-    memset(bufdestImag, 0, sizeof(bufdestImag));
+    // memset(bufAReal, 0, sizeof(bufAReal));
+    // memset(bufAImag, 0, sizeof(bufAImag));
+    // memset(bufsrcReal, 0, sizeof(bufsrcReal));
+    // memset(bufsrcImag, 0, sizeof(bufsrcImag));
+    // memset(bufdestReal, 0, sizeof(bufdestReal));
+    // memset(bufdestImag, 0, sizeof(bufdestImag));
 
     calcu_time_s = MPI_Wtime();
     for (int t = 0; t < subgrid[3]; t++) {
@@ -575,43 +575,44 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                 const bool flag_cb = (y + z + t + x_p) % 2 == cb;
                 const bool flag_loop = flag_cb || N_sub[0] == 1;
                 int x_u = flag_loop ? subgrid[0] : subgrid[0] - 1;
-                for (int x = 0; x < x_u; x++) {
+                for (int x = 0; x < subgrid[0]; x += 4) {
+                    /*
                     int f_x;
                     if (flag_cb) {
                         f_x = x;
                     } else {
                         f_x = (x + 1) % subgrid[0];
                     }
+                    */
 
-                    complex<double> *srcO = srcO_base + f_x * srcO_scale;
+                    //complex<double> *srcO = srcO_base + f_x * srcO_scale;
                     complex<double> *destE = destE_base + x * destE_scale;
                     complex<double> *AE = AE_base + x * AE_scale;
-                    /*
                     __m256d vtmpReal, vtmpImag, vtmp2Real, vtmp2Imag, vAEReal, vAEImag;
 
                     const bool flag_skip = !flag_loop && x == subgrid[0] - 4;
-                    for (int i = 1; i < 9; i++) {
+                    for (int i = 0; i < 9; i++) {
                         for (int s = 0; s < 4; s++) {
                             if (flag_skip && s == 3) continue;
                             bufAReal[i][s] = AE[i + s * AE_scale].real();
                             bufAImag[i][s] = AE[i + s * AE_scale].imag();
                         }
                     }
-                    for (int i = 1; i < 12; i++) {
+                    for (int i = 0; i < 12; i++) {
                         for (int s = 0; s < 4; s++) {
                             if (flag_skip && s == 3) continue;
                             bufsrcReal[i][s] = (srcO_base + srcO_scale * ((x + (!flag_cb) + s) % subgrid[0]))[i].real();
                             bufsrcImag[i][s] = (srcO_base + srcO_scale * ((x + (!flag_cb) + s) % subgrid[0]))[i].imag();
                         }
                     }
-                    for (int i = 1; i < 12; i++) {
+                    for (int i = 0; i < 12; i++) {
                         for (int s = 0; s < 4; s++) {
                             if (flag_skip && s == 3) continue;
                             bufdestReal[i][s] = destE[i + s * destE_scale].real();
                             bufdestImag[i][s] = destE[i + s * destE_scale].imag();
                         }
                     }
-                    */
+                    /*
                     complex<double> tmp;
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
@@ -625,7 +626,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             destE[2 * 3 + c1] += flag * (I * tmp);
                         }
                     }
-                    /*
+                    */
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
                             vAEReal = _mm256_load_pd(bufAReal[c1 * 3 + c2]);
@@ -719,14 +720,13 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             _mm256_store_pd(bufdestImag[2 * 3 + c1], vtmp2Imag);
                         }
                     }
-                    for (int i = 1; i < 12; i++) {
+                    for (int i = 0; i < 12; i++) {
                         for (int s = 0; s < 4; s++) {
                             if (flag_skip && s == 3) continue;
                             destE[i + s * destE_scale].real(bufdestReal[i][s]);
                             destE[i + s * destE_scale].imag(bufdestImag[i][s]);
                         }
                     }
-                    */
                 }
             }
         }
