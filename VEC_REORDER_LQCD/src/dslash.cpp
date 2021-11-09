@@ -99,21 +99,17 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     const int nodenum_t_f = get_nodenum(site_t_f, N_sub, 4);
 
 
-    const double flag = (dag == true) ? -1 : 1;
+    const double flag = (dag == true) ? -1.0 : 1.0;
 
-    int subgrid[4] = {src.subgs[0], src.subgs[1], src.subgs[2], src.subgs[3]};
-    int subgrid_vol = (subgrid[0] * subgrid[1] * subgrid[2] * subgrid[3]);
-    int subgrid_vol_cb = (subgrid_vol) >> 1;
-    subgrid[0] >>= 1;
+    const int subgrid[4] = {src.subgs[0] >> 1, src.subgs[1], src.subgs[2], src.subgs[3]};
+    const int subgrid_vol_cb = subgrid[0] * subgrid[1] * subgrid[2] * subgrid[3];
+    const int subgrid_vol = subgrid_vol_cb << 1;
     const double half = 0.5;
     const complex<double> I(0, 1);
     const int x_p = ((rank / N_sub[0]) % N_sub[1]) * subgrid[1] +
                     ((rank / (N_sub[1] * N_sub[0])) % N_sub[2]) * subgrid[2] +
                     (rank / (N_sub[2] * N_sub[1] * N_sub[0])) * subgrid[3];
     calcu_time_e += MPI_Wtime()-calcu_time_s;
-    // if(rank == 0){
-    //     printf("GET NODE:%.3lfms\t", calcu_time_e*1000);
-    // }
 
     calcu_time_s = MPI_Wtime();
     dest.clean();
@@ -547,18 +543,30 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     }
 
     //////////////////////////////////////////////////////// no comunication /////////////////////////////////////////////////////////
+
+    const int srcO_scale = 12;
+    const int destE_scale = 12;
+    const int AO_scale = 9;
+    const int AE_scale = 9;
+    const int grid_scaleY = subgrid[0];
+    const int grid_scaleZ = subgrid[0] * subgrid[1];
+    const int grid_scaleT = subgrid[0] * subgrid[1] * subgrid[2];
+    const __m256d vNHalf = _mm256_set1_pd(-0.5), vZero = _mm256_set1_pd(0.0);
+    alignas(32) double bufAReal[9][4], bufAImag[9][4], bufsrcReal[12][4], bufsrcImag[12][4], bufdestReal[12][4], bufdestImag[12][4];
+
     calcu_time_s = MPI_Wtime();
     for (int t = 0; t < subgrid[3]; t++) {
         for (int z = 0; z < subgrid[2]; z++) {
             for (int y = 0; y < subgrid[1]; y++) {
-                int x_u =
-                    ((y + z + t + x_p) % 2 == cb || N_sub[0] == 1) ? subgrid[0] : subgrid[0] - 1;
+                complex<double> * const srcO_base = src.A +
+                    (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + (1 - cb) * subgrid_vol_cb) * 12;
+                complex<double> * const destE_base = dest.A +
+                    (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + cb * subgrid_vol_cb) * 12;
+                complex<double> * const AE_base = U.A[1] +
+                    (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + cb * subgrid_vol_cb) * 9;
 
+                int x_u = ((y + z + t + x_p) % 2 == cb || N_sub[0] == 1) ? subgrid[0] : subgrid[0] - 1;
                 for (int x = 0; x < x_u; x++) {
-
-                    complex<double> *destE;
-                    complex<double> *AE;
-                    complex<double> tmp;
                     int f_x;
                     if ((y + z + t + x_p) % 2 == cb) {
                         f_x = x;
@@ -566,21 +574,11 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                         f_x = (x + 1) % subgrid[0];
                     }
 
-                    complex<double> *srcO = src.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
-                                                     subgrid[0] * subgrid[1] * z + subgrid[0] * y +
-                                                     f_x + (1 - cb) * subgrid_vol_cb) *
-                                                        12;
+                    complex<double> *srcO = srcO_base + f_x * srcO_scale;
+                    complex<double> *destE = destE_base + x * destE_scale;
+                    complex<double> *AE = AE_base + x * AE_scale;
 
-                    destE = dest.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
-                                      subgrid[0] * subgrid[1] * z + subgrid[0] * y + x +
-                                      cb * subgrid_vol_cb) *
-                                         12;
-
-                    AE = U.A[0] +
-                         (subgrid[0] * subgrid[1] * subgrid[2] * t + subgrid[0] * subgrid[1] * z +
-                          subgrid[0] * y + x + cb * subgrid_vol_cb) *
-                             9;
-
+                    complex<double> tmp;
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
                             tmp = -(srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]) * half *
@@ -601,36 +599,27 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     for (int t = 0; t < subgrid[3]; t++) {
         for (int z = 0; z < subgrid[2]; z++) {
             for (int y = 0; y < subgrid[1]; y++) {
+                complex<double> * const srcO_base = src.A +
+                    (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + (1 - cb) * subgrid_vol_cb) * 12;
+                complex<double> * const destE_base = dest.A +
+                    (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + cb * subgrid_vol_cb) * 12;
+                complex<double> * const AO_base = U.A[1] +
+                    (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + (1 - cb) * subgrid_vol_cb) * 9;
+
                 int x_d = (((y + z + t + x_p) % 2) != cb || N_sub[0] == 1) ? 0 : 1;
-
                 for (int x = x_d; x < subgrid[0]; x++) {
-                    complex<double> *destE;
-                    complex<double> *AO;
-                    complex<double> tmp;
-
                     int b_x;
-
                     if ((t + z + y + x_p) % 2 == cb) {
                         b_x = (x - 1 + subgrid[0]) % subgrid[0];
                     } else {
                         b_x = x;
                     }
 
-                    complex<double> *srcO = src.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
-                                                     subgrid[0] * subgrid[1] * z + subgrid[0] * y +
-                                                     b_x + (1 - cb) * subgrid_vol_cb) *
-                                                        12;
+                    complex<double> *srcO = srcO_base + b_x * srcO_scale;
+                    complex<double> *destE = destE_base + x * destE_scale;
+                    complex<double> *AO = AO_base + b_x * AO_scale;
 
-                    destE = dest.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
-                                      subgrid[0] * subgrid[1] * z + subgrid[0] * y + x +
-                                      cb * subgrid_vol_cb) *
-                                         12;
-
-                    AO = U.A[0] +
-                         (subgrid[0] * subgrid[1] * subgrid[2] * t + subgrid[0] * subgrid[1] * z +
-                          subgrid[0] * y + b_x + (1 - cb) * subgrid_vol_cb) *
-                             9;
-
+                    complex<double> tmp;
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
                             tmp = -(srcO[0 * 3 + c2] + flag * I * srcO[3 * 3 + c2]) * half *
@@ -651,32 +640,17 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         }
     }
 
-    const int srcO_scale = 12;
-    const int destE_scale = 12;
-    const int AO_scale = 9;
-    const int AE_scale = 9;
-    const int gather_scale = 8;
-    const __m256d vNHalf = _mm256_set1_pd(-0.5), vZero = _mm256_set1_pd(0.0);
-    alignas(32) double bufAReal[9][4], bufAImag[9][4], bufsrcReal[12][4], bufsrcImag[12][4], bufdestReal[12][4], bufdestImag[12][4];
-
-    int y_u = (N_sub[1] == 1) ? subgrid[1] : subgrid[1] - 1;
+    const int y_u = (N_sub[1] == 1) ? subgrid[1] : subgrid[1] - 1;
     for (int t = 0; t < subgrid[3]; t++) {
         for (int z = 0; z < subgrid[2]; z++) {
             for (int y = 0; y < y_u; y++) {
                 const int f_y = (y + 1) % subgrid[1];
-
                 complex<double> * const srcO_base = src.A +
-                    (subgrid[0] * subgrid[1] * z + subgrid[0] * f_y + subgrid[0] * subgrid[1] * subgrid[2] * t  + (1 - cb) * subgrid_vol_cb) * 12;
+                    (grid_scaleZ * z + grid_scaleY * f_y + grid_scaleT * t + (1 - cb) * subgrid_vol_cb) * 12;
                 complex<double> * const destE_base = dest.A +
-                    (subgrid[0] * subgrid[1] * z + subgrid[0] * y + subgrid[0] * subgrid[1] * subgrid[2] * t  + cb * subgrid_vol_cb) * 12;
+                    (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + cb * subgrid_vol_cb) * 12;
                 complex<double> * const AE_base = U.A[1] +
-                    (subgrid[0] * subgrid[1] * z + subgrid[0] * y + subgrid[0] * subgrid[1] * subgrid[2] * t  + cb * subgrid_vol_cb) * 9;
-
-                // index multiplied by 2: complex<double> == double[2]
-                const __m128i srcO_vindex = _mm_set_epi32(6 * srcO_scale, 4 * srcO_scale, 2 * srcO_scale, 0 * srcO_scale);
-                const __m128i destE_vindex = srcO_vindex;
-                const __m128i AE_vindex = _mm_set_epi32(6 * AE_scale, 4 * AE_scale, 2 * AE_scale, 0 * AE_scale);
-
+                    (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + cb * subgrid_vol_cb) * 9;
                 for (int x = 0; x < subgrid[0]; x += 4) {
                     complex<double> * const srcO = srcO_base + x * srcO_scale;
                     complex<double> * const destE = destE_base + x * destE_scale;
@@ -799,90 +773,26 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                         }
                     }
                 }
-
-                /*
-                for (int t = 0; t < subgrid[3]; t++) {
-
-                    complex<double> tmp;
-                    complex<double> *destE;
-                    complex<double> *AE;
-
-                    complex<double> *srcO =
-                        src.A +
-                        (subgrid[0] * subgrid[1] * subgrid[2] * t + subgrid[0] * subgrid[1] * z +
-                         subgrid[0] * f_y + x + (1 - cb) * subgrid_vol_cb) *
-                            12;
-
-                    destE = dest.A + (subgrid[0] * subgrid[1] * subgrid[2] * t +
-                                      subgrid[0] * subgrid[1] * z + subgrid[0] * y + x +
-                                      cb * subgrid_vol_cb) *
-                                         12;
-
-                    AE = U.A[1] +
-                         (subgrid[0] * subgrid[1] * subgrid[2] * t + subgrid[0] * subgrid[1] * z +
-                          subgrid[0] * y + x + cb * subgrid_vol_cb) *
-                             9;
-
-                    for (int c1 = 0; c1 < 3; c1++)
-                    {
-                        for (int c2 = 0; c2 < 3; c2++)
-                        {
-                            tmp = -(srcO[0 * 3 + c2] + flag * srcO[3 * 3 + c2]) * half *
-                                  AE[c1 * 3 + c2];
-                            destE[0 * 3 + c1] += tmp;
-                            destE[3 * 3 + c1] += flag * (tmp);
-                            tmp = -(srcO[1 * 3 + c2] - flag * srcO[2 * 3 + c2]) * half *
-                                  AE[c1 * 3 + c2];
-                            destE[1 * 3 + c1] += tmp;
-                            destE[2 * 3 + c1] -= flag * (tmp);
-                        }
-                    }
-                }
-                */
             }
         }
     }
 
-
-    int y_d = (N_sub[1] == 1) ? 0 : 1;
+    const int y_d = (N_sub[1] == 1) ? 0 : 1;
     for (int t = 0; t < subgrid[3]; t++) {
         for (int z = 0; z < subgrid[2]; z++) {
             for (int y = y_d; y < subgrid[1]; y++) {
-                int b_y = (y - 1 + subgrid[1]) % subgrid[1];
-
+                const int b_y = (y - 1 + subgrid[1]) % subgrid[1];
                 complex<double> * const srcO_base = src.A +
-                    (subgrid[0] * subgrid[1] * z + subgrid[0] * b_y + subgrid[0] * subgrid[1] * subgrid[2] * t + (1 - cb) * subgrid_vol_cb) * 12;
+                    (grid_scaleZ * z + grid_scaleY * b_y + grid_scaleT * t + (1 - cb) * subgrid_vol_cb) * 12;
                 complex<double> * const destE_base = dest.A +
-                    (subgrid[0] * subgrid[1] * z + subgrid[0] * y + subgrid[0] * subgrid[1] * subgrid[2] * t + cb * subgrid_vol_cb) * 12;
+                    (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + cb * subgrid_vol_cb) * 12;
                 complex<double> * const AO_base = U.A[1] +
-                    (subgrid[0] * subgrid[1] * z + subgrid[0] * b_y + subgrid[0] * subgrid[1] * subgrid[2] * t + (1 - cb) * subgrid_vol_cb) * 9;
-
-                const __m128i srcO_vindex = _mm_set_epi32(6 * srcO_scale, 4 * srcO_scale, 2 * srcO_scale, 0 * srcO_scale);
-                const __m128i destE_vindex = srcO_vindex;
-                const __m128i AO_vindex = _mm_set_epi32(6 * AO_scale, 4 * AO_scale, 2 * AO_scale, 0 * AO_scale);
-
+                    (grid_scaleZ * z + grid_scaleY * b_y + grid_scaleT * t + (1 - cb) * subgrid_vol_cb) * 9;
                 for (int x = 0; x < subgrid[0]; x += 4) {
                     complex<double> * const srcO = srcO_base + x * srcO_scale;
                     complex<double> * const destE = destE_base + x * destE_scale;
                     complex<double> * const AO = AO_base + x * AO_scale;
                     __m256d vtmpReal, vtmpImag, vtmp2Real, vtmp2Imag, vAOReal, vAOImag;
-
-                    /*
-                    // PROVEN CORRECT
-                    complex<double> tmp;
-                    for (int c1 = 0; c1 < 3; c1++) {
-                        for (int c2 = 0; c2 < 3; c2++) {
-                            tmp = -(srcO[0 * 3 + c2] - flag * srcO[3 * 3 + c2]) * half *
-                                  conj(AO[c2 * 3 + c1]);
-                            destE[0 * 3 + c1] += tmp;
-                            destE[3 * 3 + c1] -= flag * (tmp);
-                            tmp = -(srcO[1 * 3 + c2] + flag * srcO[2 * 3 + c2]) * half *
-                                  conj(AO[c2 * 3 + c1]);
-                            destE[1 * 3 + c1] += tmp;
-                            destE[2 * 3 + c1] += flag * (tmp);
-                        }
-                    }
-                    */
 
                     for (int i = 0; i < 9; i++) {
                         for (int s = 0; s < 4; s++) {
@@ -1004,41 +914,18 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         }
     }
 
-
-
-    int z_u = (N_sub[2] == 1) ? subgrid[2] : subgrid[2] - 1;
+    const int z_u = (N_sub[2] == 1) ? subgrid[2] : subgrid[2] - 1;
     for (int t = 0; t < subgrid[3]; t++) {
         for (int z = 0; z < z_u; z++) {
-                int f_z = (z + 1) % subgrid[2];
+            int f_z = (z + 1) % subgrid[2];
             for (int y = 0; y < subgrid[1]; y++) {
-
                 complex<double> *srcO_base = src.A +
-                    (subgrid[0] * subgrid[1] * f_z + subgrid[0] * y + subgrid[0] * subgrid[1] * subgrid[2] * t + (1 - cb) * subgrid_vol_cb) * 12;
+                    (grid_scaleZ * f_z + grid_scaleY * y + grid_scaleT * t + (1 - cb) * subgrid_vol_cb) * 12;
                 complex<double> *destE_base = dest.A +
-                    (subgrid[0] * subgrid[1] * z + subgrid[0] * y + subgrid[0] * subgrid[1] * subgrid[2] * t + cb * subgrid_vol_cb) * 12;
+                    (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + cb * subgrid_vol_cb) * 12;
                 complex<double> *AE_base = U.A[2] +
-                    (subgrid[0] * subgrid[1] * z + subgrid[0] * y + subgrid[0] * subgrid[1] * subgrid[2] * t + cb * subgrid_vol_cb) * 9;
-
-                const __m128i srcO_vindex = _mm_set_epi32(6 * srcO_scale, 4 * srcO_scale, 2 * srcO_scale, 0 * srcO_scale);
-                const __m128i destE_vindex = srcO_vindex;
-                const __m128i AE_vindex = _mm_set_epi32(6 * AE_scale, 4 * AE_scale, 2 * AE_scale, 0 * AE_scale);
-
+                    (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + cb * subgrid_vol_cb) * 9;
                 for (int x = 0; x < subgrid[0]; x += 4) {
-                    /*
-                    complex<double> tmp;
-                    for (int c1 = 0; c1 < 3; c1++) {
-                        for (int c2 = 0; c2 < 3; c2++) {
-                            tmp = -(srcO[0 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * half *
-                                  AE[c1 * 3 + c2];
-                            destE[0 * 3 + c1] += tmp;
-                            destE[2 * 3 + c1] += flag * (I * tmp);
-                            tmp = -(srcO[1 * 3 + c2] + flag * I * srcO[3 * 3 + c2]) * half *
-                                  AE[c1 * 3 + c2];
-                            destE[1 * 3 + c1] += tmp;
-                            destE[3 * 3 + c1] += flag * (-I * tmp);
-                        }
-                    }
-                    */
                     complex<double> * const srcO = srcO_base + x * srcO_scale;
                     complex<double> * const destE = destE_base + x * destE_scale;
                     complex<double> * const AE = AE_base + x * AE_scale;
@@ -1166,39 +1053,18 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         }
     }
 
-    int z_d = (N_sub[2] == 1) ? 0 : 1;
+    const int z_d = (N_sub[2] == 1) ? 0 : 1;
     for (int t = 0; t < subgrid[3]; t++) {
         for (int z = z_d; z < subgrid[2]; z++) {
-            int b_z = (z - 1 + subgrid[2]) % subgrid[2];
+            const int b_z = (z - 1 + subgrid[2]) % subgrid[2];
             for (int y = 0; y < subgrid[1]; y++) {
-
                 complex<double> *srcO_base = src.A +
-                    (subgrid[0] * subgrid[1] * b_z + subgrid[0] * y + subgrid[0] * subgrid[1] * subgrid[2] * t + (1 - cb) * subgrid_vol_cb) * 12;
+                    (grid_scaleZ * b_z + grid_scaleY * y + grid_scaleT * t + (1 - cb) * subgrid_vol_cb) * 12;
                 complex<double> *destE_base = dest.A +
-                    (subgrid[0] * subgrid[1] * z + subgrid[0] * y + subgrid[0] * subgrid[1] * subgrid[2] * t + cb * subgrid_vol_cb) * 12;
+                    (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + cb * subgrid_vol_cb) * 12;
                 complex<double> *AO_base = U.A[2] +
-                    (subgrid[0] * subgrid[1] * b_z + subgrid[0] * y + subgrid[0] * subgrid[1] * subgrid[2] * t + (1 - cb) * subgrid_vol_cb) * 9;
-
-                const __m128i srcO_vindex = _mm_set_epi32(6 * srcO_scale, 4 * srcO_scale, 2 * srcO_scale, 0 * srcO_scale);
-                const __m128i destE_vindex = srcO_vindex;
-                const __m128i AO_vindex = _mm_set_epi32(6 * AO_scale, 4 * AO_scale, 2 * AO_scale, 0 * AO_scale);
-
+                    (grid_scaleZ * b_z + grid_scaleY * y + grid_scaleT * t + (1 - cb) * subgrid_vol_cb) * 9;
                 for (int x = 0; x < subgrid[0]; x += 4) {
-                    /*
-                    complex<double> tmp;
-                    for (int c1 = 0; c1 < 3; c1++) {
-                        for (int c2 = 0; c2 < 3; c2++) {
-                            tmp = -(srcO[0 * 3 + c2] + flag * I * srcO[2 * 3 + c2]) * half *
-                                  conj(AO[c2 * 3 + c1]);
-                            destE[0 * 3 + c1] += tmp;
-                            destE[2 * 3 + c1] += flag * (-I * tmp);
-                            tmp = -(srcO[1 * 3 + c2] - flag * I * srcO[3 * 3 + c2]) * half *
-                                  conj(AO[c2 * 3 + c1]);
-                            destE[1 * 3 + c1] += tmp;
-                            destE[3 * 3 + c1] += flag * (I * tmp);
-                        }
-                    }
-                    */
                     complex<double> * const srcO = srcO_base + x * srcO_scale;
                     complex<double> * const destE = destE_base + x * destE_scale;
                     complex<double> * const AO = AO_base + x * AO_scale;
@@ -1326,23 +1192,17 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         }
     }
 
-    // srcO_scale = subgrid[0] * subgrid[1] * subgrid[2] * 12;
-    // destE_scale = subgrid[0] * subgrid[1] * subgrid[2] * 12;
-    // AO_scale = subgrid[0] * subgrid[1] * subgrid[2] * 9;
-    // AE_scale = subgrid[0] * subgrid[1] * subgrid[2] * 9;
-
-    int t_u = (N_sub[3] == 1) ? subgrid[3] : subgrid[3] - 1;
+    const int t_u = (N_sub[3] == 1) ? subgrid[3] : subgrid[3] - 1;
     for (int t = 0; t < t_u; t++) {
-        int f_t = (t + 1) % subgrid[3];
+        const int f_t = (t + 1) % subgrid[3];
         for (int z = 0; z < subgrid[2]; z++) {
             for (int y = 0; y < subgrid[1]; y++) {
                 complex<double> *srcO_base = src.A +
-                    (subgrid[0] * subgrid[1] * subgrid[2] * f_t + subgrid[0] * subgrid[1] * z + subgrid[0] * y + (1 - cb) * subgrid_vol_cb) * 12;
+                    (grid_scaleT * f_t + grid_scaleZ * z + grid_scaleY * y + (1 - cb) * subgrid_vol_cb) * 12;
                 complex<double> *destE_base = dest.A +
-                    (subgrid[0] * subgrid[1] * subgrid[2] * t + subgrid[0] * subgrid[1] * z + subgrid[0] * y + cb * subgrid_vol_cb) * 12;
+                    (grid_scaleT * t + grid_scaleZ * z + grid_scaleY * y + cb * subgrid_vol_cb) * 12;
                 complex<double> *AE_base = U.A[3] +
-                        (subgrid[0] * subgrid[1] * subgrid[2] * t + subgrid[0] * subgrid[1] * z + subgrid[0] * y + cb * subgrid_vol_cb) * 9;
-
+                        (grid_scaleT * t + grid_scaleZ * z + grid_scaleY * y + cb * subgrid_vol_cb) * 9;
                 for (int x = 0; x < subgrid[0]; x += 4) {
                     complex<double> * const srcO = srcO_base + x * srcO_scale;
                     complex<double> * const destE = destE_base + x * destE_scale;
@@ -1368,21 +1228,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                         }
                     }
 
-                    /*
+
                     for (int c1 = 0; c1 < 3; c1++) {
-                        for (int c2 = 0; c2 < 3; c2++) {
-                            tmp = -(srcO[0 * 3 + c2] - flag * srcO[2 * 3 + c2]) * half *
-                                  AE[c1 * 3 + c2];
-                            destE[0 * 3 + c1] += tmp;
-                            destE[2 * 3 + c1] -= flag * (tmp);
-                            tmp = -(srcO[1 * 3 + c2] - flag * srcO[3 * 3 + c2]) * half *
-                                  AE[c1 * 3 + c2];
-                            destE[1 * 3 + c1] += tmp;
-                            destE[3 * 3 + c1] -= flag * (tmp);
-                        }
-                    }
-                    */
-                   for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
                             vAEReal = _mm256_load_pd(bufAReal[c1 * 3 + c2]);
                             vAEImag = _mm256_load_pd(bufAImag[c1 * 3 + c2]);
@@ -1484,18 +1331,17 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         }
     }
 
-    int t_d = (N_sub[3] == 1) ? 0 : 1;
+    const int t_d = (N_sub[3] == 1) ? 0 : 1;
     for (int t = t_d; t < subgrid[3]; t++) {
-        int b_t = (t - 1 + subgrid[3]) % subgrid[3];
+        const int b_t = (t - 1 + subgrid[3]) % subgrid[3];
         for (int z = 0; z < subgrid[2]; z++) {
             for (int y = 0; y < subgrid[1]; y++) {
                 complex<double> *srcO_base = src.A +
-                    (subgrid[0] * subgrid[1] * subgrid[2] * b_t + subgrid[0] * subgrid[1] * z + subgrid[0] * y + (1 - cb) * subgrid_vol_cb) * 12;
+                    (grid_scaleT * b_t + grid_scaleZ * z + grid_scaleY * y + (1 - cb) * subgrid_vol_cb) * 12;
                 complex<double> *destE_base = dest.A +
-                    (subgrid[0] * subgrid[1] * subgrid[2] * t + subgrid[0] * subgrid[1] * z + subgrid[0] * y + cb * subgrid_vol_cb) * 12;
+                    (grid_scaleT * t + grid_scaleZ * z + grid_scaleY * y + cb * subgrid_vol_cb) * 12;
                 complex<double> *AO_base = U.A[3] +
-                        (subgrid[0] * subgrid[1] * subgrid[2] * b_t + subgrid[0] * subgrid[1] * z + subgrid[0] * y + (1 - cb) * subgrid_vol_cb) * 9;
-
+                        (grid_scaleT * b_t + grid_scaleZ * z + grid_scaleY * y + (1 - cb) * subgrid_vol_cb) * 9;
                 for (int x = 0; x < subgrid[0]; x += 4) {
                     complex<double> * const srcO = srcO_base + x * srcO_scale;
                     complex<double> * const destE = destE_base + x * destE_scale;
@@ -1520,20 +1366,6 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             bufdestImag[i][s] = destE[i + s * destE_scale].imag();
                         }
                     }
-                    /*
-                    for (int c1 = 0; c1 < 3; c1++) {
-                        for (int c2 = 0; c2 < 3; c2++) {
-                            tmp = -(srcO[0 * 3 + c2] + flag * srcO[2 * 3 + c2]) * half *
-                                  conj(AO[c2 * 3 + c1]);
-                            destE[0 * 3 + c1] += tmp;
-                            destE[2 * 3 + c1] += flag * (tmp);
-                            tmp = -(srcO[1 * 3 + c2] + flag * srcO[3 * 3 + c2]) * half *
-                                  conj(AO[c2 * 3 + c1]);
-                            destE[1 * 3 + c1] += tmp;
-                            destE[3 * 3 + c1] += flag * (tmp);
-                        }
-                    }
-                    */
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
                             vAOReal = _mm256_load_pd(bufAReal[c2 * 3 + c1]);
@@ -1638,10 +1470,6 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         }
     }
     calcu_time_e += MPI_Wtime()-calcu_time_s;
-    //    printf(" rank =%i  ghost  \n ", rank);
-    // if(rank == 0){
-    //     printf("PART2:%.3lfms\t", calcu_time_e*1000);
-    // }
     //////////////////////////////////////////////////////////////////////////////////////ghost//////////////////////////////////////////////////////////////////
 
 
