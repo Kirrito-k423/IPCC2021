@@ -892,6 +892,10 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         msg_time_s = MPI_Wtime();
         MPI_Wait(&reqr[8 * nodenum_x_f], &star[8 * nodenum_x_f]);
         msg_time_e += MPI_Wtime()-msg_time_s;
+        if (rank == 0){
+            printf("\nwait1:%lf", (MPI_Wtime() - msg_time_s) * 1000);
+        }
+        
         calcu_time_s = MPI_Wtime();
         int cont = 0;
         for (int t = 0; t < subgrid[3]; t++) {
@@ -938,6 +942,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         msg_time_s = MPI_Wtime();
         MPI_Wait(&reqs[8 * rank], &stas[8 * rank]);
         msg_time_e += MPI_Wtime()-msg_time_s;
+        if (rank == 0){
+            printf("\nwait2:%lf", (MPI_Wtime() - msg_time_s) * 1000);
+        }
     } // if(N_sub[0]!=1)
 
     //////////////////////////////////////////
@@ -947,6 +954,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         msg_time_s = MPI_Wtime();
         MPI_Wait(&reqr[8 * nodenum_x_b + 1], &star[8 * nodenum_x_b + 1]);
         msg_time_e += MPI_Wtime()-msg_time_s;
+        if (rank == 0){
+            printf("\nwait3:%lf", (MPI_Wtime() - msg_time_s) * 1000);
+        }
         calcu_time_s = MPI_Wtime();
         int cont = 0;
 
@@ -980,6 +990,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         msg_time_s = MPI_Wtime();
         MPI_Wait(&reqs[8 * rank + 1], &stas[8 * rank + 1]);
         msg_time_e += MPI_Wtime()-msg_time_s;
+        if (rank == 0){
+            printf("\nwait4:%lf", (MPI_Wtime() - msg_time_s) * 1000);
+        }
     } // if(N_sub[0]!=1)
 
 
@@ -991,6 +1004,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         msg_time_s = MPI_Wtime();
         MPI_Wait(&reqr[8 * nodenum_y_f + 2], &star[8 * nodenum_y_f + 2]);
         msg_time_e += MPI_Wtime()-msg_time_s;
+        if (rank == 0){
+            printf("\nwait5:%lf", (MPI_Wtime() - msg_time_s) * 1000);
+        }
         calcu_time_s = MPI_Wtime();
         int cont = 0;
         for (int t = 0; t < subgrid[3]; t++) {
@@ -1034,6 +1050,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         msg_time_s = MPI_Wtime();
         MPI_Wait(&reqs[8 * rank + 2], &stas[8 * rank + 2]);
         msg_time_e += MPI_Wtime()-msg_time_s;
+        if (rank == 0){
+            printf("\nwait6:%lf", (MPI_Wtime() - msg_time_s) * 1000);
+        }
     } // if(N_sub[1]!=1)
 
 
@@ -1045,6 +1064,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         msg_time_s = MPI_Wtime();
         MPI_Wait(&reqr[8 * nodenum_y_b + 3], &star[8 * nodenum_y_b + 3]);
         msg_time_e += MPI_Wtime()-msg_time_s;
+        if (rank == 0){
+            printf("\nwait7:%lf", (MPI_Wtime() - msg_time_s) * 1000);
+        }
         calcu_time_s = MPI_Wtime();
         int cont = 0;
         for (int t = 0; t < subgrid[3]; t++) {
@@ -1076,6 +1098,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         msg_time_s = MPI_Wtime();
         MPI_Wait(&reqs[8 * rank + 3], &stas[8 * rank + 3]);
         msg_time_e += MPI_Wtime()-msg_time_s;
+        if (rank == 0){
+            printf("\nwait8:%lf\t", (MPI_Wtime() - msg_time_s) * 1000);
+        }
     }
 
 
