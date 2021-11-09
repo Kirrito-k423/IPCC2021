@@ -188,7 +188,7 @@ void Dslash_tilde(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U,
     lattice_fermion tmp(src.subgs, src.site_vec);
     lattice_fermion tmp1(src.subgs, src.site_vec);
     lattice_fermion tmp2(src.subgs, src.site_vec);
-    // lattice_fermion tmp3(src.subgs, src.site_vec);
+
     DslashEE(src, tmp, mass);
     dest = dest + tmp;
     DslashOO(src, tmp, mass);
@@ -196,15 +196,11 @@ void Dslash_tilde(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U,
 
     // tmp = Meo * X
     Dslashoffd(src, tmp, U, dagger, 0); // cb=0, EO 
-    
     // tmp1 = Mee^(-1) * Meo * X
-    DslashEEInv(tmp, tmp1, mass);
-    
+    DslashEEInv(tmp, tmp1, mass);   
     // tmp2 = Moe * Mee^(-1) * Meo * X
     Dslashoffd(tmp1, tmp2, U, dagger, 1); // cb = 1, OE
     
-    //但是tmp2 在上面。
-    // UpLowChange(tmp2,tmp3);
     dest = dest - tmp2;
 }
 
