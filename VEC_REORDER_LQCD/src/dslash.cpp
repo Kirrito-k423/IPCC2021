@@ -98,7 +98,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     const int nodenum_t_b = get_nodenum(site_t_b, N_sub, 4);
     const int nodenum_t_f = get_nodenum(site_t_f, N_sub, 4);
 
-    
+
     double flag = (dag == true) ? -1 : 1;
 
     int subgrid[4] = {src.subgs[0], src.subgs[1], src.subgs[2], src.subgs[3]};
@@ -111,10 +111,10 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     ((rank / (N_sub[1] * N_sub[0])) % N_sub[2]) * subgrid[2] +
                     (rank / (N_sub[2] * N_sub[1] * N_sub[0])) * subgrid[3];
     calcu_time_e += MPI_Wtime()-calcu_time_s;
-    if(rank == 0){
-        printf("GET NODE:%.3lfms\t", calcu_time_e*1000);
-    }
-    
+    // if(rank == 0){
+    //     printf("GET NODE:%.3lfms\t", calcu_time_e*1000);
+    // }
+
     calcu_time_s = MPI_Wtime();
     dest.clean();
     MPI_Request reqs[8 * size];
@@ -127,7 +127,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     double *resv_x_f = new double[len_x_f * 6 * 2];
     double *send_x_b = new double[len_x_f * 6 * 2];
     calcu_time_e += MPI_Wtime()-calcu_time_s;
-    
+
     if (N_sub[0] != 1) {
         calcu_time_s = MPI_Wtime();
         for (int i = 0; i < len_x_f * 6 * 2; i++) {
@@ -170,7 +170,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         MPI_Irecv(resv_x_f, len_x_f * 6 * 2, MPI_DOUBLE, nodenum_x_f, 8 * nodenum_x_f,
                   MPI_COMM_WORLD, &reqr[8 * nodenum_x_f]);
         msg_time_e += MPI_Wtime()-msg_time_s;
-        
+
     }
 
     int len_x_b = (subgrid[1] * subgrid[2] * subgrid[3] + 1 - cb) >> 1;
@@ -234,7 +234,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         MPI_Irecv(resv_x_b, len_x_b * 6 * 2, MPI_DOUBLE, nodenum_x_b, 8 * nodenum_x_b + 1,
                   MPI_COMM_WORLD, &reqr[8 * nodenum_x_b + 1]);
         msg_time_e += MPI_Wtime()-msg_time_s;
-        
+
     }
 
     int len_y_f = subgrid[0] * subgrid[2] * subgrid[3];
@@ -280,7 +280,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         MPI_Irecv(resv_y_f, len_y_f * 6 * 2, MPI_DOUBLE, nodenum_y_f, 8 * nodenum_y_f + 2,
                   MPI_COMM_WORLD, &reqr[8 * nodenum_y_f + 2]);
         msg_time_e += MPI_Wtime()-msg_time_s;
-        
+
     }
 
     int len_y_b = subgrid[0] * subgrid[2] * subgrid[3];
@@ -337,7 +337,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         MPI_Irecv(resv_y_b, len_y_b * 6 * 2, MPI_DOUBLE, nodenum_y_b, 8 * nodenum_y_b + 3,
                   MPI_COMM_WORLD, &reqr[8 * nodenum_y_b + 3]);
         msg_time_e += MPI_Wtime()-msg_time_s;
-        
+
     }
 
     int len_z_f = subgrid[0] * subgrid[1] * subgrid[3];
@@ -384,7 +384,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         MPI_Irecv(resv_z_f, len_z_f * 6 * 2, MPI_DOUBLE, nodenum_z_f, 8 * nodenum_z_f + 4,
                   MPI_COMM_WORLD, &reqr[8 * nodenum_z_f + 4]);
         msg_time_e += MPI_Wtime()-msg_time_s;
-        
+
     }
 
     int len_z_b = subgrid[0] * subgrid[1] * subgrid[3];
@@ -440,7 +440,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         MPI_Irecv(resv_z_b, len_z_b * 6 * 2, MPI_DOUBLE, nodenum_z_b, 8 * nodenum_z_b + 5,
                   MPI_COMM_WORLD, &reqr[8 * nodenum_z_b + 5]);
         msg_time_e += MPI_Wtime()-msg_time_s;
-        
+
     }
 
     int len_t_f = subgrid[0] * subgrid[1] * subgrid[2];
@@ -487,7 +487,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         MPI_Irecv(resv_t_f, len_t_f * 6 * 2, MPI_DOUBLE, nodenum_t_f, 8 * nodenum_t_f + 6,
                   MPI_COMM_WORLD, &reqr[8 * nodenum_t_f + 6]);
         msg_time_e += MPI_Wtime()-msg_time_s;
-        
+
     }
 
     int len_t_b = subgrid[0] * subgrid[1] * subgrid[2];
@@ -543,12 +543,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         MPI_Irecv(resv_t_b, len_t_b * 6 * 2, MPI_DOUBLE, nodenum_t_b, 8 * nodenum_t_b + 7,
                   MPI_COMM_WORLD, &reqr[8 * nodenum_t_b + 7]);
         msg_time_e += MPI_Wtime()-msg_time_s;
-        
+
     }
 
-    if(rank == 0){
-        printf("PART1:%.3lfms\t", calcu_time_e*1000);
-    }
     //////////////////////////////////////////////////////// no comunication /////////////////////////////////////////////////////////
     calcu_time_s = MPI_Wtime();
     for (int t = 0; t < subgrid[3]; t++) {
@@ -660,18 +657,21 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     const int destE_scale = 12;
     const int AO_scale = 9;
     const int AE_scale = 9;
+    const int gather_scale = 8;
+    double bufAReal[9][4], bufAImag[9][4], bufsrcReal[12][4], bufsrcImag[12][4], bufdestReal[12][4], bufdestImag[12][4];
 
     int y_u = (N_sub[1] == 1) ? subgrid[1] : subgrid[1] - 1;
     for (int t = 0; t < subgrid[3]; t++) {
         for (int z = 0; z < subgrid[2]; z++) {
             for (int y = 0; y < y_u; y++) {
                 const int f_y = (y + 1) % subgrid[1];
-            
+
                 complex<double> * const srcO_base = src.A +
                     (subgrid[0] * subgrid[1] * z + subgrid[0] * f_y + subgrid[0] * subgrid[1] * subgrid[2] * t  + (1 - cb) * subgrid_vol_cb) * 12;
                 complex<double> * const destE_base = dest.A +
                     (subgrid[0] * subgrid[1] * z + subgrid[0] * y + subgrid[0] * subgrid[1] * subgrid[2] * t  + cb * subgrid_vol_cb) * 12;
-                complex<double> * const AE_base = U.A[1] + (subgrid[0] * subgrid[1] * z + subgrid[0] * y + subgrid[0] * subgrid[1] * subgrid[2] * t  + cb * subgrid_vol_cb) * 9;
+                complex<double> * const AE_base = U.A[1] +
+                    (subgrid[0] * subgrid[1] * z + subgrid[0] * y + subgrid[0] * subgrid[1] * subgrid[2] * t  + cb * subgrid_vol_cb) * 9;
 
                 // index multiplied by 2: complex<double> == double[2]
                 const __m128i srcO_vindex = _mm_set_epi32(6 * srcO_scale, 4 * srcO_scale, 2 * srcO_scale, 0 * srcO_scale);
@@ -685,21 +685,37 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     __m256d vtmpReal, vtmpImag, vtmp2Real, vtmp2Imag, vAEReal, vAEImag;
                     const __m256d vNHalf = _mm256_set1_pd(-0.5), vZero = _mm256_set1_pd(0.0);
 
-                    double storeReal[4], storeImag[4];
-                    const int gather_scale = 8; // one index = 8 bytes
+                    for (int i = 0; i < 9; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufAReal[i][s] = AE[i + s * AE_scale].real();
+                            bufAImag[i][s] = AE[i + s * AE_scale].imag();
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufsrcReal[i][s] = srcO[i + s * srcO_scale].real();
+                            bufsrcImag[i][s] = srcO[i + s * srcO_scale].imag();
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufdestReal[i][s] = destE[i + s * destE_scale].real();
+                            bufdestImag[i][s] = destE[i + s * destE_scale].imag();
+                        }
+                    }
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
-                            vAEReal = _mm256_i32gather_pd(reinterpret_cast<double*>(&AE[c1 * 3 + c2]), AE_vindex, gather_scale);
-                            vAEImag = _mm256_i32gather_pd(reinterpret_cast<double*>(&AE[c1 * 3 + c2]) + 1, AE_vindex, gather_scale);
+                            vAEReal = _mm256_loadu_pd(bufAReal[c1 * 3 + c2]);
+                            vAEImag = _mm256_loadu_pd(bufAImag[c1 * 3 + c2]);
                             vAEReal = _mm256_mul_pd(vAEReal, vNHalf); // multiply AE by -0.5: saves some instructions later
                             vAEImag = _mm256_mul_pd(vAEImag, vNHalf);
                             // vAE = -half * AE[c1 * 3 + c2]
                             // don't touch vAE from now on
 
-                            vtmpReal = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[0 * 3 + c2]), srcO_vindex, gather_scale);
-                            vtmpImag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[0 * 3 + c2]) + 1, srcO_vindex, gather_scale);
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[3 * 3 + c2]), srcO_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[3 * 3 + c2]) + 1, srcO_vindex, gather_scale);
+                            vtmpReal = _mm256_loadu_pd(bufsrcReal[0 * 3 + c2]);
+                            vtmpImag = _mm256_loadu_pd(bufsrcImag[0 * 3 + c2]);
+                            vtmp2Real = _mm256_loadu_pd(bufsrcReal[3 * 3 + c2]);
+                            vtmp2Imag = _mm256_loadu_pd(bufsrcImag[3 * 3 + c2]);
 
                             // dag --> flag = -1
                             if (dag) {
@@ -712,24 +728,21 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             // tmp2 = srcO[0 * 3 + c2] + flag * srcO[3 * 3 + c2]
 
                             // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
-                            vtmpReal = _mm256_sub_pd(_mm256_mul_pd(vtmp2Real, vAEReal), _mm256_mul_pd(vtmp2Imag, vAEImag));
-                            vtmpImag = _mm256_add_pd(_mm256_mul_pd(vtmp2Real, vAEImag), _mm256_mul_pd(vtmp2Imag, vAEReal));
+                            vtmpReal = _mm256_fmsub_pd(vtmp2Real, vAEReal, _mm256_mul_pd(vtmp2Imag, vAEImag));
+                            vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAEImag, _mm256_mul_pd(vtmp2Imag, vAEReal));
                             // result now in vtmp = (srcO[0 * 3 + c2] + flag * srcO[3 * 3 + c2]) * (-half * AE[c1 * 3 + c2])
 
                             // reuse vtmp2 for destE
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[0 * 3 + c1]), destE_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[0 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            vtmp2Real = _mm256_loadu_pd(bufdestReal[0 * 3 + c1]);
+                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[0 * 3 + c1]);
                             vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                             vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
-                            _mm256_storeu_pd(storeReal, vtmp2Real);
-                            _mm256_storeu_pd(storeImag, vtmp2Imag);
-                            for (int i = 0; i < 4; i++) {
-                                destE[0 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
-                            }
+                            _mm256_storeu_pd(bufdestReal[0 * 3 + c1], vtmp2Real);
+                            _mm256_storeu_pd(bufdestImag[0 * 3 + c1], vtmp2Imag);
                             // destE[0 * 3 + c1] += tmp;
 
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[3 * 3 + c1]), destE_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[3 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            vtmp2Real = _mm256_loadu_pd(bufdestReal[3 * 3 + c1]);
+                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[3 * 3 + c1]);
                             if (dag) {
                                 vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpReal);
                                 vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpImag);
@@ -737,18 +750,15 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                 vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                                 vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
                             }
-                            _mm256_storeu_pd(storeReal, vtmp2Real);
-                            _mm256_storeu_pd(storeImag, vtmp2Imag);
-                            for (int i = 0; i < 4; i++) {
-                                destE[3 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
-                            }
+                            _mm256_storeu_pd(bufdestReal[3 * 3 + c1], vtmp2Real);
+                            _mm256_storeu_pd(bufdestImag[3 * 3 + c1], vtmp2Imag);
                             // destE[3 * 3 + c1] += flag * (tmp);
 
 
-                            vtmpReal = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[1 * 3 + c2]), srcO_vindex, gather_scale);
-                            vtmpImag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[1 * 3 + c2]) + 1, srcO_vindex, gather_scale);
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[2 * 3 + c2]), srcO_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[2 * 3 + c2]) + 1, srcO_vindex, gather_scale);
+                            vtmpReal = _mm256_loadu_pd(bufsrcReal[1 * 3 + c2]);
+                            vtmpImag = _mm256_loadu_pd(bufsrcImag[1 * 3 + c2]);
+                            vtmp2Real = _mm256_loadu_pd(bufsrcReal[2 * 3 + c2]);
+                            vtmp2Imag = _mm256_loadu_pd(bufsrcImag[2 * 3 + c2]);
 
                             if (dag) {
                                 vtmp2Real = _mm256_add_pd(vtmpReal, vtmp2Real);
@@ -760,22 +770,19 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             // tmp2 = srcO[1 * 3 + c2] - flag * srcO[2 * 3 + c2]
 
                             // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
-                            vtmpReal = _mm256_sub_pd(_mm256_mul_pd(vtmp2Real, vAEReal), _mm256_mul_pd(vtmp2Imag, vAEImag));
-                            vtmpImag = _mm256_add_pd(_mm256_mul_pd(vtmp2Real, vAEImag), _mm256_mul_pd(vtmp2Imag, vAEReal));
+                            vtmpReal = _mm256_fmsub_pd(vtmp2Real, vAEReal, _mm256_mul_pd(vtmp2Imag, vAEImag));
+                            vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAEImag, _mm256_mul_pd(vtmp2Imag, vAEReal));
                             // result now in vtmp = (srcO[1 * 3 + c2] - flag * srcO[2 * 3 + c2]) * (-half * AE[c1 * 3 + c2])
 
                             // reuse vtmp2 for destE
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[1 * 3 + c1]), destE_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[1 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            vtmp2Real = _mm256_loadu_pd(bufdestReal[1 * 3 + c1]);
+                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[1 * 3 + c1]);
                             vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                             vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
-                            _mm256_storeu_pd(storeReal, vtmp2Real);
-                            _mm256_storeu_pd(storeImag, vtmp2Imag);
-                            for (int i = 0; i < 4; i++) {
-                                destE[1 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
-                            }
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[2 * 3 + c1]), destE_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[2 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            _mm256_storeu_pd(bufdestReal[1 * 3 + c1], vtmp2Real);
+                            _mm256_storeu_pd(bufdestImag[1 * 3 + c1], vtmp2Imag);
+                            vtmp2Real = _mm256_loadu_pd(bufdestReal[2 * 3 + c1]);
+                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[2 * 3 + c1]);
                             if (dag) {
                                 vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                                 vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
@@ -783,11 +790,14 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                 vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpReal);
                                 vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpImag);
                             }
-                            _mm256_storeu_pd(storeReal, vtmp2Real);
-                            _mm256_storeu_pd(storeImag, vtmp2Imag);
-                            for (int i = 0; i < 4; i++) {
-                                destE[2 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
-                            }
+                            _mm256_storeu_pd(bufdestReal[2 * 3 + c1], vtmp2Real);
+                            _mm256_storeu_pd(bufdestImag[2 * 3 + c1], vtmp2Imag);
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            destE[i + s * destE_scale].real(bufdestReal[i][s]);
+                            destE[i + s * destE_scale].imag(bufdestImag[i][s]);
                         }
                     }
                 }
@@ -842,7 +852,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
             for (int y = y_d; y < subgrid[1]; y++) {
                 int b_y = (y - 1 + subgrid[1]) % subgrid[1];
 
-            
+
                 complex<double> * const srcO_base = src.A +
                     (subgrid[0] * subgrid[1] * z + subgrid[0] * b_y + subgrid[0] * subgrid[1] * subgrid[2] * t + (1 - cb) * subgrid_vol_cb) * 12;
                 complex<double> * const destE_base = dest.A +
@@ -878,21 +888,37 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     }
                     */
 
-                    double storeReal[4], storeImag[4];
-                    const int gather_scale = 8; // one index = 8 bytes
+                    for (int i = 0; i < 9; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufAReal[i][s] = AO[i + s * AO_scale].real();
+                            bufAImag[i][s] = AO[i + s * AO_scale].imag();
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufsrcReal[i][s] = srcO[i + s * srcO_scale].real();
+                            bufsrcImag[i][s] = srcO[i + s * srcO_scale].imag();
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufdestReal[i][s] = destE[i + s * destE_scale].real();
+                            bufdestImag[i][s] = destE[i + s * destE_scale].imag();
+                        }
+                    }
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
-                            vAOReal = _mm256_i32gather_pd(reinterpret_cast<double*>(&AO[c2 * 3 + c1]), AO_vindex, gather_scale);
-                            vAOImag = _mm256_i32gather_pd(reinterpret_cast<double*>(&AO[c2 * 3 + c1]) + 1, AO_vindex, gather_scale);
+                            vAOReal = _mm256_loadu_pd(bufAReal[c2 * 3 + c1]);
+                            vAOImag = _mm256_loadu_pd(bufAImag[c2 * 3 + c1]);
                             vAOReal = _mm256_mul_pd(vAOReal, vNHalf);
                             vAOImag = _mm256_sub_pd(vZero, _mm256_mul_pd(vAOImag, vNHalf)); // conj(AO)
                             // vAO = conj(-half * AO[c2 * 3 + c1])
                             // don't touch vAO from now on
 
-                            vtmpReal = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[0 * 3 + c2]), srcO_vindex, gather_scale);
-                            vtmpImag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[0 * 3 + c2]) + 1, srcO_vindex, gather_scale);
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[3 * 3 + c2]), srcO_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[3 * 3 + c2]) + 1, srcO_vindex, gather_scale);
+                            vtmpReal = _mm256_loadu_pd(bufsrcReal[0 * 3 + c2]);
+                            vtmpImag = _mm256_loadu_pd(bufsrcImag[0 * 3 + c2]);
+                            vtmp2Real = _mm256_loadu_pd(bufsrcReal[3 * 3 + c2]);
+                            vtmp2Imag = _mm256_loadu_pd(bufsrcImag[3 * 3 + c2]);
 
                             if (dag) {
                                 vtmp2Real = _mm256_add_pd(vtmpReal, vtmp2Real);
@@ -904,24 +930,21 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             // tmp2 = srcO[0 * 3 + c2] - flag * srcO[3 * 3 + c2]
 
                             // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
-                            vtmpReal = _mm256_sub_pd(_mm256_mul_pd(vtmp2Real, vAOReal), _mm256_mul_pd(vtmp2Imag, vAOImag));
-                            vtmpImag = _mm256_add_pd(_mm256_mul_pd(vtmp2Real, vAOImag), _mm256_mul_pd(vtmp2Imag, vAOReal));
+                            vtmpReal = _mm256_fmsub_pd(vtmp2Real, vAOReal, _mm256_mul_pd(vtmp2Imag, vAOImag));
+                            vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAOImag, _mm256_mul_pd(vtmp2Imag, vAOReal));
                             // result now in vtmp = (srcO[0 * 3 + c2] - flag * srcO[3 * 3 + c2]) * conj(-half * AO[c2 * 3 + c1])
 
                             // reuse vtmp2 for destE
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[0 * 3 + c1]), destE_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[0 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            vtmp2Real = _mm256_loadu_pd(bufdestReal[0 * 3 + c1]);
+                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[0 * 3 + c1]);
                             vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                             vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
-                            _mm256_storeu_pd(storeReal, vtmp2Real);
-                            _mm256_storeu_pd(storeImag, vtmp2Imag);
-                            for (int i = 0; i < 4; i++) {
-                                destE[0 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
-                            }
+                            _mm256_storeu_pd(bufdestReal[0 * 3 + c1], vtmp2Real);
+                            _mm256_storeu_pd(bufdestImag[0 * 3 + c1], vtmp2Imag);
                             // destE[0 * 3 + c1] += tmp;
 
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[3 * 3 + c1]), destE_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[3 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            vtmp2Real = _mm256_loadu_pd(bufdestReal[3 * 3 + c1]);
+                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[3 * 3 + c1]);
                             if (dag) {
                                 vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                                 vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
@@ -929,18 +952,15 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                 vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpReal);
                                 vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpImag);
                             }
-                            _mm256_storeu_pd(storeReal, vtmp2Real);
-                            _mm256_storeu_pd(storeImag, vtmp2Imag);
-                            for (int i = 0; i < 4; i++) {
-                                destE[3 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
-                            }
+                            _mm256_storeu_pd(bufdestReal[3 * 3 + c1], vtmp2Real);
+                            _mm256_storeu_pd(bufdestImag[3 * 3 + c1], vtmp2Imag);
                             // destE[3 * 3 + c1] -= flag * (tmp);
 
 
-                            vtmpReal = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[1 * 3 + c2]), srcO_vindex, gather_scale);
-                            vtmpImag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[1 * 3 + c2]) + 1, srcO_vindex, gather_scale);
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[2 * 3 + c2]), srcO_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[2 * 3 + c2]) + 1, srcO_vindex, gather_scale);
+                            vtmpReal = _mm256_loadu_pd(bufsrcReal[1 * 3 + c2]);
+                            vtmpImag = _mm256_loadu_pd(bufsrcImag[1 * 3 + c2]);
+                            vtmp2Real = _mm256_loadu_pd(bufsrcReal[2 * 3 + c2]);
+                            vtmp2Imag = _mm256_loadu_pd(bufsrcImag[2 * 3 + c2]);
 
                             if (dag) {
                                 vtmp2Real = _mm256_sub_pd(vtmpReal, vtmp2Real);
@@ -951,23 +971,20 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             }
 
                             // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
-                            vtmpReal = _mm256_sub_pd(_mm256_mul_pd(vtmp2Real, vAOReal), _mm256_mul_pd(vtmp2Imag, vAOImag));
-                            vtmpImag = _mm256_add_pd(_mm256_mul_pd(vtmp2Real, vAOImag), _mm256_mul_pd(vtmp2Imag, vAOReal));
+                            vtmpReal = _mm256_fmsub_pd(vtmp2Real, vAOReal, _mm256_mul_pd(vtmp2Imag, vAOImag));
+                            vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAOImag, _mm256_mul_pd(vtmp2Imag, vAOReal));
 
                             // reuse vtmp2 for destE
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[1 * 3 + c1]), destE_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[1 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            vtmp2Real = _mm256_loadu_pd(bufdestReal[1 * 3 + c1]);
+                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[1 * 3 + c1]);
                             vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                             vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
-                            _mm256_storeu_pd(storeReal, vtmp2Real);
-                            _mm256_storeu_pd(storeImag, vtmp2Imag);
-                            for (int i = 0; i < 4; i++) {
-                                destE[1 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
-                            }
+                            _mm256_storeu_pd(bufdestReal[1 * 3 + c1], vtmp2Real);
+                            _mm256_storeu_pd(bufdestImag[1 * 3 + c1], vtmp2Imag);
                             // destE[1 * 3 + c1] += tmp;
 
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[2 * 3 + c1]), destE_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[2 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            vtmp2Real = _mm256_loadu_pd(bufdestReal[2 * 3 + c1]);
+                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[2 * 3 + c1]);
                             if (dag) {
                                 vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpReal);
                                 vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpImag);
@@ -975,12 +992,15 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                 vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                                 vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
                             }
-                            _mm256_storeu_pd(storeReal, vtmp2Real);
-                            _mm256_storeu_pd(storeImag, vtmp2Imag);
-                            for (int i = 0; i < 4; i++) {
-                                destE[2 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
-                            }
+                            _mm256_storeu_pd(bufdestReal[2 * 3 + c1], vtmp2Real);
+                            _mm256_storeu_pd(bufdestImag[2 * 3 + c1], vtmp2Imag);
                             // destE[2 * 3 + c1] += flag * (tmp);
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            destE[i + s * destE_scale].real(bufdestReal[i][s]);
+                            destE[i + s * destE_scale].imag(bufdestImag[i][s]);
                         }
                     }
                 }
@@ -988,14 +1008,14 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         }
     }
 
-    
+
 
     int z_u = (N_sub[2] == 1) ? subgrid[2] : subgrid[2] - 1;
     for (int t = 0; t < subgrid[3]; t++) {
         for (int z = 0; z < z_u; z++) {
                 int f_z = (z + 1) % subgrid[2];
             for (int y = 0; y < subgrid[1]; y++) {
-            
+
                 complex<double> *srcO_base = src.A +
                     (subgrid[0] * subgrid[1] * f_z + subgrid[0] * y + subgrid[0] * subgrid[1] * subgrid[2] * t + (1 - cb) * subgrid_vol_cb) * 12;
                 complex<double> *destE_base = dest.A +
@@ -1029,21 +1049,37 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     __m256d vtmpReal, vtmpImag, vtmp2Real, vtmp2Imag, vAEReal, vAEImag;
                     const __m256d vNHalf = _mm256_set1_pd(-0.5), vZero = _mm256_set1_pd(0.0);
 
-                    double storeReal[4], storeImag[4];
-                    const int gather_scale = 8; // one index = 8 bytes
+                    for (int i = 0; i < 9; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufAReal[i][s] = AE[i + s * AE_scale].real();
+                            bufAImag[i][s] = AE[i + s * AE_scale].imag();
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufsrcReal[i][s] = srcO[i + s * srcO_scale].real();
+                            bufsrcImag[i][s] = srcO[i + s * srcO_scale].imag();
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufdestReal[i][s] = destE[i + s * destE_scale].real();
+                            bufdestImag[i][s] = destE[i + s * destE_scale].imag();
+                        }
+                    }
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
-                            vAEReal = _mm256_i32gather_pd(reinterpret_cast<double*>(&AE[c1 * 3 + c2]), AE_vindex, gather_scale);
-                            vAEImag = _mm256_i32gather_pd(reinterpret_cast<double*>(&AE[c1 * 3 + c2]) + 1, AE_vindex, gather_scale);
+                            vAEReal = _mm256_loadu_pd(bufAReal[c1 * 3 + c2]);
+                            vAEImag = _mm256_loadu_pd(bufAImag[c1 * 3 + c2]);
                             vAEReal = _mm256_mul_pd(vAEReal, vNHalf); // multiply AE by -0.5: saves some instructions later
                             vAEImag = _mm256_mul_pd(vAEImag, vNHalf);
                             // vAE = -half * AE[c1 * 3 + c2]
                             // don't touch vAE from now on
 
-                            vtmpReal = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[0 * 3 + c2]), srcO_vindex, gather_scale);
-                            vtmpImag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[0 * 3 + c2]) + 1, srcO_vindex, gather_scale);
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[2 * 3 + c2]), srcO_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[2 * 3 + c2]) + 1, srcO_vindex, gather_scale);
+                            vtmpReal = _mm256_loadu_pd(bufsrcReal[0 * 3 + c2]);
+                            vtmpImag = _mm256_loadu_pd(bufsrcImag[0 * 3 + c2]);
+                            vtmp2Real = _mm256_loadu_pd(bufsrcReal[2 * 3 + c2]);
+                            vtmp2Imag = _mm256_loadu_pd(bufsrcImag[2 * 3 + c2]);
 
                             // dag --> flag = -1
                             if (dag) {
@@ -1057,24 +1093,21 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             // tmp2 = srcO[0 * 3 + c2] - flag * I * srcO[2 * 3 + c2]
 
                             // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
-                            vtmpReal = _mm256_sub_pd(_mm256_mul_pd(vtmp2Real, vAEReal), _mm256_mul_pd(vtmp2Imag, vAEImag));
-                            vtmpImag = _mm256_add_pd(_mm256_mul_pd(vtmp2Real, vAEImag), _mm256_mul_pd(vtmp2Imag, vAEReal));
+                            vtmpReal = _mm256_fmsub_pd(vtmp2Real, vAEReal, _mm256_mul_pd(vtmp2Imag, vAEImag));
+                            vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAEImag, _mm256_mul_pd(vtmp2Imag, vAEReal));
                             // result now in vtmp = (srcO[0 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * (-half * AE[c1 * 3 + c2])
 
                             // reuse vtmp2 for destE
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[0 * 3 + c1]), destE_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[0 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            vtmp2Real = _mm256_loadu_pd(bufdestReal[0 * 3 + c1]);
+                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[0 * 3 + c1]);
                             vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                             vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
-                            _mm256_storeu_pd(storeReal, vtmp2Real);
-                            _mm256_storeu_pd(storeImag, vtmp2Imag);
-                            for (int i = 0; i < 4; i++) {
-                                destE[0 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
-                            }
+                            _mm256_storeu_pd(bufdestReal[0 * 3 + c1], vtmp2Real);
+                            _mm256_storeu_pd(bufdestImag[0 * 3 + c1], vtmp2Imag);
                             // destE[0 * 3 + c1] += tmp;
 
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[2 * 3 + c1]), destE_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[2 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            vtmp2Real = _mm256_loadu_pd(bufdestReal[2 * 3 + c1]);
+                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[2 * 3 + c1]);
                             if (dag) {
                                 vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpImag);
                                 vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpReal);
@@ -1082,18 +1115,15 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                 vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpImag);
                                 vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpReal);
                             }
-                            _mm256_storeu_pd(storeReal, vtmp2Real);
-                            _mm256_storeu_pd(storeImag, vtmp2Imag);
-                            for (int i = 0; i < 4; i++) {
-                                destE[2 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
-                            }
+                            _mm256_storeu_pd(bufdestReal[2 * 3 + c1], vtmp2Real);
+                            _mm256_storeu_pd(bufdestImag[2 * 3 + c1], vtmp2Imag);
                             // destE[2 * 3 + c1] += flag * (I * tmp);
 
 
-                            vtmpReal = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[1 * 3 + c2]), srcO_vindex, gather_scale);
-                            vtmpImag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[1 * 3 + c2]) + 1, srcO_vindex, gather_scale);
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[3 * 3 + c2]), srcO_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[3 * 3 + c2]) + 1, srcO_vindex, gather_scale);
+                            vtmpReal = _mm256_loadu_pd(bufsrcReal[1 * 3 + c2]);
+                            vtmpImag = _mm256_loadu_pd(bufsrcImag[1 * 3 + c2]);
+                            vtmp2Real = _mm256_loadu_pd(bufsrcReal[3 * 3 + c2]);
+                            vtmp2Imag = _mm256_loadu_pd(bufsrcImag[3 * 3 + c2]);
 
                             if (dag) {
                                 vtmpReal = _mm256_add_pd(vtmpReal, vtmp2Imag);
@@ -1106,22 +1136,19 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             // tmp2 = srcO[1 * 3 + c2] - flag * srcO[2 * 3 + c2]
 
                             // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
-                            vtmpReal = _mm256_sub_pd(_mm256_mul_pd(vtmp2Real, vAEReal), _mm256_mul_pd(vtmp2Imag, vAEImag));
-                            vtmpImag = _mm256_add_pd(_mm256_mul_pd(vtmp2Real, vAEImag), _mm256_mul_pd(vtmp2Imag, vAEReal));
+                            vtmpReal = _mm256_fmsub_pd(vtmp2Real, vAEReal, _mm256_mul_pd(vtmp2Imag, vAEImag));
+                            vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAEImag, _mm256_mul_pd(vtmp2Imag, vAEReal));
                             // result now in vtmp = (srcO[1 * 3 + c2] - flag * srcO[2 * 3 + c2]) * (-half * AE[c1 * 3 + c2])
 
                             // reuse vtmp2 for destE
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[1 * 3 + c1]), destE_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[1 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            vtmp2Real = _mm256_loadu_pd(bufdestReal[1 * 3 + c1]);
+                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[1 * 3 + c1]);
                             vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                             vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
-                            _mm256_storeu_pd(storeReal, vtmp2Real);
-                            _mm256_storeu_pd(storeImag, vtmp2Imag);
-                            for (int i = 0; i < 4; i++) {
-                                destE[1 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
-                            }
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[3 * 3 + c1]), destE_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[3 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            _mm256_storeu_pd(bufdestReal[1 * 3 + c1], vtmp2Real);
+                            _mm256_storeu_pd(bufdestImag[1 * 3 + c1], vtmp2Imag);
+                            vtmp2Real = _mm256_loadu_pd(bufdestReal[3 * 3 + c1]);
+                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[3 * 3 + c1]);
                             if (dag) {
                                 vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpImag);
                                 vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpReal);
@@ -1129,11 +1156,14 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                 vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpImag);
                                 vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpReal);
                             }
-                            _mm256_storeu_pd(storeReal, vtmp2Real);
-                            _mm256_storeu_pd(storeImag, vtmp2Imag);
-                            for (int i = 0; i < 4; i++) {
-                                destE[3 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
-                            }
+                            _mm256_storeu_pd(bufdestReal[3 * 3 + c1], vtmp2Real);
+                            _mm256_storeu_pd(bufdestImag[3 * 3 + c1], vtmp2Imag);
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            destE[i + s * destE_scale].real(bufdestReal[i][s]);
+                            destE[i + s * destE_scale].imag(bufdestImag[i][s]);
                         }
                     }
                 }
@@ -1146,7 +1176,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
         for (int z = z_d; z < subgrid[2]; z++) {
             int b_z = (z - 1 + subgrid[2]) % subgrid[2];
             for (int y = 0; y < subgrid[1]; y++) {
-            
+
                 complex<double> *srcO_base = src.A +
                     (subgrid[0] * subgrid[1] * b_z + subgrid[0] * y + subgrid[0] * subgrid[1] * subgrid[2] * t + (1 - cb) * subgrid_vol_cb) * 12;
                 complex<double> *destE_base = dest.A +
@@ -1180,21 +1210,37 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     __m256d vtmpReal, vtmpImag, vtmp2Real, vtmp2Imag, vAOReal, vAOImag;
                     const __m256d vNHalf = _mm256_set1_pd(-0.5), vZero = _mm256_set1_pd(0.0);
 
-                    double storeReal[4], storeImag[4];
-                    const int gather_scale = 8; // one index = 8 bytes
+                    for (int i = 0; i < 9; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufAReal[i][s] = AO[i + s * AO_scale].real();
+                            bufAImag[i][s] = AO[i + s * AO_scale].imag();
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufsrcReal[i][s] = srcO[i + s * srcO_scale].real();
+                            bufsrcImag[i][s] = srcO[i + s * srcO_scale].imag();
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            bufdestReal[i][s] = destE[i + s * destE_scale].real();
+                            bufdestImag[i][s] = destE[i + s * destE_scale].imag();
+                        }
+                    }
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
-                            vAOReal = _mm256_i32gather_pd(reinterpret_cast<double*>(&AO[c2 * 3 + c1]), AO_vindex, gather_scale);
-                            vAOImag = _mm256_i32gather_pd(reinterpret_cast<double*>(&AO[c2 * 3 + c1]) + 1, AO_vindex, gather_scale);
+                            vAOReal = _mm256_loadu_pd(bufAReal[c2 * 3 + c1]);
+                            vAOImag = _mm256_loadu_pd(bufAImag[c2 * 3 + c1]);
                             vAOReal = _mm256_mul_pd(vAOReal, vNHalf);
                             vAOImag = _mm256_sub_pd(vZero, _mm256_mul_pd(vAOImag, vNHalf));
                             // vAO = conj(-half * AO[c1 * 3 + c2])
                             // don't touch vAO from now on
 
-                            vtmpReal = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[0 * 3 + c2]), srcO_vindex, gather_scale);
-                            vtmpImag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[0 * 3 + c2]) + 1, srcO_vindex, gather_scale);
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[2 * 3 + c2]), srcO_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[2 * 3 + c2]) + 1, srcO_vindex, gather_scale);
+                            vtmpReal = _mm256_loadu_pd(bufsrcReal[0 * 3 + c2]);
+                            vtmpImag = _mm256_loadu_pd(bufsrcImag[0 * 3 + c2]);
+                            vtmp2Real = _mm256_loadu_pd(bufsrcReal[2 * 3 + c2]);
+                            vtmp2Imag = _mm256_loadu_pd(bufsrcImag[2 * 3 + c2]);
 
                             // dag --> flag = -1
                             if (dag) {
@@ -1208,24 +1254,21 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             // tmp2 = srcO[0 * 3 + c2] + flag * I * srcO[2 * 3 + c2]
 
                             // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
-                            vtmpReal = _mm256_sub_pd(_mm256_mul_pd(vtmp2Real, vAOReal), _mm256_mul_pd(vtmp2Imag, vAOImag));
-                            vtmpImag = _mm256_add_pd(_mm256_mul_pd(vtmp2Real, vAOImag), _mm256_mul_pd(vtmp2Imag, vAOReal));
+                            vtmpReal = _mm256_fmsub_pd(vtmp2Real, vAOReal, _mm256_mul_pd(vtmp2Imag, vAOImag));
+                            vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAOImag, _mm256_mul_pd(vtmp2Imag, vAOReal));
                             // result now in vtmp = (srcO[0 * 3 + c2] + flag * I * srcO[2 * 3 + c2]) * conj(-half * AO[c1 * 3 + c2])
 
                             // reuse vtmp2 for destE
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[0 * 3 + c1]), destE_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[0 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            vtmp2Real = _mm256_loadu_pd(bufdestReal[0 * 3 + c1]);
+                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[0 * 3 + c1]);
                             vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                             vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
-                            _mm256_storeu_pd(storeReal, vtmp2Real);
-                            _mm256_storeu_pd(storeImag, vtmp2Imag);
-                            for (int i = 0; i < 4; i++) {
-                                destE[0 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
-                            }
+                            _mm256_storeu_pd(bufdestReal[0 * 3 + c1], vtmp2Real);
+                            _mm256_storeu_pd(bufdestImag[0 * 3 + c1], vtmp2Imag);
                             // destE[0 * 3 + c1] += tmp;
 
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[2 * 3 + c1]), destE_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[2 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            vtmp2Real = _mm256_loadu_pd(bufdestReal[2 * 3 + c1]);
+                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[2 * 3 + c1]);
                             if (dag) {
                                 vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpImag);
                                 vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpReal);
@@ -1233,18 +1276,15 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                 vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpImag);
                                 vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpReal);
                             }
-                            _mm256_storeu_pd(storeReal, vtmp2Real);
-                            _mm256_storeu_pd(storeImag, vtmp2Imag);
-                            for (int i = 0; i < 4; i++) {
-                                destE[2 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
-                            }
+                            _mm256_storeu_pd(bufdestReal[2 * 3 + c1], vtmp2Real);
+                            _mm256_storeu_pd(bufdestImag[2 * 3 + c1], vtmp2Imag);
                             // destE[2 * 3 + c1] += flag * (-I * tmp);
 
 
-                            vtmpReal = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[1 * 3 + c2]), srcO_vindex, gather_scale);
-                            vtmpImag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[1 * 3 + c2]) + 1, srcO_vindex, gather_scale);
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[3 * 3 + c2]), srcO_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&srcO[3 * 3 + c2]) + 1, srcO_vindex, gather_scale);
+                            vtmpReal = _mm256_loadu_pd(bufsrcReal[1 * 3 + c2]);
+                            vtmpImag = _mm256_loadu_pd(bufsrcImag[1 * 3 + c2]);
+                            vtmp2Real = _mm256_loadu_pd(bufsrcReal[3 * 3 + c2]);
+                            vtmp2Imag = _mm256_loadu_pd(bufsrcImag[3 * 3 + c2]);
 
                             if (dag) {
                                 vtmpReal = _mm256_sub_pd(vtmpReal, vtmp2Imag);
@@ -1257,22 +1297,19 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             // tmp2 = srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]
 
                             // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
-                            vtmpReal = _mm256_sub_pd(_mm256_mul_pd(vtmp2Real, vAOReal), _mm256_mul_pd(vtmp2Imag, vAOImag));
-                            vtmpImag = _mm256_add_pd(_mm256_mul_pd(vtmp2Real, vAOImag), _mm256_mul_pd(vtmp2Imag, vAOReal));
+                            vtmpReal = _mm256_fmsub_pd(vtmp2Real, vAOReal, _mm256_mul_pd(vtmp2Imag, vAOImag));
+                            vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAOImag, _mm256_mul_pd(vtmp2Imag, vAOReal));
                             // result now in vtmp = (srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * (-half * AO[c1 * 3 + c2])
 
                             // reuse vtmp2 for destE
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[1 * 3 + c1]), destE_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[1 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            vtmp2Real = _mm256_loadu_pd(bufdestReal[1 * 3 + c1]);
+                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[1 * 3 + c1]);
                             vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
                             vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
-                            _mm256_storeu_pd(storeReal, vtmp2Real);
-                            _mm256_storeu_pd(storeImag, vtmp2Imag);
-                            for (int i = 0; i < 4; i++) {
-                                destE[1 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
-                            }
-                            vtmp2Real = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[3 * 3 + c1]), destE_vindex, gather_scale);
-                            vtmp2Imag = _mm256_i32gather_pd(reinterpret_cast<double*>(&destE[3 * 3 + c1]) + 1, destE_vindex, gather_scale);
+                            _mm256_storeu_pd(bufdestReal[1 * 3 + c1], vtmp2Real);
+                            _mm256_storeu_pd(bufdestImag[1 * 3 + c1], vtmp2Imag);
+                            vtmp2Real = _mm256_loadu_pd(bufdestReal[3 * 3 + c1]);
+                            vtmp2Imag = _mm256_loadu_pd(bufdestImag[3 * 3 + c1]);
                             if (dag) {
                                 vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpImag);
                                 vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpReal);
@@ -1280,11 +1317,14 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                                 vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpImag);
                                 vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpReal);
                             }
-                            _mm256_storeu_pd(storeReal, vtmp2Real);
-                            _mm256_storeu_pd(storeImag, vtmp2Imag);
-                            for (int i = 0; i < 4; i++) {
-                                destE[3 * 3 + c1 + i * destE_scale] = complex<double>(storeReal[i], storeImag[i]);
-                            }
+                            _mm256_storeu_pd(bufdestReal[3 * 3 + c1], vtmp2Real);
+                            _mm256_storeu_pd(bufdestImag[3 * 3 + c1], vtmp2Imag);
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            destE[i + s * destE_scale].real(bufdestReal[i][s]);
+                            destE[i + s * destE_scale].imag(bufdestImag[i][s]);
                         }
                     }
                 }
@@ -1309,7 +1349,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     complex<double> *destE;
                     complex<double> *AE;
 
-                    
+
 
                     complex<double> *srcO = src.A + (subgrid[0] * subgrid[1] * subgrid[2] * f_t +
                                                      subgrid[0] * subgrid[1] * z + subgrid[0] * y +
@@ -1353,7 +1393,7 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     complex<double> *destE;
                     complex<double> *AO;
 
-                    
+
 
                     complex<double> *srcO = src.A + (subgrid[0] * subgrid[1] * subgrid[2] * b_t +
                                                      subgrid[0] * subgrid[1] * z + subgrid[0] * y +
@@ -1390,9 +1430,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     }
     calcu_time_e += MPI_Wtime()-calcu_time_s;
     //    printf(" rank =%i  ghost  \n ", rank);
-    if(rank == 0){
-        printf("PART2:%.3lfms\t", calcu_time_e*1000);
-    }
+    // if(rank == 0){
+    //     printf("PART2:%.3lfms\t", calcu_time_e*1000);
+    // }
     //////////////////////////////////////////////////////////////////////////////////////ghost//////////////////////////////////////////////////////////////////
 
 
@@ -1781,9 +1821,9 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     MPI_Barrier(MPI_COMM_WORLD);
     barrier_time_e += MPI_Wtime()-barrier_time_s;
     dslashoffd_time_e = MPI_Wtime();
-    if (rank == 0){
-        printf("CALCU TIME: %.3lfms, MSG TIME: %.3lfms, BARRIER TIME: %.3lfms, DSLASHOFFD TIME: %.3lfms\n", calcu_time_e*1000, msg_time_e*1000, barrier_time_e*1000, (dslashoffd_time_e - dslashoffd_time_s)*1000);
-    }
+    // if (rank == 0){
+    //     printf("CALCU TIME: %.3lfms, MSG TIME: %.3lfms, BARRIER TIME: %.3lfms, DSLASHOFFD TIME: %.3lfms\n", calcu_time_e*1000, msg_time_e*1000, barrier_time_e*1000, (dslashoffd_time_e - dslashoffd_time_s)*1000);
+    // }
     delete[] send_x_b;
     delete[] resv_x_f;
     delete[] send_x_f;
