@@ -34,6 +34,7 @@ void DslashOO(lattice_fermion &src, lattice_fermion &dest, const double mass)
     }
 }
 
+<<<<<<< HEAD
 
 
 
@@ -1321,6 +1322,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 }
 
 
+=======
+>>>>>>> parent of f273aff (add rank invert)
 // cb = 0  EO  ;  cb = 1 OE
 void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, const bool dag,
                 int cb)
