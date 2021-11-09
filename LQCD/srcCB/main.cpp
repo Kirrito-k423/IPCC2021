@@ -126,7 +126,7 @@ int main(int argc, char **argv)
     }
 
     // Check
-    check(src, dest, U, Mass);
+    check(src, FinalDest, U, Mass);
 
     delete[] source;
     MPI_Finalize();
