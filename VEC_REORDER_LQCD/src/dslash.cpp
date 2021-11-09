@@ -554,6 +554,12 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
     const int grid_scaleT = subgrid[0] * subgrid[1] * subgrid[2];
     const __m256d vNHalf = _mm256_set1_pd(-0.5), vZero = _mm256_set1_pd(0.0);
     alignas(32) double bufAReal[9][4], bufAImag[9][4], bufsrcReal[12][4], bufsrcImag[12][4], bufdestReal[12][4], bufdestImag[12][4];
+    memset(bufAReal, 0, sizeof(bufAReal));
+    memset(bufAImag, 0, sizeof(bufAImag));
+    memset(bufsrcReal, 0, sizeof(bufsrcReal));
+    memset(bufsrcImag, 0, sizeof(bufsrcImag));
+    memset(bufdestReal, 0, sizeof(bufdestReal));
+    memset(bufdestImag, 0, sizeof(bufdestImag));
 
     calcu_time_s = MPI_Wtime();
     for (int t = 0; t < subgrid[3]; t++) {
@@ -567,7 +573,8 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + cb * subgrid_vol_cb) * 9;
 
                 const bool flag_cb = (y + z + t + x_p) % 2 == cb;
-                int x_u = (flag_cb || N_sub[0] == 1) ? subgrid[0] : subgrid[0] - 1;
+                const bool flag_loop = flag_cb || N_sub[0] == 1;
+                int x_u = flag_loop ? subgrid[0] : subgrid[0] - 1;
                 for (int x = 0; x < x_u; x++) {
                     int f_x;
                     if (flag_cb) {
@@ -579,7 +586,32 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     complex<double> *srcO = srcO_base + f_x * srcO_scale;
                     complex<double> *destE = destE_base + x * destE_scale;
                     complex<double> *AE = AE_base + x * AE_scale;
+                    /*
+                    __m256d vtmpReal, vtmpImag, vtmp2Real, vtmp2Imag, vAEReal, vAEImag;
 
+                    const bool flag_skip = !flag_loop && x == subgrid[0] - 4;
+                    for (int i = 1; i < 9; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            if (flag_skip && s == 3) continue;
+                            bufAReal[i][s] = AE[i + s * AE_scale].real();
+                            bufAImag[i][s] = AE[i + s * AE_scale].imag();
+                        }
+                    }
+                    for (int i = 1; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            if (flag_skip && s == 3) continue;
+                            bufsrcReal[i][s] = (srcO_base + srcO_scale * ((x + (!flag_cb) + s) % subgrid[0]))[i].real();
+                            bufsrcImag[i][s] = (srcO_base + srcO_scale * ((x + (!flag_cb) + s) % subgrid[0]))[i].imag();
+                        }
+                    }
+                    for (int i = 1; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            if (flag_skip && s == 3) continue;
+                            bufdestReal[i][s] = destE[i + s * destE_scale].real();
+                            bufdestImag[i][s] = destE[i + s * destE_scale].imag();
+                        }
+                    }
+                    */
                     complex<double> tmp;
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
@@ -593,6 +625,108 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                             destE[2 * 3 + c1] += flag * (I * tmp);
                         }
                     }
+                    /*
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
+                            vAEReal = _mm256_load_pd(bufAReal[c1 * 3 + c2]);
+                            vAEImag = _mm256_load_pd(bufAImag[c1 * 3 + c2]);
+                            vAEReal = _mm256_mul_pd(vAEReal, vNHalf);
+                            vAEImag = _mm256_mul_pd(vAEImag, vNHalf);
+                            // vAE = -half * AE[c1 * 3 + c2]
+                            // don't touch vAE from now on
+
+                            vtmpReal = _mm256_load_pd(bufsrcReal[0 * 3 + c2]);
+                            vtmpImag = _mm256_load_pd(bufsrcImag[0 * 3 + c2]);
+                            vtmp2Real = _mm256_load_pd(bufsrcReal[3 * 3 + c2]);
+                            vtmp2Imag = _mm256_load_pd(bufsrcImag[3 * 3 + c2]);
+
+                            // dag --> flag = -1
+                            if (dag) {
+                                vtmpReal = _mm256_sub_pd(vtmpReal, vtmp2Imag);
+                                vtmpImag = _mm256_add_pd(vtmpImag, vtmp2Real);
+                            } else {
+                                vtmpReal = _mm256_add_pd(vtmpReal, vtmp2Imag);
+                                vtmpImag = _mm256_sub_pd(vtmpImag, vtmp2Real);
+                            }
+                            vtmp2Real = vtmpReal, vtmp2Imag = vtmpImag;
+                            // tmp2 = srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]
+
+                            // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
+                            vtmpReal = _mm256_fmsub_pd(vtmp2Real, vAEReal, _mm256_mul_pd(vtmp2Imag, vAEImag));
+                            vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAEImag, _mm256_mul_pd(vtmp2Imag, vAEReal));
+                            // result now in vtmp = (srcO[0 * 3 + c2] - flag * I * srcO[3 * 3 + c2]) * (-half * AE[c1 * 3 + c2])
+
+                            // reuse vtmp2 for destE
+                            vtmp2Real = _mm256_load_pd(bufdestReal[0 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[0 * 3 + c1]);
+                            vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
+                            vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
+                            _mm256_store_pd(bufdestReal[0 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[0 * 3 + c1], vtmp2Imag);
+                            // destE[0 * 3 + c1] += tmp;
+
+                            vtmp2Real = _mm256_load_pd(bufdestReal[3 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[3 * 3 + c1]);
+                            if (dag) {
+                                vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpImag);
+                                vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpReal);
+                            } else {
+                                vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpImag);
+                                vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpReal);
+                            }
+                            _mm256_store_pd(bufdestReal[3 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[3 * 3 + c1], vtmp2Imag);
+                            // destE[3 * 3 + c1] += flag * (I * tmp);
+
+
+                            vtmpReal = _mm256_load_pd(bufsrcReal[1 * 3 + c2]);
+                            vtmpImag = _mm256_load_pd(bufsrcImag[1 * 3 + c2]);
+                            vtmp2Real = _mm256_load_pd(bufsrcReal[2 * 3 + c2]);
+                            vtmp2Imag = _mm256_load_pd(bufsrcImag[2 * 3 + c2]);
+
+                            if (dag) {
+                                vtmpReal = _mm256_sub_pd(vtmpReal, vtmp2Imag);
+                                vtmpImag = _mm256_add_pd(vtmpImag, vtmp2Real);
+                            } else {
+                                vtmpReal = _mm256_add_pd(vtmpReal, vtmp2Imag);
+                                vtmpImag = _mm256_sub_pd(vtmpImag, vtmp2Real);
+                            }
+                            vtmp2Real = vtmpReal, vtmp2Imag = vtmpImag;
+                            // tmp2 = srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]
+
+                            // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
+                            vtmpReal = _mm256_fmsub_pd(vtmp2Real, vAEReal, _mm256_mul_pd(vtmp2Imag, vAEImag));
+                            vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAEImag, _mm256_mul_pd(vtmp2Imag, vAEReal));
+                            // result now in vtmp = (srcO[1 * 3 + c2] - flag * I * srcO[2 * 3 + c2]) * (-half * AE[c1 * 3 + c2])
+
+                            // reuse vtmp2 for destE
+                            vtmp2Real = _mm256_load_pd(bufdestReal[1 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[1 * 3 + c1]);
+                            vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
+                            vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
+                            _mm256_store_pd(bufdestReal[1 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[1 * 3 + c1], vtmp2Imag);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[2 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[2 * 3 + c1]);
+                            if (dag) {
+                                vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpImag);
+                                vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpReal);
+                            } else {
+                                vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpImag);
+                                vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpReal);
+                            }
+                            _mm256_store_pd(bufdestReal[2 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[2 * 3 + c1], vtmp2Imag);
+                        }
+                    }
+                    for (int i = 1; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            if (flag_skip && s == 3) continue;
+                            destE[i + s * destE_scale].real(bufdestReal[i][s]);
+                            destE[i + s * destE_scale].imag(bufdestImag[i][s]);
+                        }
+                    }
+                    */
                 }
             }
         }
@@ -609,19 +743,46 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
                     (grid_scaleZ * z + grid_scaleY * y + grid_scaleT * t + (1 - cb) * subgrid_vol_cb) * 9;
 
                 const bool flag_cb = (y + z + t + x_p) % 2 != cb;
-                int x_d = (flag_cb || N_sub[0] == 1) ? 0 : 1;
-                for (int x = x_d; x < subgrid[0]; x++) {
+                const bool flag_loop = flag_cb || N_sub[0] == 1;
+                int x_d = flag_loop ? 0 : 1;
+                for (int x = 0; x < subgrid[0]; x += 4) {
+                    /*
                     int b_x;
                     if (flag_cb) {
                         b_x = x;
                     } else {
                         b_x = (x - 1 + subgrid[0]) % subgrid[0];
                     }
+                    */
 
-                    complex<double> *srcO = srcO_base + b_x * srcO_scale;
+                    //complex<double> *srcO = srcO_base + b_x * srcO_scale;
                     complex<double> *destE = destE_base + x * destE_scale;
-                    complex<double> *AO = AO_base + b_x * AO_scale;
+                    //complex<double> *AO = AO_base + b_x * AO_scale;
+                    __m256d vtmpReal, vtmpImag, vtmp2Real, vtmp2Imag, vAOReal, vAOImag;
 
+                    const bool flag_skip = !flag_loop && x == 0;
+                    for (int i = 0; i < 9; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            if (flag_skip && s == 0) continue;
+                            bufAReal[i][s] = (AO_base + AO_scale * ((x - !flag_cb + subgrid[0] + s) % subgrid[0]))[i].real();
+                            bufAImag[i][s] = (AO_base + AO_scale * ((x - !flag_cb + subgrid[0] + s) % subgrid[0]))[i].imag();
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            if (flag_skip && s == 0) continue;
+                            bufsrcReal[i][s] = (srcO_base + srcO_scale * ((x - !flag_cb + subgrid[0] + s) % subgrid[0]))[i].real();
+                            bufsrcImag[i][s] = (srcO_base + srcO_scale * ((x - !flag_cb + subgrid[0] + s) % subgrid[0]))[i].imag();
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            if (flag_skip && s == 0) continue;
+                            bufdestReal[i][s] = destE[i + s * destE_scale].real();
+                            bufdestImag[i][s] = destE[i + s * destE_scale].imag();
+                        }
+                    }
+                    /*
                     complex<double> tmp;
                     for (int c1 = 0; c1 < 3; c1++) {
                         for (int c2 = 0; c2 < 3; c2++) {
@@ -636,6 +797,107 @@ void Dslashoffd(lattice_fermion &src, lattice_fermion &dest, lattice_gauge &U, c
 
                             destE[1 * 3 + c1] += tmp;
                             destE[2 * 3 + c1] += flag * (-I * tmp);
+                        }
+                    }
+                    */
+                    for (int c1 = 0; c1 < 3; c1++) {
+                        for (int c2 = 0; c2 < 3; c2++) {
+                            vAOReal = _mm256_load_pd(bufAReal[c2 * 3 + c1]);
+                            vAOImag = _mm256_load_pd(bufAImag[c2 * 3 + c1]);
+                            vAOReal = _mm256_mul_pd(vAOReal, vNHalf);
+                            vAOImag = _mm256_sub_pd(vZero, _mm256_mul_pd(vAOImag, vNHalf));
+                            // vAO = conj(-half * AO[c2 * 3 + c1])
+                            // don't touch vAO from now on
+
+                            vtmpReal = _mm256_load_pd(bufsrcReal[0 * 3 + c2]);
+                            vtmpImag = _mm256_load_pd(bufsrcImag[0 * 3 + c2]);
+                            vtmp2Real = _mm256_load_pd(bufsrcReal[3 * 3 + c2]);
+                            vtmp2Imag = _mm256_load_pd(bufsrcImag[3 * 3 + c2]);
+
+                            // dag --> flag = -1
+                            if (dag) {
+                                vtmpReal = _mm256_add_pd(vtmpReal, vtmp2Imag);
+                                vtmpImag = _mm256_sub_pd(vtmpImag, vtmp2Real);
+                            } else {
+                                vtmpReal = _mm256_sub_pd(vtmpReal, vtmp2Imag);
+                                vtmpImag = _mm256_add_pd(vtmpImag, vtmp2Real);
+                            }
+                            vtmp2Real = vtmpReal, vtmp2Imag = vtmpImag;
+                            // tmp2 = srcO[0 * 3 + c2] + flag * I * srcO[3 * 3 + c2]
+
+                            // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
+                            vtmpReal = _mm256_fmsub_pd(vtmp2Real, vAOReal, _mm256_mul_pd(vtmp2Imag, vAOImag));
+                            vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAOImag, _mm256_mul_pd(vtmp2Imag, vAOReal));
+                            // result now in vtmp = (srcO[0 * 3 + c2] + flag * I * srcO[3 * 3 + c2]) * conj(-half * AO[c2 * 3 + c1])
+
+                            // reuse vtmp2 for destE
+                            vtmp2Real = _mm256_load_pd(bufdestReal[0 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[0 * 3 + c1]);
+                            vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
+                            vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
+                            _mm256_store_pd(bufdestReal[0 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[0 * 3 + c1], vtmp2Imag);
+                            // destE[0 * 3 + c1] += tmp;
+
+                            vtmp2Real = _mm256_load_pd(bufdestReal[3 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[3 * 3 + c1]);
+                            if (dag) {
+                                vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpImag);
+                                vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpReal);
+                            } else {
+                                vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpImag);
+                                vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpReal);
+                            }
+                            _mm256_store_pd(bufdestReal[3 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[3 * 3 + c1], vtmp2Imag);
+                            // destE[2 * 3 + c1] += flag * (-I * tmp);
+
+
+                            vtmpReal = _mm256_load_pd(bufsrcReal[1 * 3 + c2]);
+                            vtmpImag = _mm256_load_pd(bufsrcImag[1 * 3 + c2]);
+                            vtmp2Real = _mm256_load_pd(bufsrcReal[2 * 3 + c2]);
+                            vtmp2Imag = _mm256_load_pd(bufsrcImag[2 * 3 + c2]);
+
+                            if (dag) {
+                                vtmpReal = _mm256_add_pd(vtmpReal, vtmp2Imag);
+                                vtmpImag = _mm256_sub_pd(vtmpImag, vtmp2Real);
+                            } else {
+                                vtmpReal = _mm256_sub_pd(vtmpReal, vtmp2Imag);
+                                vtmpImag = _mm256_add_pd(vtmpImag, vtmp2Real);
+                            }
+                            vtmp2Real = vtmpReal, vtmp2Imag = vtmpImag;
+                            // tmp2 = srcO[1 * 3 + c2] + flag * I * srcO[2 * 3 + c2]
+
+                            // (a+bi)(c+di) = (ac-bd) + (ad+bc)i
+                            vtmpReal = _mm256_fmsub_pd(vtmp2Real, vAOReal, _mm256_mul_pd(vtmp2Imag, vAOImag));
+                            vtmpImag = _mm256_fmadd_pd(vtmp2Real, vAOImag, _mm256_mul_pd(vtmp2Imag, vAOReal));
+                            // result now in vtmp = (srcO[1 * 3 + c2] + flag * I * srcO[2 * 3 + c2]) * (-half * AO[c1 * 3 + c2])
+
+                            // reuse vtmp2 for destE
+                            vtmp2Real = _mm256_load_pd(bufdestReal[1 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[1 * 3 + c1]);
+                            vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpReal);
+                            vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpImag);
+                            _mm256_store_pd(bufdestReal[1 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[1 * 3 + c1], vtmp2Imag);
+                            vtmp2Real = _mm256_load_pd(bufdestReal[2 * 3 + c1]);
+                            vtmp2Imag = _mm256_load_pd(bufdestImag[2 * 3 + c1]);
+                            if (dag) {
+                                vtmp2Real = _mm256_sub_pd(vtmp2Real, vtmpImag);
+                                vtmp2Imag = _mm256_add_pd(vtmp2Imag, vtmpReal);
+                            } else {
+                                vtmp2Real = _mm256_add_pd(vtmp2Real, vtmpImag);
+                                vtmp2Imag = _mm256_sub_pd(vtmp2Imag, vtmpReal);
+                            }
+                            _mm256_store_pd(bufdestReal[2 * 3 + c1], vtmp2Real);
+                            _mm256_store_pd(bufdestImag[2 * 3 + c1], vtmp2Imag);
+                        }
+                    }
+                    for (int i = 0; i < 12; i++) {
+                        for (int s = 0; s < 4; s++) {
+                            if (flag_skip && s == 0) continue;
+                            destE[i + s * destE_scale].real(bufdestReal[i][s]);
+                            destE[i + s * destE_scale].imag(bufdestImag[i][s]);
                         }
                     }
                 }
