@@ -1,11 +1,15 @@
-## tips:
-### 1
-/home/supertan/github/IPCC2021/ppm/SLIC_enforce_LscanParallel.cpp
+# IPCC 2021
 
-这个文件是有错误的，错误是threadcount，threadq里，每次循环完忘记清空了。日~~~。
+## 官网
 
-哎，我懒得改了（按照/home/supertan/github/IPCC2021/ppm/SLIC_enforce_LscanParallel_noprint.cpp改
+http://www.paratera-edu.org.cn/enterstep/index?id=3
 
-## 现在最快的是
+## 主要路径
 
-/ppm/SLIC_enforce_linescanning.cpp
+初赛最后文件：
+https://github.com/Kirrito-k423/IPCC2021/tree/main/preliminary/IPCC_USTC2
+
+决赛最后文件：
+https://github.com/Kirrito-k423/IPCC2021/tree/zzq/report
+
+tips: 其余都是各种草稿，主要超算机器是内网，只能传文件，不好用git。
